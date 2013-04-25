@@ -10,6 +10,8 @@ GEM
     daemons (1.1.9)
     diff-lcs (1.2.4)
     eventmachine (1.0.3)
+    haml (4.0.2)
+      tilt
     mime-types (1.23)
     nokogiri (1.5.9)
     rack (1.5.2)
@@ -43,6 +45,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara (~> 2.1)
+  haml (~> 4.0)
   rake (~> 10.0)
   rspec (~> 2.13)
   sinatra (~> 1.4)
