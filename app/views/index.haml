@@ -5,9 +5,11 @@
   $(document).ready ->
     $('a.action').click (e) ->
       e.preventDefault()
-      if $(this).text() == 'Deal'
-        $(this).text 'OK'
-        $('h2').text 'You have won'
-      else
+      if $(this).text() == 'OK'
         $(this).text 'Deal'
         $('h2').text 'Hello!'
+      else
+        $(this).text 'OK'
+        $.get("/result", (data) ->
+          $('h2').text(data)
+        )
