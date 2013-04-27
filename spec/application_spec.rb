@@ -1,30 +1,27 @@
 require 'spec_helper'
 require_relative '../app/hello.rb'
 
-describe "Application", :type => :feature do
+describe "Application", :type => :feature, :js => true do
   describe "/" do
     before { visit '/' }
 
-    it "has a greeting" do
+    it "has a greeting and links to a 'You have won' screen" do
       page.should have_content("Hello!")
-    end
-
-    it "links to a 'You have won' screen" do
+      page.should have_selector("a", text: "Deal")
+      page.should_not have_content("You have won")
+      page.should_not have_selector("a", text: "OK")
       click_link 'Deal'
-      current_path.should == '/win'
-    end
-  end
 
-  describe "/win" do
-    before { visit '/win' }
-
-    it "has a message of congratulation" do
+      page.should_not have_content("Hello!")
+      page.should_not have_selector("a", text: "Deal")
       page.should have_content("You have won")
-    end
-
-    it "links to home page" do
+      page.should have_selector("a", text: "OK")
       click_link 'OK'
-      current_path.should == '/'
+      
+      page.should have_content("Hello!")
+      page.should have_selector("a", text: "Deal")
+      page.should_not have_content("You have won")
+      page.should_not have_selector("a", text: "OK")
     end
   end
 end

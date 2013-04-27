@@ -1,2 +1,13 @@
 %h2 Hello!
-%a(href="win") Deal
+%a.action(href="#") Deal
+
+:coffee
+  $(document).ready ->
+    $('a.action').click (e) ->
+      e.preventDefault()
+      if $(this).text() == 'Deal'
+        $(this).text 'OK'
+        $('h2').text 'You have won'
+      else
+        $(this).text 'Deal'
+        $('h2').text 'Hello!'
