@@ -1,9 +1,12 @@
-%h2 Hello!
-%a.action(href="#") Deal
+#main
+  %h2 Hello!
+  .center
+    .button#action
+      Deal
 
 :coffee
   $(document).ready ->
-    $('a.action').click (e) ->
+    $('#action').click (e) ->
       e.preventDefault()
       if $(this).text() == 'OK'
         $(this).text 'Deal'
