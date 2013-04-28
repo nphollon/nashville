@@ -2,11 +2,11 @@
   $(document).ready(function() {
     return $('#action').click(function(e) {
       e.preventDefault();
-      if ($(this).text() === 'OK') {
-        $(this).text('Deal');
+      if ($(this).text() === 'Reset') {
+        $(this).text('Play');
         return $('h2').text('Hello!');
       } else {
-        $(this).text('OK');
+        $(this).text('Reset');
         return $.get("/result", function(data) {
           return $('h2').text(data);
         });

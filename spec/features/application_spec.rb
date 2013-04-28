@@ -7,7 +7,7 @@ describe "Application", :type => :feature, :js => true do
 
     it "has a greeting and links to a 'You have won' screen" do
       page.should have_content("Hello!")
-      page.should have_selector("#action", text: "Deal")
+      page.should have_selector("#action", text: "Play")
       page.should_not have_content("You have won")
       page.should_not have_content("You have lost")
     end
@@ -18,11 +18,11 @@ describe "Application", :type => :feature, :js => true do
 
       page.should_not have_content("Hello!")
       page.should have_content("You have won")
-      page.should have_selector("#action", text: "OK")
+      page.should have_selector("#action", text: "Reset")
       find('#action').click
       
       page.should have_content("Hello!")
-      page.should have_selector("#action", text: "Deal")
+      page.should have_selector("#action", text: "Play")
       page.should_not have_content("You have won")
     end
 
@@ -32,11 +32,11 @@ describe "Application", :type => :feature, :js => true do
 
       page.should_not have_content("Hello!")
       page.should have_content("You have lost")
-      page.should have_selector("#action", text: "OK")
+      page.should have_selector("#action", text: "Reset")
       find('#action').click
       
       page.should have_content("Hello!")
-      page.should have_selector("#action", text: "Deal")
+      page.should have_selector("#action", text: "Play")
       page.should_not have_content("You have lost")
     end
   end

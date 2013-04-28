@@ -1,11 +1,11 @@
 $(document).ready ->
   $('#action').click (e) ->
     e.preventDefault()
-    if $(this).text() == 'OK'
-      $(this).text 'Deal'
+    if $(this).text() == 'Reset'
+      $(this).text 'Play'
       $('h2').text 'Hello!'
     else
-      $(this).text 'OK'
+      $(this).text 'Reset'
       $.get("/result", (data) ->
         $('h2').text(data)
       )
