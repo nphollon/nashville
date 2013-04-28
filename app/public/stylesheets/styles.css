@@ -1,18 +1,18 @@
 #main {
-  background-color: #554236;
+  background-color: #033649;
   width: 500px;
   padding-top: 10px;
   padding-bottom: 30px; }
 
 h2 {
-  color: #60B99A;
+  color: #e8ddcb;
   font-family: sans-serif;
   text-align: center; }
 
 .button {
-  border-color: #F77825;
-  background-color: #D3CE3D;
-  color: #F77825;
+  border-color: #cdb380;
+  background-color: #036564;
+  color: #cdb380;
   font-family: sans-serif;
   cursor: pointer;
   text-align: center;
@@ -24,6 +24,5 @@ h2 {
   border: 3px;
   border-style: solid;
   border-radius: 30px; }
-
-.button:hover {
-  background-color: #F1EFA5; }
+  .button:hover {
+    background-color: #031634; }
