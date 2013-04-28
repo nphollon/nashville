@@ -1,6 +1,7 @@
 require 'capybara'
 require 'capybara/rspec'
 require 'capybara/poltergeist'
+require_relative '../app/application'
 
 ENV['RACK_ENV'] = 'test'
 
@@ -12,7 +13,7 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.filter_run :focus
   config.include Capybara::DSL
-  Capybara.app = Sinatra::Application
+  Capybara.app = Application
   Capybara.javascript_driver = :poltergeist
 
   config.order = 'random'
