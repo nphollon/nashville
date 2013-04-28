@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :shell, inline: <<-SCRIPT
     apt-get update
-    apt-get -y install ruby1.9.3 make g++ libxslt-dev libxml2-dev nodejs
+    apt-get -y install ruby1.9.3 make g++ libxslt-dev libxml2-dev nodejs coffee
     gem install bundler
     bundle install --gemfile=/home/vagrant/workspace/Gemfile
     export PATH=$PATH:/vagrant/bin
