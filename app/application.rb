@@ -1,16 +1,25 @@
 require 'sinatra'
-require 'barista'
+require 'haml'
 require_relative './game'
 
-register Barista::Integration::Sinatra
-
-Barista.configure do |config|
-  config.root = "app/coffeescripts"
-  config.output_root = "app/public/javascripts"
+def load_barista
+  require 'barista'
+  register Barista::Integration::Sinatra
+  Barista.configure do |config|
+    config.root = "app/coffeescripts"
+    config.output_root = "app/public/javascripts"
+  end
 end
 
-set :bind, "0.0.0.0"
-set :root, File.dirname(__FILE__)
+configure :development do
+  load_barista
+  set :bind, "0.0.0.0"
+end
+
+configure :test do
+  load_barista
+  set :root, File.dirname(__FILE__)
+end
 
 game = Game.new(Random.new)
 

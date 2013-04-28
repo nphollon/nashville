@@ -3,7 +3,7 @@ $(document).ready ->
     e.preventDefault()
     if $(this).text() == 'OK'
       $(this).text 'Deal'
-      $('h2').text 'Click to win or lose.'
+      $('h2').text 'Hello!'
     else
       $(this).text 'OK'
       $.get("/result", (data) ->

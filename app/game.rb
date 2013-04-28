@@ -1,4 +1,7 @@
 class Game
+  VICTORY_MSG = "You have won"
+  DEFEAT_MSG = "You have lost"
+
   attr_reader :rng
   private :rng
 
@@ -7,7 +10,6 @@ class Game
   end
 
   def result_msg
-    choice = rng.rand(2)
-    choice == 0 ? "You have lost" : "You have won"
+    rng.rand(2) == 0 ? DEFEAT_MSG : VICTORY_MSG
   end
 end
