@@ -21,12 +21,13 @@ configure :test do
   set :root, File.dirname(__FILE__)
 end
 
-game = Game.new(Random.new)
+game = Nashville::Game.new(Random.new)
 
 get '/' do
   haml :index
 end
 
 get '/result' do
-  game.result_msg
+  game.play
+  game.result_string
 end
