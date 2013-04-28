@@ -11,22 +11,23 @@ $acqua_profonda: #033649;
 $abisso: #031634;
 
 $bkg_color: $acqua_profonda;
-$title_color: $terra_terra;
+$txt_color: $terra_terra;
 $btn_txt_color: $terra;
 $btn_bkg_color: $acqua;
 $btn_hover_color: $abisso;
 
 #main {
   background-color: $bkg_color;
+  color: $txt_color;
+  font-family: sans-serif;
+  text-align: center;
   width: 500px;
   padding-top: 10px;
   padding-bottom: 30px;
 }
 
-h2 {
-  color: $title_color;
-  font-family: sans-serif;
-  text-align: center;
+var {
+  font-style: normal;
 }
 
 .button {

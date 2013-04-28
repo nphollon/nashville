@@ -1,13 +1,14 @@
 #main {
   background-color: #033649;
+  color: #e8ddcb;
+  font-family: sans-serif;
+  text-align: center;
   width: 500px;
   padding-top: 10px;
   padding-bottom: 30px; }
 
-h2 {
-  color: #e8ddcb;
-  font-family: sans-serif;
-  text-align: center; }
+var {
+  font-style: normal; }
 
 .button {
   border-color: #cdb380;
