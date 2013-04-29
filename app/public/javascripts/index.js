@@ -1,23 +1,18 @@
 (function() {
-  var Main, Score, playLabel, resetLabel, welcomeHeader,
-    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-  resetLabel = 'Reset';
-
-  playLabel = 'Play';
-
-  welcomeHeader = 'Hello!';
+  var Button, Main, Score;
 
   $(document).ready(function() {
     var main;
 
-    main = new Main();
-    return main.run();
+    return main = new Main();
   });
 
   Score = (function() {
+    Score.prototype.victoryString = "You have won";
+
     function Score(element) {
       this.element = element;
+      this.setValue(0);
     }
 
     Score.prototype.update = function(resultString) {
@@ -28,7 +23,7 @@
     };
 
     Score.prototype.didUserWin = function(resultString) {
-      return resultString === "You have won";
+      return resultString === this.victoryString;
     };
 
     Score.prototype.changeBy = function(points) {
@@ -47,40 +42,66 @@
 
   })();
 
-  Main = (function() {
-    function Main() {
-      this.displayResult = __bind(this.displayResult, this);
-    }
+  Button = (function() {
+    Button.prototype.resetLabel = 'Reset';
 
-    Main.prototype.score = new Score($('#score'));
+    Button.prototype.playLabel = 'Play';
 
-    Main.prototype.run = function() {
+    function Button(main, element) {
       var _this = this;
 
-      this.setHeader(welcomeHeader);
-      this.setButtonText(playLabel);
-      return $('#action').click(function(e) {
-        if ($('#action').text() === resetLabel) {
-          _this.setHeader(welcomeHeader);
-          return _this.setButtonText(playLabel);
+      this.element = element;
+      this.element.click(function() {
+        if (_this.isResetButton()) {
+          return main.reset();
         } else {
-          _this.setButtonText(resetLabel);
-          return $.get("/result", _this.displayResult);
+          return main.play();
         }
+      });
+    }
+
+    Button.prototype.isResetButton = function() {
+      return this.getText() === this.resetLabel;
+    };
+
+    Button.prototype.setText = function(newText) {
+      return this.element.text(newText);
+    };
+
+    Button.prototype.getText = function() {
+      return this.element.text();
+    };
+
+    return Button;
+
+  })();
+
+  Main = (function() {
+    Main.prototype.welcomeHeader = 'Hello!';
+
+    function Main() {
+      this.score = new Score($('#score'));
+      this.button = new Button(this, $('#action'));
+      this.headerElement = $('h2');
+      this.reset();
+    }
+
+    Main.prototype.play = function() {
+      var _this = this;
+
+      return $.get("/result", function(resultString) {
+        _this.setText(resultString, _this.button.resetLabel);
+        return _this.score.update(resultString);
       });
     };
 
-    Main.prototype.displayResult = function(resultString) {
-      this.setHeader(resultString);
-      return this.score.update(resultString);
+    Main.prototype.reset = function() {
+      return this.setText(this.welcomeHeader, this.button.playLabel);
     };
 
-    Main.prototype.setHeader = function(newText) {
-      return $('h2').text(newText);
-    };
-
-    Main.prototype.setButtonText = function(newText) {
-      return $('#action').text(newText);
+    Main.prototype.setText = function(headerText, buttonText) {
+      this.headerElement.text(headerText);
+      return this.button.setText(buttonText);
     };
 
     return Main;

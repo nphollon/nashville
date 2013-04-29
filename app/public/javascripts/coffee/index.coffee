@@ -1,21 +1,19 @@
-resetLabel = 'Reset'
-playLabel = 'Play'
-welcomeHeader = 'Hello!'
-
 $(document).ready ->
   main = new Main()
-  main.run()
 
 
 class Score
+  victoryString: "You have won"
+
   constructor: (@element) ->
+    @setValue 0
 
   update: (resultString) ->
     points = if @didUserWin(resultString) then +1 else -1
     @changeBy(points)
 
   didUserWin: (resultString) ->
-    resultString == "You have won"
+    resultString == @victoryString
 
   changeBy: (points) ->
     @setValue (@getValue() + points)
@@ -27,27 +25,44 @@ class Score
     Number @element.text()
 
 
-class Main
-  score: new Score $('#score')
+class Button
+  resetLabel: 'Reset'
+  playLabel: 'Play'
 
-  run: ->
-    @setHeader welcomeHeader
-    @setButtonText playLabel
-
-    $('#action').click (e) =>
-      if $('#action').text() == resetLabel
-        @setHeader welcomeHeader
-        @setButtonText playLabel
+  constructor: (main, @element) ->
+    @element.click =>
+      if @isResetButton()
+        main.reset()
       else
-        @setButtonText resetLabel
-        $.get "/result", @displayResult
+        main.play()
 
-  displayResult: (resultString) =>
-    @setHeader resultString
-    @score.update resultString
+  isResetButton: ->
+    @getText() == @resetLabel
 
-  setHeader: (newText) ->
-    $('h2').text newText
+  setText: (newText) ->
+    @element.text newText
 
-  setButtonText: (newText) ->
-    $('#action').text newText
+  getText: ->
+    @element.text()
+
+
+class Main
+  welcomeHeader: 'Hello!'
+
+  constructor: ->
+    @score = new Score $('#score')
+    @button = new Button this, $('#action')
+    @headerElement = $('h2')
+    @reset()
+
+  play: ->
+    $.get "/result", (resultString) =>
+      @setText resultString, @button.resetLabel
+      @score.update resultString
+
+  reset: ->
+    @setText @welcomeHeader, @button.playLabel
+
+  setText: (headerText, buttonText) ->
+    @headerElement.text headerText
+    @button.setText buttonText
