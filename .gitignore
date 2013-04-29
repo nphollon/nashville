@@ -1,3 +1,4 @@
 doc/
 .sass-cache/
+.vagrant/
 app/.sass-cache
