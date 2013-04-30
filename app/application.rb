@@ -1,6 +1,7 @@
 require 'sinatra/base'
 require 'barista'
 require 'haml'
+require 'json'
 
 require_relative './game'
 
@@ -11,14 +12,21 @@ class Application < Sinatra::Base
     config.output_root = "/home/vagrant/workspace/app/public/javascripts"
   end
 
-  game = Nashville::Game.new(Random.new)
+  game = nil
 
   get '/' do
     haml :index
   end
 
-  get '/result' do
-    game.play
-    game.result_string
+  get '/init' do
+    content_type :json
+    game = Nashville::Game.new(Random.new)
+    game.to_json
+  end
+
+  get '/play' do
+    content_type :json
+    game.next_state
+    game.to_json
   end
 end
