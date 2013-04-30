@@ -2,17 +2,23 @@ require 'json'
 
 module Nashville
   class Game
+    VICTORY_STRING = "You have won"
+    DEFEAT_STRING = "You have lost"
+    PLAY_STRING = "Play"
+    RESET_STRING = "Reset"
+
     USER_VICTORY = 1
     NUMBER_OF_END_STATES = 2
 
-    attr_accessor :game_state
-    attr_reader :rng, :score
-    private :rng
+    attr_accessor :game_state, :action_available, :value
+    attr_reader :rng
+    private :rng, :value=
 
     def initialize(rng)
       @rng = rng
       @game_state = GameNotStarted.new
-      @score = Score.new
+      @action_available = PLAY_STRING
+      @value = 0
     end
 
     def next_state
@@ -30,10 +36,26 @@ module Nashville
     end
 
     def to_json
-      { message: result_string, actionAvailable: score.actionAvailable, score: score.value }.to_json
+      { message: result_string, actionAvailable: action_available, score: value }.to_json
     end
 
     private
+
+    def update
+      points = case(result_string)
+      when VICTORY_STRING
+        self.action_available = RESET_STRING
+        1
+      when DEFEAT_STRING
+        self.action_available = RESET_STRING
+        -1
+      else
+        self.action_available = PLAY_STRING
+        0
+      end
+      change_by points
+    end
+
     def play
       outcome = rng.rand(NUMBER_OF_END_STATES)
       self.game_state = outcome == USER_VICTORY ? GameWon.new : GameLost.new
@@ -43,8 +65,8 @@ module Nashville
       self.game_state = GameNotStarted.new
     end
 
-    def update
-      score.update result_string
+    def change_by(points)
+      self.value = value + points
     end
   end
 
@@ -76,41 +98,6 @@ module Nashville
     WELCOME_STRING = "Hello!"
     def to_s
       WELCOME_STRING
-    end
-  end
-
-  class Score
-    VICTORY_STRING = "You have won"
-    DEFEAT_STRING = "You have lost"
-    PLAY_STRING = "Play"
-    RESET_STRING = "Reset"
-
-    attr_accessor :value, :actionAvailable
-    private :value=, :actionAvailable=
-
-    def initialize
-      @value = 0
-      @actionAvailable = PLAY_STRING
-    end
-
-    def update(result_string)
-      points = case(result_string)
-      when VICTORY_STRING
-        self.actionAvailable = RESET_STRING
-        1
-      when DEFEAT_STRING
-        self.actionAvailable = RESET_STRING
-        -1
-      else
-        self.actionAvailable = PLAY_STRING
-        0
-      end
-      change_by points
-    end
-
-    private
-    def change_by(points)
-      self.value = value + points
     end
   end
 end
