@@ -26,7 +26,7 @@ class Application < Sinatra::Base
 
   get '/play' do
     content_type :json
-    game.next_state
+    game.proceed_to_next_state
     game.to_json
   end
 end
