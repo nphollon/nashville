@@ -4,7 +4,7 @@ setText = (state) ->
   $('#score').text state.score
 
 getStateAndUpdateDOM = (path) ->
-  $.get path, setText
+  $.get path, {session_id: $('#session').attr("value")}, setText
 
 play = ->
   getStateAndUpdateDOM "/play"

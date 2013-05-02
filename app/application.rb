@@ -12,21 +12,23 @@ class Application < Sinatra::Base
     config.output_root = "/home/vagrant/workspace/app/public/javascripts"
   end
 
-  game = nil
+  games = []
 
   get '/' do
-    haml :index
+    games << Nashville::Game.new(Random.new)
+    haml :index, locals: { id: games.size - 1 }
   end
 
   get '/init' do
+    session_id = params[:session_id].to_i
     content_type :json
-    game = Nashville::Game.new(Random.new)
-    game.to_json
+    games[session_id].to_json
   end
 
   get '/play' do
+    session_id = params[:session_id].to_i
     content_type :json
-    game.proceed_to_next_state
-    game.to_json
+    games[session_id].proceed_to_next_state
+    games[session_id].to_json
   end
 end

@@ -8,7 +8,9 @@
   };
 
   getStateAndUpdateDOM = function(path) {
-    return $.get(path, setText);
+    return $.get(path, {
+      session_id: $('#session').attr("value")
+    }, setText);
   };
 
   play = function() {
