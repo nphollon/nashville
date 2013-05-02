@@ -16,13 +16,7 @@ class Application < Sinatra::Base
 
   get '/' do
     games << Nashville::Game.new(Random.new)
-    haml :index, locals: { id: games.size - 1 }
-  end
-
-  get '/init' do
-    session_id = params[:session_id].to_i
-    content_type :json
-    games[session_id].to_json
+    haml :index, locals: { id: games.size-1, game: games.last }
   end
 
   get '/play' do

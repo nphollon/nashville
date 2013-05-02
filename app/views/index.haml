@@ -1,9 +1,9 @@
 #main
-  %h2
-  .button#action
+  %h2= game.result_string
+  .button#action= game.action_available
   %h3
     Score:
-    %var#score
-  %input#session{ type:"hidden", value:id }
+    %var#score= game.score
+  %input#session{ type: "hidden", value: id }
 
 %script(src="javascripts/index.js")

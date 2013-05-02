@@ -22,8 +22,12 @@ module Nashville
       game_state.to_s
     end
 
+    def action_available
+      game_state.action_available
+    end
+
     def to_json
-      { message: result_string, actionAvailable: game_state.action_available, score: score }.to_json
+      { message: result_string, actionAvailable: action_available, score: score }.to_json
     end
 
     private

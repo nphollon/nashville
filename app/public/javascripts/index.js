@@ -1,5 +1,9 @@
 (function() {
-  var getStateAndUpdateDOM, initialize, play, setText;
+  var play, sessionAsParam, setText;
+
+  sessionAsParam = {
+    session_id: $('#session').attr('value')
+  };
 
   setText = function(state) {
     $('h2').text(state.message);
@@ -7,22 +11,11 @@
     return $('#score').text(state.score);
   };
 
-  getStateAndUpdateDOM = function(path) {
-    return $.get(path, {
-      session_id: $('#session').attr("value")
-    }, setText);
-  };
-
   play = function() {
-    return getStateAndUpdateDOM("/play");
-  };
-
-  initialize = function() {
-    return getStateAndUpdateDOM("/init");
+    return $.get("/play", sessionAsParam, setText);
   };
 
   $(document).ready(function() {
-    initialize();
     return $('#action').click(play);
   });
 
