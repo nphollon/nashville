@@ -6,7 +6,7 @@ setText = (state) ->
   $('#score').text state.score
 
 play = ->
-  $.get "/play", sessionAsParam, setText
+  $.post "/play", sessionAsParam, setText
 
 $(document).ready ->
   $('#action').click play

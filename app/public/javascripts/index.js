@@ -12,7 +12,7 @@
   };
 
   play = function() {
-    return $.get("/play", sessionAsParam, setText);
+    return $.post("/play", sessionAsParam, setText);
   };
 
   $(document).ready(function() {

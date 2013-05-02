@@ -21,7 +21,7 @@ class Application < Sinatra::Base
     haml :index, locals: { id: key, game: games[key] }
   end
 
-  get '/play' do
+  post '/play' do
     game = games[params[:session_id]]
     content_type :json
     game.proceed_to_next_state
