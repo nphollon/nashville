@@ -2,7 +2,7 @@ module Nashville
   class GameState
     def action_available; raise NotImplementedError; end
     def to_s; raise NotImplementedError; end
-    def point_value; raise NotImplementedError; end
+    def point_multiplier; raise NotImplementedError; end
     def determine_next_state(rng); raise NotImplementedError; end
 
     def ==(object)
@@ -25,7 +25,7 @@ module Nashville
       "You have won"
     end
 
-    def point_value
+    def point_multiplier
       1
     end
   end
@@ -35,7 +35,7 @@ module Nashville
       "You have lost"
     end
 
-    def point_value
+    def point_multiplier
       -1
     end
   end
@@ -49,7 +49,7 @@ module Nashville
       "Hello!"
     end
 
-    def point_value
+    def point_multiplier
       0
     end
 

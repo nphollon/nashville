@@ -1,18 +1,22 @@
 (function() {
-  var play, sessionAsParam, setText;
-
-  sessionAsParam = {
-    session_id: $('#session').attr('value')
-  };
+  var params, play, setText;
 
   setText = function(state) {
     $('h2').text(state.message);
     $('#action').text(state.actionAvailable);
+    $('#wager').val(state.wager);
     return $('#score').text(state.score);
   };
 
+  params = function() {
+    return {
+      session_id: $('#session').attr('value'),
+      wager: $('#wager').val()
+    };
+  };
+
   play = function() {
-    return $.post("/play", sessionAsParam, setText);
+    return $.post("/play", params(), setText);
   };
 
   $(document).ready(function() {

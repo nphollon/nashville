@@ -21,6 +21,7 @@ class Application < Sinatra::Base
 
   post '/play' do
     game = games[params[:session_id]]
+    game.wager = params[:wager].to_i
     content_type :json
     game.proceed_to_next_state
     game.to_json

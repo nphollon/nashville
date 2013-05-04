@@ -30,7 +30,30 @@ var {
   font-style: normal;
 }
 
+input {
+  $field_height: 20px;
+  background-color: $btn_bkg_color;
+  color: $btn_txt_color;
+  text-align: center;
+  width: 50px;
+  height: $field_height;
+  border: none;
+  border-radius: $field_height;
+
+  &:focus {
+    background-color: $btn_hover_color;
+    outline: none;
+  }
+
+  &[type='number']::-webkit-outer-spin-button, 
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 .button {
+  $button_height: 30px;
   border-color: $btn_txt_color;
   background-color: $btn_bkg_color;
   color: $btn_txt_color;
@@ -38,13 +61,13 @@ var {
   cursor: pointer;
   text-align: center;
   width: 100px;
-  height: 30px;
-  line-height: 30px;
+  height: $button_height;
+  line-height: $button_height;
   margin-left: auto;
   margin-right: auto;
   border: 3px;
   border-style: solid;
-  border-radius: 30px;
+  border-radius: $button_height;
   &:hover {
     background-color: $btn_hover_color;
   }
