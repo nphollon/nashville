@@ -5,7 +5,7 @@ module Nashville
   class Game
     attr_accessor :game_state, :score
     attr_reader :rng
-    private :score=
+    private :score=, :rng
 
     def initialize(rng)
       @rng = rng

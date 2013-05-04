@@ -2,9 +2,8 @@ require 'sinatra/base'
 require 'barista'
 require 'haml'
 require 'json'
-require 'digest/sha2'
 
-require_relative './game'
+require_relative './game_collection'
 
 class Application < Sinatra::Base
   register Barista::Integration::Sinatra
@@ -13,12 +12,11 @@ class Application < Sinatra::Base
     config.output_root = "/home/vagrant/workspace/app/public/javascripts"
   end
 
-  games = {}
+  games = Nashville::GameCollection.new
 
-  get '/' do
-    key = (Digest::SHA2.new << Time.now.to_s).to_s
-    games[key] = Nashville::Game.new(Random.new)
-    haml :index, locals: { id: key, game: games[key] }
+  get '/' do 
+    session_id, game = games.new_game_session
+    haml :index, locals: { session_id: session_id, game: game }
   end
 
   post '/play' do
