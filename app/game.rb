@@ -35,7 +35,11 @@ module Nashville
     end
 
     def wager=(new_wager)
-      @wager = new_wager < 1 ? INIT_WAGER : new_wager
+      @wager = if new_wager > 0
+        new_wager
+      else
+        INIT_WAGER
+      end
     end
 
     private

@@ -75,7 +75,8 @@ describe "Application", :type => :feature, :js => :true do
         find('#action').click
         page.should have_selector('#score', text: '1')
       end
-      
+
+      # A bug in Poltergeist prevents this test from passing      
       xit "Sets the wager to 1 if wager is negative" do
         fill_in "wager", with: "-5"
         find('#action').click
