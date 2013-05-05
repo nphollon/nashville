@@ -3,6 +3,9 @@ require_relative './game_state'
 
 module Nashville
   class Game
+    INIT_WAGER = 1
+    INIT_SCORE = 0
+
     attr_accessor :game_state, :score, :wager
     attr_reader :rng
     private :score=, :rng
@@ -10,8 +13,8 @@ module Nashville
     def initialize(rng)
       @rng = rng
       @game_state = GameNotStarted.new
-      @score = 0
-      @wager = 1
+      @score = INIT_SCORE
+      @wager = INIT_WAGER
     end
 
     def proceed_to_next_state

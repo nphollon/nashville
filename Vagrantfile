@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
     apt-get -y install make g++ libxslt-dev libxml2-dev nodejs coffeescript curl
     curl -L https://get.rvm.io | bash -s stable --autolibs=3 --ruby
     echo "source /usr/local/lib/rvm" >> /etc/profile
-    echo PATH=$PATH:/vagrant/bin >> /etc/profile
+    echo PATH=$PATH:/vagrant/bin >> /home/vagrant/.bashrc
     usermod --append --groups rvm vagrant
     rm -rf /opt/vagrant_ruby/
     rm /etc/profile.d/vagrant_ruby.sh

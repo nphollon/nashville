@@ -56,5 +56,12 @@ describe "Application", :type => :feature, :js => true do
       find('#action').click
       page.should have_selector("#score", text: /^-2$/)
     end
+
+    it "Deducts the wager amount if next generated value is a 0" do
+      Random.any_instance.stub(:rand).and_return(0)
+      fill_in "wager", with: 5
+      find('#action').click
+      page.should have_selector('#score', text: /^-5$/)
+    end
   end
 end

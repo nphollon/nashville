@@ -3,7 +3,7 @@ require 'barista'
 require 'haml'
 require 'json'
 
-require_relative './game_collection'
+require_relative './game_manager'
 
 class Application < Sinatra::Base
   register Barista::Integration::Sinatra
@@ -12,7 +12,7 @@ class Application < Sinatra::Base
     config.output_root = "/home/vagrant/workspace/app/public/javascripts"
   end
 
-  games = Nashville::GameCollection.new
+  games = Nashville::GameManager.new
 
   get '/' do 
     session_id, game = games.new_game_session
@@ -20,10 +20,7 @@ class Application < Sinatra::Base
   end
 
   post '/play' do
-    game = games[params[:session_id]]
-    game.wager = params[:wager].to_i
     content_type :json
-    game.proceed_to_next_state
-    game.to_json
+    games.respond_to params
   end
 end
