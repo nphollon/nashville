@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'barista'
 require 'sass/plugin/rack'
-require './application'
+require './app/application'
 
 use Sass::Plugin::Rack
 
