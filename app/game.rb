@@ -34,6 +34,10 @@ module Nashville
       { message: result_string, actionAvailable: action_available, score: score, wager: wager }.to_json
     end
 
+    def wager=(new_wager)
+      @wager = new_wager < 1 ? INIT_WAGER : new_wager
+    end
+
     private
     def change_score_by(points)
       self.score = score + points

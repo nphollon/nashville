@@ -63,4 +63,16 @@ describe "Game" do
   describe "to_json" do
     its(:to_json) { should == '{"message":"Hello!","actionAvailable":"Play","score":0,"wager":1}' }
   end
+
+  describe "wager=" do
+    it "sets wager to 1 if passed a 0" do
+      game.wager = 0
+      game.wager.should == 1
+    end
+
+    it "sets wager to 1 if passed a negative number" do
+      game.wager = -10
+      game.wager.should == 1
+    end
+  end
 end
