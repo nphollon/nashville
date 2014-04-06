@@ -1,5 +1,4 @@
 require 'sinatra'
-require 'barista'
 require 'sass/plugin/rack'
 require './app/application'
 
