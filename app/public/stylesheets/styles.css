@@ -1,37 +1,55 @@
 #main {
-  background-color: #033649;
-  color: #e8ddcb;
+  background-color: #60b99a;
+  color: #f1efa5;
   font-family: sans-serif;
   text-align: center;
   width: 500px;
-  padding-top: 10px;
-  padding-bottom: 30px; }
+  height: 200px; }
 
-var {
-  font-style: normal; }
+#scoreboard {
+  width: 30%;
+  height: 100%;
+  float: left; }
+
+#controls {
+  height: 100%;
+  width: 60%;
+  float: left; }
+
+.display {
+  background-color: #554236;
+  color: #d3ce3d;
+  height: 85px;
+  border-radius: 21.25px;
+  line-height: 42.5px;
+  margin: 10px; }
+
+h3 {
+  margin-top: 0px; }
 
 input {
-  background-color: #036564;
-  color: #cdb380;
+  background-color: #d3ce3d;
+  color: #f77825;
   text-align: center;
   width: 50px;
   height: 20px;
   border: none;
   border-radius: 20px; }
   input:focus {
-    background-color: #031634;
+    color: #554236;
     outline: none; }
   input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0; }
 
 .button {
-  border-color: #cdb380;
-  background-color: #036564;
-  color: #cdb380;
+  border-color: #f77825;
+  background-color: #d3ce3d;
+  color: #f77825;
   font-family: sans-serif;
-  cursor: pointer;
   text-align: center;
+  text-decoration: none;
+  cursor: pointer;
   width: 100px;
   height: 30px;
   line-height: 30px;
@@ -41,4 +59,7 @@ input {
   border-style: solid;
   border-radius: 30px; }
   .button:hover {
-    background-color: #031634; }
+    color: #554236; }
+
+.spacer {
+  height: 20px; }

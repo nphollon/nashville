@@ -10,24 +10,50 @@ $acqua: #036564;
 $acqua_profonda: #033649;
 $abisso: #031634;
 
-$bkg_color: $acqua_profonda;
-$txt_color: $terra_terra;
-$btn_txt_color: $terra;
-$btn_bkg_color: $acqua;
-$btn_hover_color: $abisso;
+$bkg_color: $mystery_machine_blue;
+$txt_color: $mystery_machine_white;
+$btn_txt_color: $mystery_machine_orange;
+$btn_bkg_color: $mystery_machine_yellow;
+$btn_hover_color: $mystery_machine_brown;
+$display_bkg_color: $mystery_machine_brown;
+$display_txt_color: $mystery_machine_yellow;
+
+$width: 500px;
+$height: 200px;
 
 #main {
   background-color: $bkg_color;
   color: $txt_color;
   font-family: sans-serif;
   text-align: center;
-  width: 500px;
-  padding-top: 10px;
-  padding-bottom: 30px;
+  width: $width;
+  height: $height;
 }
 
-var {
-  font-style: normal;
+#scoreboard {
+  width: 30%;
+  height: 100%;
+  float: left;
+}
+
+#controls {
+  height: 100%;
+  width: 60%;
+  float: left;
+}
+
+.display {
+  $div_height: 85px;
+  background-color: $display_bkg_color;
+  color: $display_txt_color;
+  height: $div_height;
+  border-radius: 0.25*$div_height;
+  line-height: 0.5*$div_height;
+  margin: 10px;
+}
+
+h3 {
+  margin-top: 0px;
 }
 
 input {
@@ -41,7 +67,7 @@ input {
   border-radius: $field_height;
 
   &:focus {
-    background-color: $btn_hover_color;
+    color: $btn_hover_color;
     outline: none;
   }
 
@@ -58,8 +84,9 @@ input {
   background-color: $btn_bkg_color;
   color: $btn_txt_color;
   font-family: sans-serif;
-  cursor: pointer;
   text-align: center;
+  text-decoration: none;
+  cursor: pointer;
   width: 100px;
   height: $button_height;
   line-height: $button_height;
@@ -69,6 +96,10 @@ input {
   border-style: solid;
   border-radius: $button_height;
   &:hover {
-    background-color: $btn_hover_color;
+    color: $btn_hover_color;
   }
+}
+
+.spacer {
+  height: 20px;
 }

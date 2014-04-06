@@ -19,12 +19,14 @@ describe "Game" do
         end
 
         it "should increase score by 1 if wager is 1" do
-          expect { game.proceed_to_next_state }.to change{ game.score }.by 1
+          game.proceed_to_next_state
+          game.scores.should == [1, -1]
         end
 
         it "should increase score by 10 if wager is 10" do
           game.wager = 10
-          expect { game.proceed_to_next_state }.to change{ game.score }.by 10
+          game.proceed_to_next_state
+          game.scores.should == [10, -10]
         end
       end
 
@@ -37,12 +39,14 @@ describe "Game" do
         end
 
         it "should decrease score by 1 if wager is 1" do
-          expect { game.proceed_to_next_state }.to change{ game.score }.by -1
+          game.proceed_to_next_state
+          game.scores.should == [-1, 1]
         end
 
         it "should decrease score by 10 if wager is 10" do
           game.wager = 10
-          expect { game.proceed_to_next_state }.to change{ game.score }.by -10
+          game.proceed_to_next_state
+          game.scores.should == [-10, 10]
         end
       end
     end
@@ -61,7 +65,7 @@ describe "Game" do
   end
 
   describe "to_json" do
-    its(:to_json) { should == '{"message":"Hello!","actionAvailable":"Play","score":0,"wager":1}' }
+    its(:to_json) { should == '{"message":"Hello!","actionAvailable":"Play","scores":[0,0],"wager":1}' }
   end
 
   describe "wager=" do
@@ -73,6 +77,14 @@ describe "Game" do
     it "sets wager to 1 if passed a negative number" do
       game.wager = -10
       game.wager.should == 1
+    end
+  end
+
+  describe "scores" do
+    it "should not be modifiable" do
+      scores_copy = game.scores
+      scores_copy[0] = 100
+      game.scores.should == [0, 0]
     end
   end
 end

@@ -5,7 +5,8 @@
     $('h2').text(state.message);
     $('#action').text(state.actionAvailable);
     $('#wager').val(state.wager);
-    return $('#score').text(state.score);
+    $('#score-player').text(state.scores[0]);
+    return $('#score-opponent').text(state.scores[1]);
   };
 
   params = function() {
