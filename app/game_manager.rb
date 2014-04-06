@@ -3,13 +3,15 @@ require_relative './game'
 
 module Nashville
   class GameManager
-    def initialize
+    def initialize(game_factory = nil, session_id_generator = nil)
       @games_hash = {}
+      @game_factory = game_factory || GameFactory.new
+      @session_id_generator = session_id_generator || SessionIdGenerator.new
     end
 
     def new_game_session
-      game = create_game
-      session_id = create_session_id
+      game = game_factory.build
+      session_id = session_id_generator.get_id
       games_hash[session_id] = game
       [session_id, game]
     end
@@ -26,14 +28,18 @@ module Nashville
     end
 
     private
-    attr_accessor :games_hash
-    
-    def create_game
-      Game.new(Random.new)
-    end
+    attr_reader :games_hash, :session_id_generator, :game_factory
+  end
 
-    def create_session_id
+  class SessionIdGenerator
+    def get_id
       (Digest::SHA2.new << Time.now.to_s).to_s
+    end
+  end
+
+  class GameFactory
+    def build
+      return Game.new(Random.new)
     end
   end
 end

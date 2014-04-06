@@ -1,5 +1,5 @@
 require 'spec_helper'
-require_relative '../../app/application.rb'
+require_relative '../app/application.rb'
 
 describe "Playing a game", :js => :true do
   specify "winning a round" do
