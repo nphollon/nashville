@@ -6,7 +6,6 @@ gem 'sinatra', '~> 1.4'
 gem 'haml', '~> 4.0'
 gem 'sass', '~> 3.2'
 gem 'json', '~> 1.7'
-gem 'barista', '~> 1.3'
 
 group :test do
   gem 'rspec', '~> 2.13'
