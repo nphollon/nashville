@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rake', '~> 10.0'
+gem 'rake', '~> 10.1'
 gem 'thin', '~> 1.5'
 gem 'sinatra', '~> 1.4'
 gem 'haml', '~> 4.0'

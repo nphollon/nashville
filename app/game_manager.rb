@@ -17,14 +17,10 @@ module Nashville
     end
 
     def respond_to(params)
-      game = self[params[:session_id]]
+      game = games_hash[ params[:session_id] ]
       game.wager = params[:wager].to_i
       game.proceed_to_next_state
       game.to_json
-    end
-
-    def [](session_id)
-      games_hash[session_id]
     end
 
     private
