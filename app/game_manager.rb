@@ -18,6 +18,8 @@ module Nashville
 
     def respond_to(params)
       game = games_hash[ params[:session_id] ]
+      return empty_response unless game
+
       game.wager = params[:wager].to_i
       game.proceed_to_next_state
       game.to_json
@@ -25,6 +27,10 @@ module Nashville
 
     private
     attr_reader :games_hash, :session_id_generator, :game_factory
+
+    def empty_response
+      "{}"
+    end
   end
 
   class SessionIdGenerator
