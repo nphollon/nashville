@@ -17,3 +17,18 @@ class Application < Sinatra::Base
     games.respond_to params
   end
 end
+
+=begin
+
+layers:
+
+user (JS)
+application (Sinatra (untestable?))
+game_server_manager
+game_server
+...
+
+
+
+add jasmine tests to front-end!
+=end

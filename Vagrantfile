@@ -10,12 +10,17 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell, inline: <<-SCRIPT
     apt-get update
     apt-get -y install make g++ libxslt-dev libxml2-dev nodejs curl
+
     curl -L https://get.rvm.io | bash -s stable --autolibs=3 --ruby
     echo "source /usr/local/lib/rvm" >> /etc/profile
+    
     echo PATH=$PATH:/vagrant/bin >> /home/vagrant/.bashrc
+    
     usermod --append --groups rvm vagrant
+    
     rm -rf /opt/vagrant_ruby/
     rm /etc/profile.d/vagrant_ruby.sh
+    
     gem install bundler
     bundle install --gemfile=/home/vagrant/workspace/Gemfile
   SCRIPT
