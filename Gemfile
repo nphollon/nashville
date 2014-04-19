@@ -11,5 +11,4 @@ group :test do
   gem 'rspec', '~> 2.13'
   gem 'capybara', '~> 2.1'
   gem 'poltergeist', '~> 1.2'
-  gem 'jasmine', '~> 2.0'
 end

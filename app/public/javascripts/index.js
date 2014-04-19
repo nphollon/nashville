@@ -16,8 +16,8 @@ var play = function () {
   return $.post("/play", params(), setText);
 };
 
-var aFunction = function () { return 5; };
-
 $(document).ready(function () {
   return $('#action').click(play);
 });
+
+var buildClient = function () {};

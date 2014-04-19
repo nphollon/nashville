@@ -1,10 +1,11 @@
 require 'rspec/core/rake_task'
-require 'jasmine'
 
 task :default => :test
 
-task :test => [ :"jasmine:ci", :spec ]
+task :test => [ :jasmine, :rspec ]
 
-RSpec::Core::RakeTask.new(:spec)
+RSpec::Core::RakeTask.new(:rspec)
 
-load 'jasmine/tasks/jasmine.rake'
+task :jasmine do
+	sh "jasmine-node spec"
+end
