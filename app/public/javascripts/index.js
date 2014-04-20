@@ -19,5 +19,3 @@ var play = function () {
 $(document).ready(function () {
   return $('#action').click(play);
 });
-
-var buildClient = function () {};

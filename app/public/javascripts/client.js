@@ -4,7 +4,7 @@ var buildClient = function (requester, renderer, reader) {
 	var client = {}
 
 	client.start = function () {
-		requester.request(client.update)
+		requester.request(this.update)
 		reader.disable()
 	}
 
@@ -12,16 +12,76 @@ var buildClient = function (requester, renderer, reader) {
 		renderer.render(response)
 
 		if (response.enableInput === true) {
-			reader.enable(client.submit)
+			reader.enable(this.submit)
 		} else {
-			requester.request(client.update)
+			requester.request(this.update)
 		}
 	}
 
 	client.submit = function (decision) {
-		requester.submit(decision, client.update)
+		requester.submit(decision, this.update)
 		reader.disable()
 	}
 
 	return client
+}
+
+var buildRequester = function ($, urls) {
+	var requester = {}
+
+	requester.request = function (callback) {
+		$.post(urls.requestUrl, {}, callback)
+	}
+
+	requester.submit = function (decision, callback) {
+		$.post(urls.submitUrl, decision, callback)
+	}
+
+	return requester
+}
+
+var buildReader = function (interfaceElements) {
+	var reader = {}
+
+	var submitButton = interfaceElements.submitButton
+	var wagerField = interfaceElements.wagerField
+
+	reader.enable = function (callback) {
+		setButtonDisabled(false)
+		submitButton.click(this.buildOnClickCallback(callback))
+	}
+
+	reader.disable = function () {
+		setButtonDisabled(true)
+		submitButton.off("click")
+	}
+
+	reader.buildOnClickCallback = function (clientCallback) {
+		var decision = this.getDecision()
+		return function () {
+			clientCallback(decision)
+		}
+	}
+
+	reader.getDecision = function () {
+		return { wager: parseInt(wagerField.val()) }
+	}
+
+  var setButtonDisabled = function (isDisabled) {
+  	submitButton.attr("disabled", isDisabled.toString())
+	}
+
+	return reader
+}
+
+var buildRenderer = function (interfaceElements) {
+	var renderer = {}	
+
+	renderer.render = function (data) {
+		interfaceElements.wagerField.val(data.wager)
+		interfaceElements.statusDiv.text(data.message)
+		interfaceElements.scoreDiv.text(data.score)
+	}
+
+	return renderer
 }

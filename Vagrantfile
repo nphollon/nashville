@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     apt-add-repository ppa:brightbox/ruby-ng
     apt-add-repository ppa:chris-lea/node.js
     apt-get update
-    apt-get -y install ruby2.0 nodejs libxslt-dev libxml2-dev libfontconfig1 phantomjs
+    apt-get -y install ruby2.0-dev nodejs libxslt-dev libxml2-dev libfontconfig1 phantomjs
     
     rm -rf /opt/vagrant_ruby/
     rm /etc/profile.d/vagrant_ruby.sh
