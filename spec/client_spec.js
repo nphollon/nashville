@@ -11,7 +11,7 @@ var testContext, mock, dummy
 	dummy = helpers.dummy
 
 	testContext = {}
-	var testFileText = fs.readFileSync("app/public/javascripts/client.js")
+	var testFileText = fs.readFileSync("app/client/client.js")
 	vm.runInNewContext(testFileText, testContext)
 })()
 
