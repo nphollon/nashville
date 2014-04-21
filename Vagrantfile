@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
     rm -rf /opt/vagrant_ruby/
     rm /etc/profile.d/vagrant_ruby.sh
     
-    npm install jasmine-node -g
+    npm install jasmine-node zombie -g
     gem install bundler
     bundle install --gemfile=/home/vagrant/workspace/Gemfile
   SCRIPT

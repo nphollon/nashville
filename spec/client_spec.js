@@ -1,13 +1,16 @@
 "use strict"
 
-var testContext
+var testContext, mock, dummy
 
 ;(function () {
 	var fs = require("fs")
 	var vm = require("vm")
+	var helpers = require("./spec_helper.js")
+
+	mock = helpers.mock
+	dummy = helpers.dummy
 
 	testContext = {}
-
 	var testFileText = fs.readFileSync("app/public/javascripts/client.js")
 	vm.runInNewContext(testFileText, testContext)
 })()
@@ -70,13 +73,13 @@ describe("The client", function () {
 
 	describe("submitting user input", function () {
 		it("sends the submission as a request", function () {
-			var decision = dummyDecision
+			var decision = dummy
 			client.submit(decision)
 			expect(requester.submit).toHaveBeenCalledWith(decision, client.update)
 		})
 
 		it("disables user input", function () {
-			var decision = dummyDecision()
+			var decision = dummy()
 			client.submit(decision)
 			expect(reader.disable).toHaveBeenCalled()
 		})
@@ -102,7 +105,7 @@ describe("The requester", function () {
 
 	describe("requesting data", function () {
 		it("posts an empty message to the request url", function () {
-			var callback = dummyCallback()
+			var callback = dummy()
 			requester.request(callback)
 			expect(jQuery.post).toHaveBeenCalledWith(requestUrl, {}, callback)
 		})
@@ -110,8 +113,8 @@ describe("The requester", function () {
 
 	describe("submitting a decision", function () {
 		it("posts the decision to the submit url", function () {
-			var callback = dummyCallback()
-			var decision = dummyDecision()
+			var callback = dummy()
+			var decision = dummy()
 			requester.submit(decision, callback)
 			expect(jQuery.post).toHaveBeenCalledWith(submitUrl, decision, callback)
 		})
@@ -144,13 +147,13 @@ describe("The reader", function () {
 
   describe("enabling user input", function () {
     it("should enable the submit button", function () {
-      reader.enable(dummyCallback())
+      reader.enable(dummy())
       expect(submitButton.attr).toHaveBeenCalledWith("disabled", "false")
     })
 
     it("should set the button's click event to trigger the callback", function () {
-      var clientCallback = dummyCallback()
-      var callbackWrapper = dummyCallback()
+      var clientCallback = dummy()
+      var callbackWrapper = dummy()
 
       spyOn(reader, "buildOnClickCallback").andCallFake(function (callback) {
         return (callback === clientCallback) ? callbackWrapper : undefined
@@ -170,7 +173,7 @@ describe("The reader", function () {
     })
 
     it("should return a function that sends the decision to the client callback", function () {
-      var decision = dummyDecision()
+      var decision = dummy()
       spyOn(reader, 'getDecision').andReturn(decision)
       var clientCallback = jasmine.createSpy("clientCallback")
 
@@ -227,20 +230,3 @@ describe("The renderer", function () {
     })
   })
 })
-
-var mock = function (stubMethods) {
-	var mock = {}
-	stubMethods.forEach(function (stubMethod) {
-		mock[stubMethod] = function () {}
-		spyOn(mock, stubMethod)
-	})
-	return mock
-}
-
-var dummyDecision = function () {
-	return { arbitrary: true }
-}
-
-var dummyCallback = function () {
-  return function () {}
-}
