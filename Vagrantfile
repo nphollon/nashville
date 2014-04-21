@@ -4,7 +4,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu_13_10"
   config.vm.box_url = "http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-1310-i386-virtualbox-nocm.box"
-  config.vm.network :forwarded_port, guest: 9292, host: 4567
+  config.vm.network :forwarded_port, guest: 4567, host: 4567
   config.vm.synced_folder ".", "/home/vagrant/workspace"
 
   config.vm.provision :shell, inline: <<-SCRIPT

@@ -1,6 +1,6 @@
 "use strict"
 
-var buildClient = function (requester, renderer, reader) {
+exports.buildClient = function (requester, renderer, reader) {
 	var client = {}
 
 	client.start = function () {
@@ -26,7 +26,7 @@ var buildClient = function (requester, renderer, reader) {
 	return client
 }
 
-var buildRequester = function ($, urls) {
+exports.buildRequester = function ($, urls) {
 	var requester = {}
 
 	requester.request = function (callback) {
@@ -40,7 +40,7 @@ var buildRequester = function ($, urls) {
 	return requester
 }
 
-var buildReader = function (interfaceElements) {
+exports.buildReader = function (interfaceElements) {
 	var reader = {}
 
 	var submitButton = interfaceElements.submitButton
@@ -74,7 +74,7 @@ var buildReader = function (interfaceElements) {
 	return reader
 }
 
-var buildRenderer = function (interfaceElements) {
+exports.buildRenderer = function (interfaceElements) {
 	var renderer = {}	
 
 	renderer.render = function (data) {

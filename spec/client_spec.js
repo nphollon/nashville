@@ -3,16 +3,11 @@
 var testContext, mock, dummy
 
 ;(function () {
-	var fs = require("fs")
-	var vm = require("vm")
+	testContext = require("../app/client/client.js")
+	
 	var helpers = require("./spec_helper.js")
-
 	mock = helpers.mock
 	dummy = helpers.dummy
-
-	testContext = {}
-	var testFileText = fs.readFileSync("app/client/client.js")
-	vm.runInNewContext(testFileText, testContext)
 })()
 
 describe("The client", function () {
