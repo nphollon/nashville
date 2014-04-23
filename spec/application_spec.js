@@ -38,12 +38,19 @@ describe("starting a server", function () {
 describe("The router", function () {
 	describe("responding to a request", function () {
 		var routes, router, responseStream
+		var getUrl, postUrl, badUrl, GET, POST
 
 		beforeEach(function () {
-			routes = {
-				"/validget": { method: "GET" },
-				"/validpost": { method: "POST" }
-			}
+			getUrl = "/valid_get"
+			postUrl = "/valid_post"
+			badUrl = "/invalid"
+			GET = "GET"
+			POST = "POST"
+
+			routes = {}
+			routes[getUrl] = { method: GET },
+			routes[postUrl] = { method: POST }
+
 			router = application.buildRouter(routes)
 			responseStream = mock(["writeHead", "end"])
 		})
@@ -54,45 +61,43 @@ describe("The router", function () {
 		})
 
 		it("should return a 404 if the request url is invalid", function () {
-			var requestStream = { url: "/invalid", method: "GET" }
+			var requestStream = buildRequestStream(badUrl, GET)
 			router.respond(requestStream, responseStream)
 			expect(responseStream.writeHead).toHaveBeenCalledWith(404)
 		})
 
 		it("should return a 405 if the request is a POST and the route accepts a GET", function () {
-			var requestStream = { url: "/validget", method: "POST" }
+			var requestStream = buildRequestStream(getUrl, POST)
 			router.respond(requestStream, responseStream)
 			expect(responseStream.writeHead).toHaveBeenCalledWith(405)
 		})
 
 		it("should return a 405 if the request is a GET and the route accepts a POST", function () {
-			var requestStream = { url: "/validpost", method: "GET" }
+			var requestStream = buildRequestStream(postUrl, GET)
 			router.respond(requestStream, responseStream)
 			expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+		})
+
+		it("should delegate request processing to correct route", function () {
+			var requestBody = dummy()
+			var responseBody = dummy()
+			var requestStream = buildRequestStream(postUrl, POST, requestBody)
+			routes[postUrl].processRequest = function (data) {
+				return (data === requestBody) ? responseBody : undefined
+			}
+
+			router.respond(requestStream, responseStream)
+
+			expect(responseStream.writeHead).toHaveBeenCalledWith(200)
+			expect(responseStream.end).toHaveBeenCalledWith(responseBody)
 		})
 	})
 })
 
-/*
-startServer(port, routes)
-	requestCallback = startRequestCallback(routes)
-	return http.createServer().listen(port)
-
-startRequestCallback(routes)
-	return function(request, response)
-		path = getPath(request)
-		requestBody = getRequestBody(request)
-		route = routes[path]
-
-		if (route)
-			startResponse = route[getMethod(request)]
-			if (startResponse)
-				writeHeader(response, route.responseType)
-				schedule(responsestarter(requestBody, function(responseBody)
-					response.end(responseBody)
-				))
-			else
-				methodNotAllowed(response)
-		else
-			pageNotFound(response)
-*/
+var buildRequestStream = function (url, method, body) {
+	return {
+		url: url,
+		method: method,
+		read: function () { return body }
+	}
+}

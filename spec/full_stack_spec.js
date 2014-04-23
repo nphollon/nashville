@@ -8,17 +8,19 @@ var Browser, application
 })()
 
 describe("The application", function () {
-	var browser, server, port, rng
+	var browser, server, port
 
 	beforeEach(function () {
 		port = 3000
-		rng = {
+		var rng = {
 			getBoolean: function () {
 				return true
 			}
 		}
-
-		server = application.start(port, application.respond)
+		
+		var routes = { "/": { method: "GET", processRequest: function () {} } }
+		var router = application.buildRouter(routes)
+		server = application.start(port, router.respond)
 		browser = new Browser()
 	})
 
