@@ -18,7 +18,7 @@ describe("The application", function () {
 			}
 		}
 
-		server = application.build(port, rng)
+		server = application.start(port, application.respond)
 		browser = new Browser()
 	})
 
