@@ -1,14 +1,16 @@
 "use strict"
 
-var http, application, mock, dummy
+var http, application, routes, mock, dummy, checkArgumentAndReturn
 
 ;(function () {
 	http = require("http")
 	application = require("../app/server")
+	routes = require("../app/routes")
 
 	var helpers = require("./spec_helper.js")
 	mock = helpers.mock
 	dummy = helpers.dummy
+	checkArgumentAndReturn = helpers.checkArgumentAndReturn
 })()
 
 describe("starting a server", function () {
@@ -17,14 +19,16 @@ describe("starting a server", function () {
 	beforeEach(function () {
 			port = 1234
 			server = mock(["listen"])
-			router = dummy()
-			spyOn(http, "createServer").andCallFake(function (callback) {
-				return (callback === router) ? server : undefined
-			})
+			router = { respond: dummy() }
+
+			spyOn(application, "buildRouter")
+				.andCallFake(checkArgumentAndReturn(routes, router))
+			spyOn(http, "createServer")
+				.andCallFake(checkArgumentAndReturn(router.respond, server))
 	})
 		
 	it("should create a server listening on the correct port", function () {
-		application.start(port, router)
+		application.start(port)
 		expect(server.listen).toHaveBeenCalledWith(port)
 	})
 
@@ -91,47 +95,6 @@ describe("The router", function () {
 			expect(responseStream.writeHead).toHaveBeenCalledWith(200)
 			expect(responseStream.end).toHaveBeenCalledWith(responseBody)
 		})
-	})
-})
-
-describe("The routes", function () {
-	it("should initially be empty", function () {
-		var routes = application.routeMapper().routes
-		expect(routes).toEqual({})
-	})
-
-	it("should add a post", function () {
-		var callback = function () {}
-		
-		var routes = application.routeMapper()
-			.post("url", callback)
-			.routes
-
-		var expectedRoutes = {
-			"url" : {
-				method: "POST",
-				processRequest: callback
-			}
-		}
-
-		expect(routes).toEqual(expectedRoutes)
-	})
-
-	it("should add a get", function () {
-		var callback = function () {}
-		
-		var routes = application.routeMapper()
-			.get("url", callback)
-			.routes
-
-		var expectedRoutes = {
-			"url" : {
-				method: "GET",
-				processRequest: callback
-			}
-		}
-
-		expect(routes).toEqual(expectedRoutes)
 	})
 })
 

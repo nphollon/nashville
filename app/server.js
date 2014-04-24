@@ -1,7 +1,10 @@
+"use strict"
+
 var http = require("http")
 
-exports.start = function (port, router) {
-	return http.createServer(router).listen(port)
+exports.start = function (port) {
+	var router = this.buildRouter(require("./routes"))
+	return http.createServer(router.respond).listen(port)
 }
 
 exports.buildRouter = function (routes) {
@@ -24,28 +27,6 @@ exports.buildRouter = function (routes) {
 	}
 
 	return router
-}
-
-exports.routeMapper = function () {
-	var mapper = {
-		routes: { },
-
-		post: function (url, callback) {
-			this.routes[url] = buildRoute("POST", callback)
-			return this
-		},
-		
-		get: function (url, callback) {
-			this.routes[url] = buildRoute("GET", callback)
-			return this
-		}
-	}
-
-	var buildRoute = function (method, callback) {
-		return { method: method, processRequest: callback }
-	}
-
-	return mapper
 }
 
 var buildResponseWriter = function (responseStream) {

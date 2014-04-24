@@ -11,16 +11,14 @@ describe("The application", function () {
 	var browser, server, port
 
 	beforeEach(function () {
-		port = 3000
 		var rng = {
 			getBoolean: function () {
 				return true
 			}
 		}
 		
-		var routes = { "/": { method: "GET", processRequest: function () {} } }
-		var router = application.buildRouter(routes)
-		server = application.start(port, router.respond)
+		port = 3000
+		server = application.start(port)
 		browser = new Browser()
 	})
 

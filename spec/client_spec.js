@@ -1,6 +1,6 @@
 "use strict"
 
-var testContext, mock, dummy
+var testContext, mock, dummy, checkArgumentAndReturn
 
 ;(function () {
 	testContext = require("../app/client/client.js")
@@ -8,6 +8,7 @@ var testContext, mock, dummy
 	var helpers = require("./spec_helper.js")
 	mock = helpers.mock
 	dummy = helpers.dummy
+	checkArgumentAndReturn = helpers.checkArgumentAndReturn
 })()
 
 describe("The client", function () {
@@ -150,9 +151,8 @@ describe("The reader", function () {
       var clientCallback = dummy()
       var callbackWrapper = dummy()
 
-      spyOn(reader, "buildOnClickCallback").andCallFake(function (callback) {
-        return (callback === clientCallback) ? callbackWrapper : undefined
-      })
+      spyOn(reader, "buildOnClickCallback")
+      	.andCallFake(checkArgumentAndReturn(clientCallback, callbackWrapper))
 
       reader.enable(clientCallback)
 

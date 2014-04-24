@@ -1,4 +1,5 @@
 (function () {
+	"use strict"
 	var application = require("./application.js")
 	var port = 4567
 	application.build(port)

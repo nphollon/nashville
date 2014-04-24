@@ -10,3 +10,9 @@ exports.mock = function (stubMethods) {
 exports.dummy = function () {
   return function () {}
 }
+
+exports.checkArgumentAndReturn = function (expectedArgument, returnValue) {
+	return function (argument) {
+		return (argument === expectedArgument) ? returnValue : undefined
+	}
+}
