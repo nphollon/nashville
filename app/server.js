@@ -26,9 +26,26 @@ exports.buildRouter = function (routes) {
 	return router
 }
 
-exports.respond = function (request, response) {
-	response.writeHead(200, {'Content-Type': 'text/plain'})
-	response.end('Hello World\n')
+exports.routeMapper = function () {
+	var mapper = {
+		routes: { },
+
+		post: function (url, callback) {
+			this.routes[url] = buildRoute("POST", callback)
+			return this
+		},
+		
+		get: function (url, callback) {
+			this.routes[url] = buildRoute("GET", callback)
+			return this
+		}
+	}
+
+	var buildRoute = function (method, callback) {
+		return { method: method, processRequest: callback }
+	}
+
+	return mapper
 }
 
 var buildResponseWriter = function (responseStream) {

@@ -4,7 +4,7 @@ var Browser, application
 
 ;(function () {
 	Browser = require("zombie")
-	application = require("../app/application.js")
+	application = require("../app/server")
 })()
 
 describe("The application", function () {

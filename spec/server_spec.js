@@ -4,7 +4,7 @@ var http, application, mock, dummy
 
 ;(function () {
 	http = require("http")
-	application = require("../app/application")
+	application = require("../app/server")
 
 	var helpers = require("./spec_helper.js")
 	mock = helpers.mock
@@ -91,6 +91,47 @@ describe("The router", function () {
 			expect(responseStream.writeHead).toHaveBeenCalledWith(200)
 			expect(responseStream.end).toHaveBeenCalledWith(responseBody)
 		})
+	})
+})
+
+describe("The routes", function () {
+	it("should initially be empty", function () {
+		var routes = application.routeMapper().routes
+		expect(routes).toEqual({})
+	})
+
+	it("should add a post", function () {
+		var callback = function () {}
+		
+		var routes = application.routeMapper()
+			.post("url", callback)
+			.routes
+
+		var expectedRoutes = {
+			"url" : {
+				method: "POST",
+				processRequest: callback
+			}
+		}
+
+		expect(routes).toEqual(expectedRoutes)
+	})
+
+	it("should add a get", function () {
+		var callback = function () {}
+		
+		var routes = application.routeMapper()
+			.get("url", callback)
+			.routes
+
+		var expectedRoutes = {
+			"url" : {
+				method: "GET",
+				processRequest: callback
+			}
+		}
+
+		expect(routes).toEqual(expectedRoutes)
 	})
 })
 
