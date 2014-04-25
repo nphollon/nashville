@@ -11,12 +11,6 @@ describe("The application", function () {
 	var browser, server, port
 
 	beforeEach(function () {
-		var rng = {
-			getBoolean: function () {
-				return true
-			}
-		}
-		
 		port = 3000
 		server = application.start(port)
 		browser = new Browser()
@@ -24,6 +18,7 @@ describe("The application", function () {
 
 	it("should let the user submit a decision and display the result", function (done) {
 		var playGame = function () {
+			expect(browser.text("#status")).toEqual("Hello")
 				// wait for message to change
 				// score should be 0
 				// set wager to 5

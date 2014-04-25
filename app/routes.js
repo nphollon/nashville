@@ -13,4 +13,4 @@ var post = function (callback) {
 	return buildRoute("POST", callback)
 }
 
-exports["/"] = get(function () {})
+exports["/"] = get(require("./home_page").render)

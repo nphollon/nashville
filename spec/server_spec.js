@@ -1,46 +1,43 @@
-"use strict"
-
-var http, application, routes, mock, dummy, checkArgumentAndReturn
-
 ;(function () {
-	http = require("http")
-	application = require("../app/server")
-	routes = require("../app/routes")
+	"use strict"
 
+	var http = require("http")
+	var application = require("../app/server")
+	var routes = require("../app/routes")
 	var helpers = require("./spec_helper.js")
-	mock = helpers.mock
-	dummy = helpers.dummy
-	checkArgumentAndReturn = helpers.checkArgumentAndReturn
-})()
 
-describe("starting a server", function () {
-	var server, port, router
+	var mock = helpers.mock
+	var dummy = helpers.dummy
+	var checkArgumentAndReturn = helpers.checkArgumentAndReturn
+	var checkArgumentAndForward = helpers.checkArgumentAndForward
 
-	beforeEach(function () {
-			port = 1234
-			server = mock(["listen"])
-			router = { respond: dummy() }
+	describe("Starting a server", function () {
+		var server, port, router
 
-			spyOn(application, "buildRouter")
-				.andCallFake(checkArgumentAndReturn(routes, router))
-			spyOn(http, "createServer")
-				.andCallFake(checkArgumentAndReturn(router.respond, server))
+		beforeEach(function () {
+				port = 1234
+				server = mock(["listen"])
+				router = { respond: dummy() }
+
+				spyOn(application, "buildRouter")
+					.andCallFake(checkArgumentAndReturn(routes, router))
+				spyOn(http, "createServer")
+					.andCallFake(checkArgumentAndReturn(router.respond, server))
+		})
+			
+		it("should create a server listening on the correct port", function () {
+			application.start(port)
+			expect(server.listen).toHaveBeenCalledWith(port)
+		})
+
+		it("should return a server", function () {
+			var listeningServer = dummy()
+			server.listen.andReturn(listeningServer)
+			expect(application.start(port, router)).toBe(listeningServer)
+		})
 	})
-		
-	it("should create a server listening on the correct port", function () {
-		application.start(port)
-		expect(server.listen).toHaveBeenCalledWith(port)
-	})
 
-	it("should return a server", function () {
-		var listeningServer = dummy()
-		server.listen.andReturn(listeningServer)
-		expect(application.start(port, router)).toBe(listeningServer)
-	})
-})
-
-describe("The router", function () {
-	describe("responding to a request", function () {
+	describe("The router", function () {
 		var routes, router, responseStream
 		var getUrl, postUrl, badUrl, GET, POST
 
@@ -85,10 +82,10 @@ describe("The router", function () {
 		it("should delegate request processing to correct route", function () {
 			var requestBody = dummy()
 			var responseBody = dummy()
+
+			routes[postUrl].processRequest = checkArgumentAndForward(requestBody, responseBody)
+
 			var requestStream = buildRequestStream(postUrl, POST, requestBody)
-			routes[postUrl].processRequest = function (data) {
-				return (data === requestBody) ? responseBody : undefined
-			}
 
 			router.respond(requestStream, responseStream)
 
@@ -96,12 +93,12 @@ describe("The router", function () {
 			expect(responseStream.end).toHaveBeenCalledWith(responseBody)
 		})
 	})
-})
 
-var buildRequestStream = function (url, method, body) {
-	return {
-		url: url,
-		method: method,
-		read: function () { return body }
+	var buildRequestStream = function (url, method, body) {
+		return {
+			url: url,
+			method: method,
+			read: function () { return body }
+		}
 	}
-}
+})()

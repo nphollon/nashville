@@ -22,8 +22,7 @@ exports.buildRouter = function (routes) {
 			return responseWriter.invalidMethod()
 		}
 
-		var responseBody = route.processRequest(requestStream.read())
-		return responseWriter.success(responseBody)
+		var responseBody = route.processRequest(requestStream.read(), responseWriter.success)
 	}
 
 	return router
@@ -31,7 +30,7 @@ exports.buildRouter = function (routes) {
 
 var buildResponseWriter = function (responseStream) {
 	var responseWriter = {
-		success: function (body) { writeResponse(200, body) },
+		success: function (err, body) { writeResponse(200, body) },
 		invalidPath: function () { writeResponse(404) },
 		invalidMethod: function () { writeResponse(405)	}
 	}
