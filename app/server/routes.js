@@ -19,3 +19,4 @@ var post = function (callback) {
 
 exports["/"] = get("public/index.html")
 exports["/index.css"] = get("public/index.css")
+exports["/index.js"] = get("public/index.js")

@@ -12,8 +12,8 @@ Vagrant.configure("2") do |config|
     apt-get -y install software-properties-common python-software-properties
     apt-add-repository ppa:chris-lea/node.js
     apt-get update
-    apt-get -y install nodejs
+    apt-get -y install nodejs git
     
-    npm install jasmine-node zombie -g
+    npm install jasmine-node zombie webgenjs browserify jquery -g
   SCRIPT
 end
