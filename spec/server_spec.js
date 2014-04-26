@@ -1,15 +1,16 @@
 ;(function () {
 	"use strict"
 
-	var http = require("http")
-	var application = require("../app/server")
-	var routes = require("../app/routes")
-	var helpers = require("./spec_helper.js")
-
+	var helpers = require("./spec_helper")
 	var mock = helpers.mock
 	var dummy = helpers.dummy
 	var checkArgumentAndReturn = helpers.checkArgumentAndReturn
 	var checkArgumentAndForward = helpers.checkArgumentAndForward
+	var requireSource = helpers.requireSource
+
+	var http = require("http")
+	var application = requireSource("server/server")
+	var routes = requireSource("server/routes")
 
 	describe("Starting a server", function () {
 		var server, port, router

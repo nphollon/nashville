@@ -1,5 +1,9 @@
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 500 // milliseconds
 
+exports.requireSource = function (sourceFile) {
+	return require("../app/" + sourceFile)
+}
+
 exports.mock = function (stubMethods) {
 	var mock = {}
 	stubMethods.forEach(function (stubMethod) {
