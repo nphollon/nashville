@@ -1,0 +1,27 @@
+{
+  "name": "nashville",
+  "version": "0.0.0",
+  "author": "Nick Hollon <nhollon@thoughtworks.com>",
+  "description": "",
+  "keywords": [],
+  "license": "GPL-3.0+",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nphollon/nashville.git"
+  },
+  "dependencies": {
+    "jquery": "^2.1.0",
+  },
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-shell": "^0.7.0",
+    "grunt-browserify": "^2.0.8",
+    "grunt-contrib-jshint": "^0.10.0",
+    "jasmine-node": "^1.14.3",
+    "webgenjs": "0.0.1"
+    "zombie": "^2.0.0-alpha31",
+  },
+  "engines": {
+    "node": ">=0.10"
+  }
+}

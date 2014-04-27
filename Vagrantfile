@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
     apt-add-repository ppa:chris-lea/node.js
     apt-get update
     apt-get -y install nodejs git
-    
-    npm install jasmine-node zombie webgenjs browserify jquery -g
+
+    npm install grunt-cli -g
   SCRIPT
 end

@@ -1,4 +1,3 @@
-doc/
-.sass-cache/
 .vagrant/
-app/.sass-cache
+node_modules/
+public/
