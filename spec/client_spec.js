@@ -1,5 +1,5 @@
 ;(function () {
-	"use strict"
+	"use strict";
 	
 	var helpers = require("./spec_helper")
 	var mock = helpers.mock
@@ -165,7 +165,7 @@
 
 	    it("should return a function that sends the decision to the client callback", function () {
 	      var decision = dummy()
-	      spyOn(reader, 'getDecision').andReturn(decision)
+	      spyOn(reader, "getDecision").andReturn(decision)
 	      var clientCallback = jasmine.createSpy("clientCallback")
 
 	      var callbackWrapper = reader.buildOnClickCallback(clientCallback)

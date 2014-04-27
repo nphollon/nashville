@@ -1,3 +1,5 @@
+"use strict";
+
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 500 // milliseconds
 
 exports.requireSource = function (sourceFile) {

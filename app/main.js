@@ -1,5 +1,5 @@
 ;(function () {
-	"use strict"
+	"use strict";
 	var application = require("./server/server.js")
 	var port = 4567
 	application.start(port)

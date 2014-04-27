@@ -1,5 +1,5 @@
 ;(function () {
-	"use strict"
+	"use strict";
 	
 	var indexMarkup = require("./publicgen/index_markup")
 	var document = indexMarkup.document

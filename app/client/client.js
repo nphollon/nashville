@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 exports.buildClient = function (requester, renderer, reader) {
 	var client = {}

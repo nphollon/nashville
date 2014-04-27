@@ -1,5 +1,5 @@
 ;(function () {
-	"use strict"
+	"use strict";
 	
 	var Browser = require("zombie")
 	var requireSource = require("./spec_helper").requireSource

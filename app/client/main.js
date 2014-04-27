@@ -1,4 +1,7 @@
+/* jshint browser: true */
+
 ;(function () {
+	"use strict";
 	var $ = require("jquery")
 
 	$(document).ready(function () {

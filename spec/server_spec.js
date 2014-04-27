@@ -1,5 +1,5 @@
 ;(function () {
-	"use strict"
+	"use strict";
 
 	var helpers = require("./spec_helper")
 	var mock = helpers.mock
@@ -50,7 +50,7 @@
 			POST = "POST"
 
 			routes = {}
-			routes[getUrl] = { method: GET },
+			routes[getUrl] = { method: GET }
 			routes[postUrl] = { method: POST }
 
 			router = application.buildRouter(routes)

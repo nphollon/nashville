@@ -10,7 +10,7 @@
     "url": "https://github.com/nphollon/nashville.git"
   },
   "dependencies": {
-    "jquery": "^2.1.0",
+    "jquery": "^2.1.0"
   },
   "devDependencies": {
     "grunt": "^0.4.4",
@@ -18,8 +18,8 @@
     "grunt-browserify": "^2.0.8",
     "grunt-contrib-jshint": "^0.10.0",
     "jasmine-node": "^1.14.3",
-    "webgenjs": "0.0.1"
-    "zombie": "^2.0.0-alpha31",
+    "webgenjs": "0.0.1",
+    "zombie": "^2.0.0-alpha31"
   },
   "engines": {
     "node": ">=0.10"
