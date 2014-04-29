@@ -23,6 +23,8 @@
 		var reader = clientLib.buildReader(interfaceElements)
 		
 		var client = clientLib.buildClient(requester, renderer, reader)
-		client.start()
+		process.nextTick(function () {
+			client.start()
+		})
 	})
 })()
