@@ -14,7 +14,7 @@
 			browser = new Browser()
 		})
 
-		it("should let the user submit a decision and display the result", function (done) {
+		xit("should let the user submit a decision and display the result", function (done) {
 			var playGame = function () {
 				expect(browser.text("#status")).toEqual("Hello")
 					// wait for message to change

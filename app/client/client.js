@@ -3,27 +3,30 @@
 exports.buildClient = function (requester, renderer, reader) {
 	var client = {}
 
+
 	client.start = function () {
-		requester.request(this.update)
+		process.nextTick(requestUpdate)
 		reader.disable()
 	}
 
 	client.update = function (response) {
-		console.log("received response: " + response)
 		renderer.render(response)
 
 		if (response.enableInput === true) {
-			reader.enable(this.submit)
+			reader.enable(client.submit)
 		} else {
-			console.log("requesting update")
-			requester.request(this.update)
+			process.nextTick(requestUpdate)
 		}
 	}
 
 	client.submit = function (decision) {
-		requester.submit(decision, this.update)
+		process.nextTick(function () {
+			requester.submit(decision, client.update)
+		})
 		reader.disable()
 	}
+	
+	var requestUpdate = requester.request.bind(requester, client.update)
 
 	return client
 }

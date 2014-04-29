@@ -13,6 +13,7 @@
 				expect(responseData.wager).toBe(5)
 				expect(responseData.score).toBe(0)
 				expect(responseData.message).toBe("Update")
+				expect(responseData.enableInput).toBe(true)
 				done()
 			})
 		})
