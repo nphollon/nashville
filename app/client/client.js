@@ -9,11 +9,13 @@ exports.buildClient = function (requester, renderer, reader) {
 	}
 
 	client.update = function (response) {
+		console.log("received response: " + response)
 		renderer.render(response)
 
 		if (response.enableInput === true) {
 			reader.enable(this.submit)
 		} else {
+			console.log("requesting update")
 			requester.request(this.update)
 		}
 	}

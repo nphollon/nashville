@@ -63,8 +63,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-shell")
   grunt.loadNpmTasks("grunt-contrib-jshint")
 
-  grunt.registerTask("test", ["jshint:source", "jshint:spec", "shell:runJasmine"])
   grunt.registerTask("compile", ["jshint:source", "shell:compileStatic"])
-  grunt.registerTask("launch", ["test", "shell:compileStatic", "shell:startServer"])
+  grunt.registerTask("test", ["compile", "jshint:spec", "shell:runJasmine"])
+  grunt.registerTask("launch", ["test", "shell:startServer"])
   grunt.registerTask("default", ["test"])
 }
