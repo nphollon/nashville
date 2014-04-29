@@ -4,13 +4,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
 
-    browserify: {
-      build: {
-        src: "app/client/main.js",
-        dest: "public/index.js"
-      }
-    },
-
     shell: {
       runJasmine: {
         command: "node_modules/jasmine-node/bin/jasmine-node spec"
@@ -67,12 +60,11 @@ module.exports = function(grunt) {
     }
   })
 
-  grunt.loadNpmTasks("grunt-browserify")
   grunt.loadNpmTasks("grunt-shell")
   grunt.loadNpmTasks("grunt-contrib-jshint")
 
   grunt.registerTask("test", ["jshint:source", "jshint:spec", "shell:runJasmine"])
-  grunt.registerTask("compile", ["browserify", "shell:compileStatic"])
-  grunt.registerTask("launch", ["test", "compile", "shell:startServer"])
+  grunt.registerTask("compile", ["jshint:source", "shell:compileStatic"])
+  grunt.registerTask("launch", ["test", "shell:compileStatic", "shell:startServer"])
   grunt.registerTask("default", ["test"])
 }

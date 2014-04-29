@@ -1,3 +1,5 @@
+exports.pageName = "index"
+
 exports.document = { tag: "html",	body: [
 	{ tag: "head", body: [
 		{ tag: "title",	body: "Welcome!" },
@@ -23,3 +25,5 @@ exports.document = { tag: "html",	body: [
 ]}
 
 exports.styles = { id: "status", style: { color: "red" } }
+
+exports.scripts = ["./app/client/main.js"]
