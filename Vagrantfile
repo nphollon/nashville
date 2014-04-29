@@ -14,6 +14,6 @@ Vagrant.configure("2") do |config|
     apt-get update
     apt-get -y install nodejs git
 
-    npm install grunt-cli -g
+    npm install grunt-cli zombie -g
   SCRIPT
 end
