@@ -34,12 +34,25 @@ exports.buildClient = function (requester, renderer, reader) {
 exports.buildRequester = function ($, urls) {
 	var requester = {}
 
+	var sendResponseTo = function (callback) {
+		return function (data) {
+			process.nextTick(function () {
+				callback(JSON.parse(data))
+			})
+		}
+	}
+
+	var post = function (url, postObject, callback) {
+		var postBody = JSON.stringify(postObject)
+		$.post(url, postBody, sendResponseTo(callback))
+	}
+
 	requester.request = function (callback) {
-		$.post(urls.requestUrl, {}, callback)
+		post(urls.requestUrl, {}, callback)
 	}
 
 	requester.submit = function (decision, callback) {
-		$.post(urls.submitUrl, decision, callback)
+		post(urls.submitUrl, decision, callback)
 	}
 
 	return requester

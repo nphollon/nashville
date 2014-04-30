@@ -107,19 +107,41 @@
 		})
 
 		describe("requesting data", function () {
-			it("posts an empty message to the request url", function () {
-				var callback = dummy()
+			it("posts an empty message to the request url", function (done) {
+				var response = { key: "value" }
+				
+				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
+					expect(postUrl).toBe(requestUrl)
+					expect(JSON.parse(postBody)).toEqual({})
+					postCallback(JSON.stringify(response))
+				})
+
+				var callback = function (postResponse) {
+					expect(postResponse).toEqual(response)
+					done()
+				}
+
 				requester.request(callback)
-				expect(jQuery.post).toHaveBeenCalledWith(requestUrl, {}, callback)
 			})
 		})
 
 		describe("submitting a decision", function () {
-			xit("posts the decision to the submit url", function () {
-				var callback = dummy()
-				var decision = dummy()
+			it("posts the decision to the submit url", function (done) {
+				var decision = { decision: "value" }
+				var response = { key: "value" }
+
+				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
+					expect(postUrl).toBe(submitUrl)
+					expect(JSON.parse(postBody)).toEqual(decision)
+					postCallback(JSON.stringify(response))
+				})
+
+				var callback = function (postResponse) {
+					expect(postResponse).toEqual(response)
+					done()
+				}
+
 				requester.submit(decision, callback)
-				expect(jQuery.post).toHaveBeenCalledWith(submitUrl, decision, callback)
 			})
 		})
 	})
