@@ -16,10 +16,21 @@ exports.document = { tag: "html",	body: [
 	]},
 	{ tag: "body", body: [
 		{ id: "status", body: "Hello" },
+		{ body: "Score: " },
+		{ id: "score", body: " "},
 		{ tag: "script",
 			type: "text/javascript",
 			src: "index.js",
 			body: ""
+		},
+		{ tag: "input",
+			id: "wager",
+			type: "text"
+		},
+		{ tag: "input",
+			id: "submit",
+			type: "button",
+			value: "Submit"
 		}
 	]}
 ]}

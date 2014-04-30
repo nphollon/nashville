@@ -86,7 +86,7 @@ exports.buildReader = function (interfaceElements) {
 	}
 
   var setButtonDisabled = function (isDisabled) {
-  	submitButton.attr("disabled", isDisabled.toString())
+		submitButton.prop("disabled", isDisabled)
 	}
 
 	return reader

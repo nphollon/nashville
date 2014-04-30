@@ -150,7 +150,7 @@
 		var submitButton, wagerField, reader
 		
 		beforeEach(function () {
-			submitButton = mock(["attr", "off", "click"])
+			submitButton = mock(["prop", "off", "click"])
 	    wagerField = mock(["val"])
 			reader = testContext.buildReader({
 	      submitButton: submitButton,
@@ -161,7 +161,7 @@
 		describe("disabling user input", function () {
 			it("should disable the submit button", function() {
 				reader.disable()
-				expect(submitButton.attr).toHaveBeenCalledWith("disabled", "true")
+				expect(submitButton.prop).toHaveBeenCalledWith("disabled", true)
 			})
 
 			it("should remove the callback from the submit button", function() {
@@ -173,7 +173,7 @@
 	  describe("enabling user input", function () {
 	    it("should enable the submit button", function () {
 	      reader.enable(dummy())
-	      expect(submitButton.attr).toHaveBeenCalledWith("disabled", "false")
+	      expect(submitButton.prop).toHaveBeenCalledWith("disabled", false)
 	    })
 
 	    it("should set the button's click event to trigger the callback", function () {

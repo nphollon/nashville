@@ -12,7 +12,7 @@
 			submitUrl: "/submit-decision"
 		}
 		var interfaceElements = {
-			statusDiv: $("h2"),
+			statusDiv: $("#status"),
 			scoreDiv: $("#score"),
 			wagerField: $("#wager"),
 			submitButton: $("#submit")
