@@ -62,25 +62,34 @@
 			expect(responseStream.end).toHaveBeenCalled()
 		})
 
-		it("should return a 404 if the request url is invalid", function () {
+		it("should return a 404 if the request url is invalid", function (done) {
 			var requestStream = buildRequestStream(badUrl, GET)
 			router.respond(requestStream, responseStream)
-			expect(responseStream.writeHead).toHaveBeenCalledWith(404)
+			process.nextTick(function () {
+				expect(responseStream.writeHead).toHaveBeenCalledWith(404)
+				done()
+			})
 		})
 
-		it("should return a 405 if the request is a POST and the route accepts a GET", function () {
+		it("should return a 405 if the request is a POST and the route accepts a GET", function (done) {
 			var requestStream = buildRequestStream(getUrl, POST)
 			router.respond(requestStream, responseStream)
-			expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+			process.nextTick(function () {
+				expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+				done()
+			})
 		})
 
-		it("should return a 405 if the request is a GET and the route accepts a POST", function () {
+		it("should return a 405 if the request is a GET and the route accepts a POST", function (done) {
 			var requestStream = buildRequestStream(postUrl, GET)
 			router.respond(requestStream, responseStream)
-			expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+			process.nextTick(function () {
+				expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+				done()
+			})
 		})
 
-		it("should delegate request processing to correct route", function () {
+		it("should delegate request processing to correct route", function (done) {
 			var requestBody = dummy()
 			var responseBody = dummy()
 
@@ -90,8 +99,11 @@
 
 			router.respond(requestStream, responseStream)
 
-			expect(responseStream.writeHead).toHaveBeenCalledWith(200)
-			expect(responseStream.end).toHaveBeenCalledWith(responseBody)
+			process.nextTick(function () {
+				expect(responseStream.writeHead).toHaveBeenCalledWith(200)
+				expect(responseStream.end).toHaveBeenCalledWith(responseBody)
+				done()
+			})
 		})
 	})
 

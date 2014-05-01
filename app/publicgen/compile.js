@@ -19,12 +19,13 @@ var errorLogger = function (outputFile) {
 
 var compile = function (sourceObject, outputFile, generator) {
 	var logErrors = errorLogger(outputFile)
-
-	generator(sourceObject, logErrors(function (data) {
-		fs.writeFile(outputFile, data, logErrors(function () {
-			console.log("Compiled " + outputFile)
+	process.nextTick(function () {
+		generator(sourceObject, logErrors(function (data) {
+			fs.writeFile(outputFile, data, logErrors(function () {
+				console.log("Compiled " + outputFile)
+			}))
 		}))
-	}))
+	})
 }
 
 var generateHTML = webgenjs.htmlgen.generateHTML

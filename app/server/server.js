@@ -7,19 +7,27 @@ exports.start = function (port) {
 	return http.createServer(router.respond).listen(port)
 }
 
-var buildResponseWriter = function (responseStream) {
-	var responseWriter = {
-		success: function (err, body) { writeResponse(200, body) },
-		invalidPath: function () { writeResponse(404) },
-		invalidMethod: function () { writeResponse(405)	}
-	}
+var respondToInvalidPath = function (responseStream) {
+	process.nextTick(function () {
+		responseStream.writeHead(404)
+		responseStream.end()
+	})
+}
 
-	var writeResponse = function (statusCode, body) {
-		responseStream.writeHead(statusCode)
-		responseStream.end(body)
-	}
+var respondToInvalidMethod = function (responseStream) {
+	process.nextTick(function () {
+		responseStream.writeHead(405)
+		responseStream.end()
+	})
+}
 
-	return responseWriter
+var respondToValidRequest = function (requestStream, responseStream, route) {
+	process.nextTick(function () {
+		route.processRequest(requestStream.read(), function (error, body) {
+			responseStream.writeHead(200)
+			responseStream.end(body)
+		})
+	})
 }
 
 exports.buildRouter = function (routes) {
@@ -27,17 +35,14 @@ exports.buildRouter = function (routes) {
 
 	router.respond = function (requestStream, responseStream) {
 		var route = routes[requestStream.url]
-		var responseWriter = buildResponseWriter(responseStream)
 
 		if (route === undefined) {
-			return responseWriter.invalidPath()
+			respondToInvalidPath(responseStream)
+		} else if (requestStream.method !== route.method) {
+			respondToInvalidMethod(responseStream)
+		} else {
+			respondToValidRequest(requestStream, responseStream, route)
 		}
-
-		if (requestStream.method !== route.method) {
-			return responseWriter.invalidMethod()
-		}
-
-		route.processRequest(requestStream.read(), responseWriter.success)
 	}
 
 	return router
