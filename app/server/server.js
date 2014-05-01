@@ -22,9 +22,10 @@ var respondToInvalidMethod = function (responseStream) {
 }
 
 var respondToValidRequest = function (requestStream, responseStream, route) {
+	var headers = { "Content-Type": route.responseType }
 	process.nextTick(function () {
 		route.processRequest(requestStream.read(), function (error, body) {
-			responseStream.writeHead(200)
+			responseStream.writeHead(200, headers)
 			responseStream.end(body)
 		})
 	})

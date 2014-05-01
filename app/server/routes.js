@@ -3,25 +3,26 @@
 var fs = require("fs")
 var ajaxResources = require("./ajax_resources")
 
-var buildRoute = function (method, callback) {
+var buildRoute = function (method, responseType, callback) {
 	return {
 		method: method,
+		responseType: responseType,
 		processRequest: callback
 	}
 }
 
-var get = function (filename) {
-	return buildRoute("GET", function (requestBody, callback) {
-		fs.readFile(filename, callback)
+var get = function (fileName, fileType) {
+	return buildRoute("GET", fileType, function (requestBody, callback) {
+		fs.readFile(fileName, callback)
 	})	
 }
 
 var post = function (callback) {
-	return buildRoute("POST", callback)
+	return buildRoute("POST", "application/json", callback)
 }
 
-exports["/"] = get("public/index.html")
-exports["/index.css"] = get("public/index.css")
-exports["/index.js"] = get("public/index.js")
+exports["/"] = get("public/index.html", "text/html")
+exports["/index.css"] = get("public/index.css", "text/css")
+exports["/index.js"] = get("public/index.js", "application/javascript")
 exports["/request-update"] = post(ajaxResources.requestUpdate)
 exports["/submit-decision"] = post(ajaxResources.submitDecision)

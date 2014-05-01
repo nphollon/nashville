@@ -51,7 +51,7 @@
 
 			routes = {}
 			routes[getUrl] = { method: GET }
-			routes[postUrl] = { method: POST }
+			routes[postUrl] = { method: POST, responseType: "text/plain" }
 
 			router = application.buildRouter(routes)
 			responseStream = mock(["writeHead", "end"])
@@ -93,14 +93,16 @@
 			var requestBody = dummy()
 			var responseBody = dummy()
 
+			var responseType = "text/plain"
 			routes[postUrl].processRequest = checkArgumentAndForward(requestBody, responseBody)
+			routes[postUrl].responseType = responseType
 
 			var requestStream = buildRequestStream(postUrl, POST, requestBody)
 
 			router.respond(requestStream, responseStream)
 
 			process.nextTick(function () {
-				expect(responseStream.writeHead).toHaveBeenCalledWith(200)
+				expect(responseStream.writeHead).toHaveBeenCalledWith(200, { "Content-Type": responseType })
 				expect(responseStream.end).toHaveBeenCalledWith(responseBody)
 				done()
 			})

@@ -112,8 +112,8 @@
 				
 				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
 					expect(postUrl).toBe(requestUrl)
-					expect(JSON.parse(postBody)).toEqual({})
-					postCallback(JSON.stringify(response))
+					expect(postBody).toEqual({})
+					postCallback(response)
 				})
 
 				var callback = function (postResponse) {
@@ -132,8 +132,8 @@
 
 				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
 					expect(postUrl).toBe(submitUrl)
-					expect(JSON.parse(postBody)).toEqual(decision)
-					postCallback(JSON.stringify(response))
+					expect(postBody).toEqual(decision)
+					postCallback(response)
 				})
 
 				var callback = function (postResponse) {

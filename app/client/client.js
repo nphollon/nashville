@@ -37,14 +37,13 @@ exports.buildRequester = function ($, urls) {
 	var sendResponseTo = function (callback) {
 		return function (data) {
 			process.nextTick(function () {
-				callback(JSON.parse(data))
+				callback(data)
 			})
 		}
 	}
 
 	var post = function (url, postObject, callback) {
-		var postBody = JSON.stringify(postObject)
-		$.post(url, postBody, sendResponseTo(callback))
+		$.post(url, postObject, sendResponseTo(callback), "json")
 	}
 
 	requester.request = function (callback) {
