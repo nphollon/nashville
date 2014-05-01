@@ -11,14 +11,15 @@
 		submitUrl: "/submit-decision"
 	}
 
-	var interfaceElements = {
-		statusDiv: $("#status"),
-		scoreDiv: $("#score"),
-		wagerField: $("#wager"),
-		submitButton: $("#submit")
-	}
-
 	$(document).ready(function () {
+
+		var interfaceElements = {
+			statusDiv: $("#status"),
+			scoreDiv: $("#score"),
+			wagerField: $("#wager"),
+			submitButton: $("#submit")
+		}
+		
 		var requester = clientLib.buildRequester($, urls)
 		var renderer = clientLib.buildRenderer(interfaceElements)
 		var reader = clientLib.buildReader(interfaceElements)
