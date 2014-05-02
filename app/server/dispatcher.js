@@ -3,6 +3,7 @@
 exports.buildDispatcher = function () {
 	var dispatcher = {}
 	var mostRecentDispatch = null
+	var mostRecentDecision = null
 	var awaitingResponse = null
 
 	var fulfillResponse = function () {
@@ -12,10 +13,16 @@ exports.buildDispatcher = function () {
 		})
 	}
 
-	dispatcher.sendDispatch = function (dispatch) {
+	dispatcher.sendDispatch = function (dispatch, refereeCallback) {
 		mostRecentDispatch = dispatch
 		if (awaitingResponse !== null) {
 			fulfillResponse()
+		}
+		if (mostRecentDecision !== null) {
+			process.nextTick(function () {
+				refereeCallback(null, mostRecentDecision)
+				mostRecentDecision = null
+			})
 		}
 	}
 
@@ -26,5 +33,9 @@ exports.buildDispatcher = function () {
 		}
 	}
 	
+	dispatcher.submitDecision = function (decision) {
+		mostRecentDecision = decision
+	}
+
 	return dispatcher
 }
