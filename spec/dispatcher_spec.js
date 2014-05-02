@@ -52,8 +52,8 @@
 			it("should discard the callback after the dispatch is sent", function (done) {
 				var callback = jasmine.createSpy("client callback")
 
-				dispatcher.sendDispatch(dummy())
 				dispatcher.requestUpdate(callback)
+				dispatcher.sendDispatch(dummy())
 
 				process.nextTick(function () {
 					callback.calls.reset()
@@ -64,6 +64,9 @@
 					})
 				})
 			})
+
+			xit("should not discard decision if one exists")
+			xit("should replace previous client callback if one exists")
 		})
 
 		/*
@@ -74,6 +77,12 @@
 			3) DISPATCHER sends an ERROR to the new REQUEST CALLBACK
 		*/
 		describe("submitting a decision", function () {
+			xit("should send decision to referee callback if callback exists")
+			xit("should discard decision after it is sent to referee callback")
+			xit("should not call client callback immediately")
+			xit("should send error to new client callback if one already exists")
+			xit("should not replace old client callback if one exits")
+			xit("should not replace old decision if one exists")
 		})
 		
 		/*
@@ -84,34 +93,39 @@
 			C) DISPATCHER sends DECISION to REFEREE CALLBACK, discards the DISPATCH, enters state B
 		*/
 		describe("sending a dispatch", function () {
-			it("should send dispatch to callback if callback exists", function (done) {
+			it("should send dispatch to client callback if callback exists", function (done) {
 				var dispatch = dummy()
 
-				var callback = function (error, data) {
+				var clientCallback = function (error, data) {
 					expect(error).toBe(null)
 					expect(data).toBe(dispatch)
 					done()
 				}
 
-				dispatcher.requestUpdate(callback)
-				dispatcher.sendDispatch(dispatch)
+				dispatcher.requestUpdate(clientCallback)
+				dispatcher.sendDispatch(dispatch, dummy())
 			})
 
-			it("should discard the callback after it is used", function (done) {
-				var callback = jasmine.createSpy("client callback")
+			it("should discard the client callback after it is used", function (done) {
+				var clientCallback = jasmine.createSpy("client clientCallback")
 
-				dispatcher.requestUpdate(callback)
-				dispatcher.sendDispatch(dummy())
+				dispatcher.requestUpdate(clientCallback)
+				dispatcher.sendDispatch(dummy(), dummy())
 
 				process.nextTick(function () {
-					callback.calls.reset()
-					dispatcher.sendDispatch(dummy())
+					clientCallback.calls.reset()
+					dispatcher.sendDispatch(dummy(), dummy())
 					process.nextTick(function () {
-						expect(callback).not.toHaveBeenCalled()
+						expect(clientCallback).not.toHaveBeenCalled()
 						done()
 					})
 				})
 			})
+
+			xit("should send decision to referee callback if decision exists")
+			xit("should not send update to client callback if decision exists")
+			xit("should discard referee callback after it is used")
+			xit("should discard decision after it is passed to referee callback")
 		})
 	})
 })()
