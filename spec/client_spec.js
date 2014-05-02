@@ -20,7 +20,7 @@
 		describe("starting", function () {
 			it("sends a request", function (done) {
 				client.start()
-				requester.request.andCallFake(function (callback) {
+				requester.request.and.callFake(function (callback) {
 					expect(callback).toBe(client.update)
 					done()
 				})
@@ -63,7 +63,7 @@
 
 			it("sends a request if the response forbids user input", function (done) {
 				client.update(createResponse(false))
-				requester.request.andCallFake(function (callback) {
+				requester.request.and.callFake(function (callback) {
 					expect(callback).toBe(client.update)
 					done()
 				})
@@ -74,7 +74,7 @@
 			it("sends the submission as a request", function (done) {
 				var decision = dummy
 				client.submit(decision)
-				requester.submit.andCallFake(function (submission, callback) {
+				requester.submit.and.callFake(function (submission, callback) {
 					expect(submission).toBe(decision)
 					expect(callback).toBe(client.update)
 					done()
@@ -110,7 +110,7 @@
 			it("posts an empty message to the request url", function (done) {
 				var response = { key: "value" }
 				
-				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
+				jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
 					expect(postUrl).toBe(requestUrl)
 					expect(postBody).toEqual({})
 					postCallback(response)
@@ -130,7 +130,7 @@
 				var decision = { decision: "value" }
 				var response = { key: "value" }
 
-				jQuery.post.andCallFake(function (postUrl, postBody, postCallback) {
+				jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
 					expect(postUrl).toBe(submitUrl)
 					expect(postBody).toEqual(decision)
 					postCallback(response)
@@ -181,7 +181,7 @@
 	      var callbackWrapper = dummy()
 
 	      spyOn(reader, "buildOnClickCallback")
-	      	.andCallFake(checkArgumentAndReturn(clientCallback, callbackWrapper))
+	      	.and.callFake(checkArgumentAndReturn(clientCallback, callbackWrapper))
 
 	      reader.enable(clientCallback)
 
@@ -198,7 +198,7 @@
 
 	    it("should return a function that sends the decision to the client callback", function () {
 	      var decision = dummy()
-	      spyOn(reader, "getDecision").andReturn(decision)
+	      spyOn(reader, "getDecision").and.returnValue(decision)
 	      var clientCallback = jasmine.createSpy("clientCallback")
 
 	      var callbackWrapper = reader.buildOnClickCallback(clientCallback)
@@ -211,7 +211,7 @@
 	  describe("getting the decision from the user interface", function () {
 	    it("should return the wager in the decision", function () {
 	      var wager = 7
-	      wagerField.val.andReturn(wager.toString())
+	      wagerField.val.and.returnValue(wager.toString())
 
 	      var decision = reader.getDecision()
 

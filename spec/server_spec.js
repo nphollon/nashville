@@ -21,9 +21,9 @@
 				router = { respond: dummy() }
 
 				spyOn(application, "buildRouter")
-					.andCallFake(checkArgumentAndReturn(routes, router))
+					.and.callFake(checkArgumentAndReturn(routes, router))
 				spyOn(http, "createServer")
-					.andCallFake(checkArgumentAndReturn(router.respond, server))
+					.and.callFake(checkArgumentAndReturn(router.respond, server))
 		})
 			
 		it("should create a server listening on the correct port", function () {
@@ -33,7 +33,7 @@
 
 		it("should return a server", function () {
 			var listeningServer = dummy()
-			server.listen.andReturn(listeningServer)
+			server.listen.and.returnValue(listeningServer)
 			expect(application.start(port, router)).toBe(listeningServer)
 		})
 	})
@@ -58,7 +58,7 @@
 		})
 
 		afterEach(function () {
-			expect(responseStream.writeHead.callCount).toBe(1)
+			expect(responseStream.writeHead.calls.count()).toBe(1)
 			expect(responseStream.end).toHaveBeenCalled()
 		})
 

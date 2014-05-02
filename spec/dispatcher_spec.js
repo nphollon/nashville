@@ -48,6 +48,22 @@
 					done()
 				})
 			})
+
+			it("should discard the callback after the dispatch is sent", function (done) {
+				var callback = jasmine.createSpy("client callback")
+
+				dispatcher.sendDispatch(dummy())
+				dispatcher.requestUpdate(callback)
+
+				process.nextTick(function () {
+					callback.calls.reset()
+					dispatcher.sendDispatch(dummy())
+					process.nextTick(function () {
+						expect(callback).not.toHaveBeenCalled()
+						done()
+					})
+				})
+			})
 		})
 
 		/*
@@ -57,7 +73,6 @@
 			2) DISPATCHER sends an ERROR to the new REQUEST CALLBACK 
 			3) DISPATCHER sends an ERROR to the new REQUEST CALLBACK
 		*/
-
 		describe("submitting a decision", function () {
 		})
 		
@@ -69,6 +84,34 @@
 			C) DISPATCHER sends DECISION to REFEREE CALLBACK, discards the DISPATCH, enters state B
 		*/
 		describe("sending a dispatch", function () {
+			it("should send dispatch to callback if callback exists", function (done) {
+				var dispatch = dummy()
+
+				var callback = function (error, data) {
+					expect(error).toBe(null)
+					expect(data).toBe(dispatch)
+					done()
+				}
+
+				dispatcher.requestUpdate(callback)
+				dispatcher.sendDispatch(dispatch)
+			})
+
+			it("should discard the callback after it is used", function (done) {
+				var callback = jasmine.createSpy("client callback")
+
+				dispatcher.requestUpdate(callback)
+				dispatcher.sendDispatch(dummy())
+
+				process.nextTick(function () {
+					callback.calls.reset()
+					dispatcher.sendDispatch(dummy())
+					process.nextTick(function () {
+						expect(callback).not.toHaveBeenCalled()
+						done()
+					})
+				})
+			})
 		})
 	})
 })()
