@@ -1,7 +1,7 @@
 "use strict";
 
 var fs = require("fs")
-var ajaxResources = require("./ajax_resources")
+var ajaxResources = require("./ajax_adapter")
 
 var buildRoute = function (method, responseType, callback) {
 	return {
