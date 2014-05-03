@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
     shell: {
       runJasmine: {
-        command: "node_modules/jasmine-node/bin/jasmine-node spec"
+        command: "node_modules/jasmine-node/bin/jasmine-node spec --captureExceptions"
       },
 
       compileStatic: {
