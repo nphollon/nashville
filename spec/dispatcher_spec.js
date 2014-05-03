@@ -54,46 +54,6 @@
 				})
 			})
 
-			it("should discard the callback after the dispatch is sent", function (done) {
-				var clientCallback = jasmine.createSpy("client callback")
-
-				dispatcher.requestUpdate(clientCallback)
-				process.nextTick(function () {
-					dispatcher.sendDispatch(dummy())
-
-					process.nextTick(function () {
-						clientCallback.calls.reset()
-						dispatcher.sendDispatch(dummy())
-
-						process.nextTick(function () {
-							expect(clientCallback).not.toHaveBeenCalled()
-							done()
-						})
-					})
-				})
-			})
-
-			it("should not discard decision if one exists", function (done) {
-				var decision = dummy()
-
-				var refereeCallback = function (error, data) {
-					process.nextTick(function () {
-						expect(data).toBe(decision)
-						done()
-					})
-				}
-
-				dispatcher.submitDecision(decision, dummy())
-
-				process.nextTick(function () {
-					dispatcher.requestUpdate(dummy())
-
-					process.nextTick(function () {
-						dispatcher.sendDispatch(dummy(), refereeCallback)
-					})
-				})
-			})
-
 			it("should replace previous client callback if one exists", function (done) {
 				var decisionCallback = jasmine.createSpy("decision callback")
 				var updateCallback = jasmine.createSpy("update callback")
@@ -126,6 +86,29 @@
 		describe("submitting a decision", function () {
 			xit("should send decision to referee callback if callback exists")
 			xit("should discard decision after it is sent to referee callback")
+
+			// Won't fail properly until submitDecision begins to be implemented
+			xit("should discard referee callback after it is used", function (done) {
+				var refereeCallback = jasmine.createSpy("referee callback")
+
+				dispatcher.submitDecision(dummy(), dummy())
+
+				process.nextTick(function() {
+					dispatcher.sendDispatch(dummy(), refereeCallback)
+
+					process.nextTick(function() {
+						refereeCallback.calls.reset()
+
+						dispatcher.submitDecision(dummy(), dummy())
+
+						process.nextTick(function () {
+							expect(refereeCallback).not.toHaveBeenCalled()
+							done()
+						})
+					})
+				})
+			})
+
 			xit("should not call client callback immediately")
 			xit("should send error to new client callback if one already exists")
 			xit("should not replace old client callback if one exits")
@@ -192,29 +175,28 @@
 				})
 			})
 
-			xit("should not send dispatch to client callback if decision exists")
+			it("should still send decision to referee if update requests were made in the meantime", function (done) {
+				var decision = dummy()
 
-			// Won't fail properly until submitDecision begins to be implemented
-			xit("should discard referee callback after it is used", function (done) {
-				var refereeCallback = jasmine.createSpy("referee callback")
+				var refereeCallback = function (error, data) {
+					process.nextTick(function () {
+						expect(data).toBe(decision)
+						done()
+					})
+				}
 
-				dispatcher.submitDecision(dummy(), dummy())
+				dispatcher.submitDecision(decision, dummy())
 
-				process.nextTick(function() {
-					dispatcher.sendDispatch(dummy(), refereeCallback)
+				process.nextTick(function () {
+					dispatcher.requestUpdate(dummy())
 
-					process.nextTick(function() {
-						refereeCallback.calls.reset()
-
-						dispatcher.submitDecision(dummy(), dummy())
-
-						process.nextTick(function () {
-							expect(refereeCallback).not.toHaveBeenCalled()
-							done()
-						})
+					process.nextTick(function () {
+						dispatcher.sendDispatch(dummy(), refereeCallback)
 					})
 				})
 			})
+
+			xit("should not send dispatch to client callback if decision exists")
 			
 			it("should discard decision after it is passed to referee callback", function (done) {
 				var refereeCallback = jasmine.createSpy("referee callback")
