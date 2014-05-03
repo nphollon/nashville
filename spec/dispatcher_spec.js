@@ -94,7 +94,26 @@
 				})
 			})
 
-			xit("should replace previous client callback if one exists")
+			it("should replace previous client callback if one exists", function (done) {
+				var decisionCallback = jasmine.createSpy("decision callback")
+				var updateCallback = jasmine.createSpy("update callback")
+
+				dispatcher.submitDecision(dummy(), decisionCallback)
+
+				process.nextTick(function () {
+					dispatcher.requestUpdate(dummy(), updateCallback)
+
+					process.nextTick(function () {
+						dispatcher.requestUpdate(dummy(), dummy())
+
+						process.nextTick(function () {
+							expect(decisionCallback).not.toHaveBeenCalled()
+							expect(updateCallback).not.toHaveBeenCalled()
+							done()
+						})
+					})
+				})
+			})
 		})
 
 		/*
