@@ -4,37 +4,42 @@ exports.buildDispatcher = function () {
 	var dispatcher = {}
 	var mostRecentDispatch = null
 	var mostRecentDecision = null
-	var awaitingResponse = null
+	var clientCallback = null
 
-	var fulfillResponse = function () {
+	var fulfillClientCallback = function () {
 		process.nextTick(function () {
-			awaitingResponse(null, mostRecentDispatch)
-			awaitingResponse = null
+			clientCallback(null, mostRecentDispatch)
+			clientCallback = null
 		})
 	}
 
-	dispatcher.sendDispatch = function (dispatch, refereeCallback) {
+	var fullfillRefereeCallback = function (refereeCallback) {
+		process.nextTick(function () {
+			refereeCallback(null, mostRecentDecision)
+			mostRecentDecision = null
+		})
+	}
+
+	dispatcher.sendDispatch = function (dispatch, callback) {
 		mostRecentDispatch = dispatch
-		if (awaitingResponse !== null) {
-			fulfillResponse()
-		}
+		
 		if (mostRecentDecision !== null) {
-			process.nextTick(function () {
-				refereeCallback(null, mostRecentDecision)
-				mostRecentDecision = null
-			})
+			fullfillRefereeCallback(callback)
+		} else if (clientCallback !== null) {
+			fulfillClientCallback()
 		}
 	}
 
-	dispatcher.requestUpdate = function (clientCallback) {
-		awaitingResponse = clientCallback
+	dispatcher.requestUpdate = function (callback) {
+		clientCallback = callback
 		if (mostRecentDispatch !== null) {
-			fulfillResponse()		
+			fulfillClientCallback()		
 		}
 	}
 	
-	dispatcher.submitDecision = function (decision) {
+	dispatcher.submitDecision = function (decision, callback) {
 		mostRecentDecision = decision
+		clientCallback = callback
 	}
 
 	return dispatcher
