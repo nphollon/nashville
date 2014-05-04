@@ -17,13 +17,14 @@
 		xit("should let the user submit a decision and display the result", function (done) {
 			var playGame = function () {
 				expect(browser.text("#status")).toEqual("Hello")
-					// wait for message to change
-					// score should be 0
-					// set wager to 5
-					// click submit
-					// wait for message to change
-					// score should be 5
-				done()
+				expect(browser.text("#score")).toEqual("0")
+
+				browser.fill("#wager", 5, function () {
+					browser.pressButton("#submit", function () {
+						expect(browser.text("#score")).toEqual("5")
+						done()
+					})
+				})
 			}
 
 			var url = "http://localhost:" + port + "/"

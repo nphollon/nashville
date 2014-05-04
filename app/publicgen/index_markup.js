@@ -2,7 +2,6 @@ exports.pageName = "index"
 
 exports.document = { tag: "html",	body: [
 	{ tag: "head", body: [
-		{ tag: "title",	body: "Welcome!" },
 		{ tag: "meta",
 			"http-equiv": "Content-type",
 			content: "text/html;charset=UTF-8"
@@ -15,7 +14,7 @@ exports.document = { tag: "html",	body: [
 		}
 	]},
 	{ tag: "body", body: [
-		{ id: "status", body: "Hello" },
+		{ id: "status", body: "No text yet" },
 		{ body: "Score: " },
 		{ id: "score", body: " "},
 		{ tag: "script",

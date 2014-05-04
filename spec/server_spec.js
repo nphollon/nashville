@@ -107,6 +107,29 @@
 				done()
 			})
 		})
+
+		it("should return 422 if route sends error to callback", function (done) {		
+			var requestStream = buildRequestStream(postUrl, POST, dummy())
+			var error = new Error("test error")
+
+			var responseType = "application/json"
+			routes[postUrl].processRequest = function (requestBody, responseCallback) {
+				process.nextTick(function () {
+					responseCallback(error)
+
+					process.nextTick(function () {
+						expect(responseStream.writeHead).toHaveBeenCalledWith(422, { "Content-Type": responseType })
+						expect(responseStream.end).toHaveBeenCalledWith(error)
+						done()
+					})
+				})
+			}
+
+			routes[postUrl].responseType = responseType
+
+			router.respond(requestStream, responseStream)
+
+		})
 	})
 
 	var buildRequestStream = function (url, method, body) {
