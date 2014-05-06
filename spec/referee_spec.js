@@ -17,31 +17,17 @@ describe("The referee", function () {
 
   describe("starting a game", function () {
     it("should query state manager for initial game state", function (done) {
-      referee.start()
+      referee.startGame()
 
       process.nextTick(function () {
-        expect(stateManager.initialize).toHaveBeenCalledWith(referee.queryNextPlayer)
+        expect(stateManager.initialize).toHaveBeenCalledWith(referee.getNextEvent)
         done()
       })
     })
   })
 
-  describe("querying the next player", function () {
-    it("should send the game state to the dispatcher if it is a player's turn", function (done) {
-      var game = {
-        needChanceEvent: false,
-        state: dummy()
-      }
-
-      referee.queryNextPlayer(game)
-
-      process.nextTick(function () {
-        expect(dispatcher.sendDispatch).toHaveBeenCalledWith(game.state, referee.updateGame)
-        done()
-      })
-    })
-
-    it("should send a chance event to the state manager if it asks for one", function (done) {
+  describe("continuing a game", function () {
+    it("should get a chance event if the state manager needs one", function (done) {
       var chanceEvent = dummy()
       var game = {
         needChanceEvent: true,
@@ -50,35 +36,34 @@ describe("The referee", function () {
 
       chancePlayer.getNextEvent.and.returnValue(chanceEvent)
 
-      referee.queryNextPlayer(game)
+      referee.getNextEvent(null, game)
 
       process.nextTick(function () {
-        expect(stateManager.advance).toHaveBeenCalledWith(game.state, chanceEvent, referee.queryNextPlayer)
+        expect(stateManager.advance).toHaveBeenCalledWith(game, chanceEvent, referee.getNextEvent)
         done()
       })
     })
-  })
 
-  describe("updating the game state", function () {
-    
+    it("should get a client event from the dispatcher if the state manager needs one", function (done) {
+      var clientEvent = dummy()
+
+      var game = {
+        needChanceEvent: false,
+        state: dummy()
+      }
+
+      dispatcher.sendDispatch = function (data, callback) {
+        expect(data).toBe(game)
+
+        callback(null, clientEvent)
+
+        process.nextTick(function () {
+          expect(stateManager.advance).toHaveBeenCalledWith(game, clientEvent, referee.getNextEvent)
+          done()
+        })
+      }
+
+      referee.getNextEvent(null, game)
+    })
   })
 })
-
-/**
-
-External dependencies:
-  dispatcher
-  game state manager
-  chance player
-
-updateGame = (error, clientPly) ->
-  update(game, clientPly, queryNextPlayer)
-
-queryNextPlayer = (error, game) ->
-  if chance is next
-    get chancePly
-    updateGame(null, chancePly)
-  else
-    dispatcher.sendDispatch(newGame, updateGame)
-  
-**/

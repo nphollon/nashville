@@ -1,24 +1,33 @@
 "use strict";
 
 exports.buildReferee = function (dispatcher, stateManager, chancePlayer) {
+  var gameState = null
   var referee = {}
 
-  referee.start = function () {
+  var updateDispatcher = function () {
     process.nextTick(function () {
-      stateManager.initialize(referee.queryNextPlayer)
+      dispatcher.sendDispatch(gameState, updateGame)
     })
   }
 
-  referee.queryNextPlayer = function (game) {
-    if (game.needChanceEvent) {
-      var event = chancePlayer.getNextEvent()
-      process.nextTick(function () {
-        stateManager.advance(game.state, event, referee.queryNextPlayer)
-      })
+  var updateGame = function (error, gameEvent) {
+    process.nextTick(function () {
+      stateManager.advance(gameState, gameEvent, referee.getNextEvent)
+    })
+  }
+
+  referee.startGame = function () {
+    process.nextTick(function () {
+      stateManager.initialize(referee.getNextEvent)
+    })
+  }
+
+  referee.getNextEvent = function (error, newGameState) {
+    gameState = newGameState
+    if (gameState.needChanceEvent === true) {
+      updateGame(null, chancePlayer.getNextEvent())
     } else {
-      process.nextTick(function () {
-        dispatcher.sendDispatch(game.state, undefined)
-      })
+      updateDispatcher()
     }
   }
 
