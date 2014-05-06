@@ -139,4 +139,4 @@
 			read: function () { return body }
 		}
 	}
-})()
+}())
