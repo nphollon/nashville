@@ -31,7 +31,6 @@ describe("The referee", function () {
       var chanceEvent = dummy()
       var game = {
         needChanceEvent: true,
-        state: dummy()
       }
 
       chancePlayer.getNextEvent.and.returnValue(chanceEvent)
@@ -49,7 +48,6 @@ describe("The referee", function () {
 
       var game = {
         needChanceEvent: false,
-        state: dummy()
       }
 
       dispatcher.sendDispatch = function (data, callback) {
