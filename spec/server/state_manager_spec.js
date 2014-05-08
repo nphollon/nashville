@@ -1,7 +1,7 @@
 "use strict";
 
 describe("The state manager", function () {
-  var helpers = require("./spec_helper")
+  var helpers = require("../spec_helper")
   var stateManagerFactory = helpers.requireSource("server/state_manager")
   var stateManager
 

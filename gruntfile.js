@@ -55,7 +55,7 @@ module.exports = function(grunt) {
         options: {
           predef: ["jasmine", "beforeEach", "describe", "it", "xit", "spyOn", "expect", "afterEach" ]
         },
-        files: { src: ["spec/*.js"] } 
+        files: { src: ["spec/**/*.js"] } 
       }
     }
   })

@@ -1,7 +1,7 @@
 ;(function () {
 	"use strict";
 
-	var helpers = require("./spec_helper")
+	var helpers = require("../spec_helper")
 	var mock = helpers.mock
 	var dummy = helpers.dummy
 	var checkArgumentAndReturn = helpers.checkArgumentAndReturn

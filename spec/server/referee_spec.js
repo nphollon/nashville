@@ -1,7 +1,7 @@
 describe("The referee", function () {
   "use strict";
 
-  var helpers = require("./spec_helper")
+  var helpers = require("../spec_helper")
   var dummy = helpers.dummy
   var mock = helpers.mock
   var refereeFactory = helpers.requireSource("server/referee")

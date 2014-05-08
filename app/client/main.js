@@ -4,7 +4,6 @@
 	"use strict";
 	
 	var $ = require("jquery")
-	var clientLib = require("./client")
 
 	var urls = {
 		requestUrl: "/request-update",
@@ -20,11 +19,11 @@
 			submitButton: $("#submit")
 		}
 		
-		var requester = clientLib.buildRequester($, urls)
-		var renderer = clientLib.buildRenderer(interfaceElements)
-		var reader = clientLib.buildReader(interfaceElements)
+		var requester = require("./requester").buildRequester($, urls)
+		var renderer = require("./renderer").buildRenderer(interfaceElements)
+		var reader = require("./reader").buildReader(interfaceElements)
 		
-		var client = clientLib.buildClient(requester, renderer, reader)
+		var client = require("./client").buildClient(requester, renderer, reader)
 		
 		process.nextTick(function () {
 			client.start()
