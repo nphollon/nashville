@@ -1,6 +1,10 @@
 "use strict";
 
-exports.buildClient = function (requester, renderer, reader) {
+exports.buildClient = function (dependencies) {
+	var reader = dependencies.reader
+	var renderer = dependencies.renderer
+	var requester = dependencies.requester
+
 	var client = {}
 
 
