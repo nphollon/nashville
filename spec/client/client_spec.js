@@ -12,11 +12,7 @@ describe("The client", function () {
 		requester = mock(["request", "submit"])
 		renderer = mock(["render"])
 		reader = mock(["disable", "enable"])
-		client = clientFactory.buildClient({
-			requester: requester,
-			renderer: renderer,
-			reader: reader
-		})
+		client = clientFactory.buildClient(requester, renderer, reader)
 	})
 
 	describe("starting", function () {
