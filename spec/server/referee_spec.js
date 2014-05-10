@@ -12,7 +12,7 @@ describe("The referee", function () {
     dispatcher = mock(["sendDispatch"])
     stateManager = mock(["initialize", "advance"])
     chancePlayer = mock(["getNextEvent"])
-    referee = refereeFactory.buildReferee(dispatcher, stateManager, chancePlayer)
+    referee = refereeFactory.build(dispatcher, stateManager, chancePlayer)
   })
 
   describe("starting a game", function () {

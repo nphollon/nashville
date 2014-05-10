@@ -1,6 +1,6 @@
 "use strict";
 
-exports.buildReferee = function (dispatcher, stateManager, chancePlayer) {
+exports.build = function (dispatcher, stateManager, chancePlayer) {
   var gameState = null
   var referee = {}
 

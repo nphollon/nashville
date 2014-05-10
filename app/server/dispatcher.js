@@ -1,6 +1,6 @@
 "use strict";
 
-exports.buildDispatcher = function () {
+exports.build = function () {
 	var dispatcher = {}
 	var mostRecentDispatch = null
 	var mostRecentDecision = null

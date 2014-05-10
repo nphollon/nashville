@@ -15,7 +15,7 @@ describe("The dispatcher", function () {
 	var dispatcher
 	
 	beforeEach(function () {
-		dispatcher = dispatcherFactory.buildDispatcher()
+		dispatcher = dispatcherFactory.build()
 	})
 
 	/*
