@@ -1,16 +1,18 @@
 "use strict";
 
+var events = require("./game_events")
+
 exports.createState = function (original) {
   if (original === undefined) {
     return {
-      needChanceEvent: false,
+      nextEventType: events.playerType,
       wager: 1,
       score: 0,
       status: ""
     }
   } else {
     return {
-      needChanceEvent: original.needChanceEvent,
+      nextEventType: original.nextEventType,
       wager: original.wager,
       score: original.score,
       status: original.status
@@ -23,7 +25,7 @@ exports.build = function () {
 
   var adjustScore = function (state, decision, callback) {
     state.score += state.wager * (decision.userWins ? 1 : -1)
-    state.needChanceEvent = false
+    state.nextEventType = events.playerType
 
     process.nextTick(function () {
       callback(null, state)
@@ -32,7 +34,8 @@ exports.build = function () {
 
   var setWager = function (state, decision, callback) {
     state.wager = decision.wager
-    state.needChanceEvent = true
+    state.nextEventType = events.chanceType
+
     process.nextTick(function () {
       callback(null, state)
     })
@@ -56,20 +59,12 @@ exports.build = function () {
   stateManager.advance = function (previousState, decision, callback) {
     var nextState = exports.createState(previousState)
 
-    var mutators = {
-      true: adjustScore,
-      false: setWager
-    }
+    var mutator = {}
+    mutator[events.chanceType] = adjustScore
+    mutator[events.playerType] = setWager
 
-    var neededProperty = {
-      true: "userWins",
-      false: "wager"
-    }
-
-    var key = nextState.needChanceEvent
-
-    if (decision.hasOwnProperty(neededProperty[key])) {
-      mutators[key].call(null, nextState, decision, callback)
+    if (decision.type === nextState.nextEventType) {
+      mutator[decision.type].call(null, nextState, decision, callback)
     } else {
       raiseStateError(nextState, decision, callback)
     }
