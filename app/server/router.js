@@ -1,5 +1,21 @@
 "use strict";
 
+var readRequestBody = function (requestStream, callback) {
+  var body = ""
+
+  requestStream.setEncoding("utf8")
+
+  requestStream.on("data", function (chunk) {
+    body += chunk
+  })
+
+  requestStream.on("end", function () {
+    process.nextTick(function () {
+      callback(body)
+    })
+  })
+}
+
 var buildResponder = function (responseStream) {
   var responder = {}
 
@@ -21,12 +37,12 @@ var buildResponder = function (responseStream) {
     var headers = { "Content-Type": responseType }
 
     var writeToResponseStream = function (error, body) {
-      if (error !== null) {
-        responseStream.writeHead(422, headers)
-        responseStream.end(error)
-      } else {
+      if (error === null) {
         responseStream.writeHead(200, headers)
         responseStream.end(body)
+      } else {
+        responseStream.writeHead(422, headers)
+        responseStream.end(error)
       }
     }
 
@@ -39,9 +55,7 @@ var buildResponder = function (responseStream) {
 }
 
 exports.build = function (routes) {
-  var router = {}
-
-  router.respond = function (requestStream, responseStream) {
+  return function (requestStream, responseStream) {
     var responder = buildResponder(responseStream)
     
     var route = routes[requestStream.url]
@@ -51,9 +65,9 @@ exports.build = function (routes) {
     } else if (requestStream.method !== route.method) {
       responder.respondToInvalidMethod()
     } else {
-      responder.respondToValidRequest(requestStream.read(), route.responseType, route.processRequest)
+      readRequestBody(requestStream, function (body) {
+        responder.respondToValidRequest(body, route.responseType, route.processRequest)
+      })
     }
   }
-
-  return router
 }

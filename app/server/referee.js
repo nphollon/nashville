@@ -16,7 +16,7 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
     })
   }
 
-  referee.startGame = function () {
+  referee.start = function () {
     process.nextTick(function () {
       stateManager.initialize(referee.getNextEvent)
     })

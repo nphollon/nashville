@@ -12,28 +12,72 @@ describe("Ajax adapter", function () {
     adapter = adapterFactory.build(dispatcher)
   })
 
-  it("should forward update requests to dispatcher", function (done) {
-    var clientCallback = dummy()
+  it("should stringify dispatcher responses when client requests update", function (done) {
+    var gameState = {
+      nextEventType: events.playerType,
+      wager: 1,
+      score: 0,
+      status: ""
+    }
 
-    dispatcher.requestUpdate = function (receivedCallback) {
-      expect(receivedCallback).toBe(clientCallback)
+    var serverResponse = {
+      enableInput: true,
+      wager: 1,
+      score: 0,
+      status: ""
+    }
+
+    var clientCallback = function (error, data) {
+      expect(error).toBe(null)
+      expect(data).toBe(JSON.stringify(serverResponse))
       done()
     }
 
-    adapter.requestUpdate({}, clientCallback)
+    dispatcher.requestUpdate = function (callback) {
+      callback(null, gameState)
+    }
+
+    adapter.requestUpdate("{}", clientCallback)
   })
 
   it("should transform decisions to player events and send to dispatcher", function (done) {
     var clientCallback = dummy()
-    var jsonDecision = { wager: 3 }
+    var jsonDecision = JSON.stringify({ wager: 3 })
 
-    dispatcher.submitDecision = function (playerEvent, receivedCallback) {
-      expect(receivedCallback).toBe(clientCallback)
+    dispatcher.submitDecision = function (playerEvent) {
       expect(playerEvent.wager).toBe(3)
       expect(playerEvent.type).toBe(events.playerType)
       done()
     }
 
     adapter.submitDecision(jsonDecision, clientCallback)
+  })
+
+  it("should stringify dispatcher responses when client submits decision", function (done) {
+    var gameState = {
+      nextEventType: events.playerType,
+      wager: 1,
+      score: 0,
+      status: ""
+    }
+
+    var serverResponse = {
+      enableInput: true,
+      wager: 1,
+      score: 0,
+      status: ""
+    }
+
+    var clientCallback = function (error, data) {
+      expect(error).toBe(null)
+      expect(data).toBe(JSON.stringify(serverResponse))
+      done()
+    }
+
+    dispatcher.submitDecision = function (playerEvent, callback) {
+      callback(null, gameState)
+    }
+
+    adapter.submitDecision("{}", clientCallback)
   })
 })

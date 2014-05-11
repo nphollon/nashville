@@ -24,11 +24,3 @@ exports.checkArgumentAndReturn = function (expectedArgument, returnValue) {
 		return (argument === expectedArgument) ? returnValue : undefined
 	}
 }
-
-exports.checkArgumentAndForward = function (expectedArgument, callbackArgument) {
-	return function (argument, callback) {
-		if (argument === expectedArgument) {
-			callback(null, callbackArgument)
-		}
-	}
-}

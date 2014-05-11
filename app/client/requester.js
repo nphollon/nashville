@@ -12,7 +12,7 @@ exports.buildRequester = function ($, urls) {
   }
 
   var post = function (url, postObject, callback) {
-    $.post(url, postObject, sendResponseTo(callback), "json")
+    $.post(url, JSON.stringify(postObject), sendResponseTo(callback), "json")
   }
 
   requester.request = function (callback) {

@@ -17,7 +17,7 @@ describe("The referee", function () {
 
   describe("starting a game", function () {
     it("should query state manager for initial game state", function (done) {
-      referee.startGame()
+      referee.start()
 
       process.nextTick(function () {
         expect(stateManager.initialize).toHaveBeenCalledWith(referee.getNextEvent)

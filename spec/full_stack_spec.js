@@ -2,13 +2,13 @@ describe("The application", function () {
 	"use strict";
 	var Browser = require("zombie")
 	var requireSource = require("./spec_helper").requireSource
-	var application = requireSource("server/server")
+	var application = requireSource("server/application")
 
 	var browser, server, port
 
 	beforeEach(function () {
 		port = 3000
-		server = application.start(port)
+		server = application.build().start(port)
 		browser = new Browser()
 	})
 

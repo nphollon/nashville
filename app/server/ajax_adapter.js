@@ -15,16 +15,33 @@ exports.submitDecision = returnDummyResponse
 exports.build = function (dispatcher) {
   var adapter = {}
 
+  var stringifyResponse = function (callback) {
+    return function (error, state) {
+      var response = {
+        enableInput: true,
+        wager: state.wager,
+        score: state.score,
+        status: state.status
+      }
+
+      process.nextTick(function () {
+        callback(null, JSON.stringify(response))
+      })
+    }
+  }
+
   adapter.requestUpdate = function (requestBody, callback) {
     process.nextTick(function () {
-      dispatcher.requestUpdate(callback)
+      dispatcher.requestUpdate(stringifyResponse(callback))
     })
   }
 
   adapter.submitDecision = function (requestBody, callback) {
-    var decision = events.playerEvent(requestBody.wager)
+    var jsonDecision = JSON.parse(requestBody)
+    var decision = events.playerEvent(jsonDecision.wager)
+
     process.nextTick(function () {
-      dispatcher.submitDecision(decision, callback)
+      dispatcher.submitDecision(decision, stringifyResponse(callback))
     })
   }
 

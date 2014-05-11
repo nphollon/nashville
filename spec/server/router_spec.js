@@ -4,7 +4,6 @@ describe("The router", function () {
   var helpers = require("../spec_helper")
   var mock = helpers.mock
   var dummy = helpers.dummy
-  var checkArgumentAndForward = helpers.checkArgumentAndForward
   var requireSource = helpers.requireSource
 
   var routerFactory = requireSource("server/router")
@@ -34,7 +33,7 @@ describe("The router", function () {
 
   it("should return a 404 if the request url is invalid", function (done) {
     var requestStream = buildRequestStream(badUrl, GET)
-    router.respond(requestStream, responseStream)
+    router(requestStream, responseStream)
     process.nextTick(function () {
       expect(responseStream.writeHead).toHaveBeenCalledWith(404)
       done()
@@ -43,7 +42,7 @@ describe("The router", function () {
 
   it("should return a 405 if the request is a POST and the route accepts a GET", function (done) {
     var requestStream = buildRequestStream(getUrl, POST)
-    router.respond(requestStream, responseStream)
+    router(requestStream, responseStream)
     process.nextTick(function () {
       expect(responseStream.writeHead).toHaveBeenCalledWith(405)
       done()
@@ -52,7 +51,7 @@ describe("The router", function () {
 
   it("should return a 405 if the request is a GET and the route accepts a POST", function (done) {
     var requestStream = buildRequestStream(postUrl, GET)
-    router.respond(requestStream, responseStream)
+    router(requestStream, responseStream)
     process.nextTick(function () {
       expect(responseStream.writeHead).toHaveBeenCalledWith(405)
       done()
@@ -60,22 +59,28 @@ describe("The router", function () {
   })
 
   it("should delegate request processing to correct route", function (done) {
-    var requestBody = dummy()
+    var requestBody = "dummy"
     var responseBody = dummy()
-
     var responseType = "text/plain"
-    routes[postUrl].processRequest = checkArgumentAndForward(requestBody, responseBody)
-    routes[postUrl].responseType = responseType
-
     var requestStream = buildRequestStream(postUrl, POST, requestBody)
 
-    router.respond(requestStream, responseStream)
+    routes[postUrl].responseType = responseType
 
-    process.nextTick(function () {
-      expect(responseStream.writeHead).toHaveBeenCalledWith(200, { "Content-Type": responseType })
-      expect(responseStream.end).toHaveBeenCalledWith(responseBody)
-      done()
-    })
+    routes[postUrl].processRequest =  function (argument, callback) {
+      expect(argument).toBe(requestBody)
+
+      process.nextTick(function () {
+        callback(null, responseBody)
+
+        process.nextTick(function () {
+          expect(responseStream.writeHead).toHaveBeenCalledWith(200, { "Content-Type": responseType })
+          expect(responseStream.end).toHaveBeenCalledWith(responseBody)
+          done()
+        })
+      })
+    }
+
+    router(requestStream, responseStream)
   })
 
   it("should return 422 if route sends error to callback", function (done) {    
@@ -83,6 +88,7 @@ describe("The router", function () {
     var error = new Error("test error")
 
     var responseType = "application/json"
+
     routes[postUrl].processRequest = function (requestBody, responseCallback) {
       process.nextTick(function () {
         responseCallback(error)
@@ -97,15 +103,24 @@ describe("The router", function () {
 
     routes[postUrl].responseType = responseType
 
-    router.respond(requestStream, responseStream)
+    router(requestStream, responseStream)
 
   })
 
   var buildRequestStream = function (url, method, body) {
+    var argMap = {
+      "data": body,
+      "end": undefined
+    }
+
     return {
       url: url,
       method: method,
-      read: function () { return body }
+      setEncoding: dummy(),
+      read: function () { return body },
+      on: function (eventType, callback) {
+        callback(argMap[eventType])
+      }
     }
   }
 })

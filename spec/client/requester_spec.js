@@ -23,7 +23,7 @@ describe("The requester", function () {
       
       jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(requestUrl)
-        expect(postBody).toEqual({})
+        expect(JSON.parse(postBody)).toEqual({})
         postCallback(response)
       })
 
@@ -43,7 +43,7 @@ describe("The requester", function () {
 
       jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(submitUrl)
-        expect(postBody).toEqual(decision)
+        expect(JSON.parse(postBody)).toEqual(decision)
         postCallback(response)
       })
 
