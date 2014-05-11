@@ -1,81 +1,107 @@
 "use strict";
 
-var defaultDependencies = {
-  webServer: function () {
-    return require("http").createServer(
-      this.router()
-    )
-  },
-
-  router: function () {
-    return require("./router").build(
-      this.routes()
-    )
-  },
-
-  routes: function () {
-    var routeFactory = this.routeFactory()
-    var adapter = this.adapter()
-    return {
-      "/": routeFactory.get("public/index.html", "text/html"),
-      "/index.css": routeFactory.get("public/index.css", "text/css"),
-      "/index.js": routeFactory.get("public/index.js", "application/javascript"),
-      "/request-update": routeFactory.post(adapter.requestUpdate),
-      "/submit-decision": routeFactory.post(adapter.submitDecision)
+var defaults = {
+  webServer: {
+    dependencies: ["router"],
+    factory: function (deps) {
+      return require("http").createServer(deps.router)
     }
   },
 
-  routeFactory: function () {
-    return require("./routes")
+  router: {
+    dependencies: ["routes"],
+    factory: function (deps) {
+      return require("./router").build(deps.routes)
+    }
   },
 
-  adapter: function () {
-    return require("./ajax_adapter").build(
-      this.dispatcher()
-    )
+  routes: {
+    dependencies: ["routeFactory", "adapter"],
+    factory: function (deps) {
+      var get = deps.routeFactory.get
+      var post = deps.routeFactory.post
+      return {
+        "/": get("public/index.html", "text/html"),
+        "/index.css": get("public/index.css", "text/css"),
+        "/index.js": get("public/index.js", "application/javascript"),
+        "/request-update": post(deps.adapter.requestUpdate),
+        "/submit-decision": post(deps.adapter.submitDecision)
+      }
+    }
   },
 
-  dispatcher: function () {
-    return require("./dispatcher").build()
+  routeFactory: {
+    dependencies: [],
+    factory: function () {
+      return require("./routes")
+    }
   },
 
-  gameServer: function () {
-    return require("./game_server").build(
-      this.dispatcher(),
-      this.stateManager(),
-      this.chancePlayer()
-    )
+  adapter: {
+    dependencies: ["dispatcher"],
+    factory: function (deps) {
+      return require("./ajax_adapter").build(deps.dispatcher)
+    }
   },
 
-  stateManager: function () {
-    return require("./state_manager").build()
+  dispatcher: {
+    dependencies: [],
+    factory: function () {
+      return require("./dispatcher").build()
+    }
   },
 
-  chancePlayer: function () {
-    return null
+  gameServer: {
+    dependencies: ["dispatcher", "stateManager", "chancePlayer"],
+    factory: function (deps) {
+      return require("./game_server").build(
+        deps.dispatcher,
+        deps.stateManager,
+        deps.chancePlayer
+      )
+    }
+  },
+
+  stateManager: {
+    dependencies: [],
+    factory: function () {
+      return require("./state_manager").build()
+    }
+  },
+
+  chancePlayer: {
+    dependencies: [],
+    factory: function () {
+      return null
+    }
   }
-}
-
-var replaceDependencies = function (dependencies, substitutions) {
-  Object.keys(substitutions).forEach(function (key) {
-    dependencies[key] = function () {
-      return substitutions[key]
-    }
-  }, dependencies)
 }
 
 exports.build = function (substitutions) {
   var application = {}
 
-  var dependencies = Object.create(defaultDependencies)
+  var objects = {}
 
-  if (substitutions !== undefined) {
-    replaceDependencies(dependencies, substitutions)
+  var buildObject = function (name) {
+    if (objects.hasOwnProperty(name)) {
+      return
+    }
+
+    if (substitutions && substitutions.hasOwnProperty(name)) {
+      objects[name] = substitutions[name]
+      return
+    }
+
+    defaults[name].dependencies.forEach(buildObject)
+
+    objects[name] = defaults[name].factory(objects)
   }
 
+  Object.keys(defaults).forEach(buildObject)
+
   application.start = function (port) {
-    dependencies.gameServer().start()
-    dependencies.webServer().listen(port)
+    objects.gameServer.start()
+    objects.webServer.listen(port)
   }
   
   return application

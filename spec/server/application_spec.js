@@ -46,13 +46,25 @@ describe("the application", function () {
       spyOn(http, "createServer").and.returnValue(webServer)
 
       var application = applicationFactory.build({
-        gameServer: gameServer,
         router: router
       })
 
       application.start(port)
 
       expect(http.createServer).toHaveBeenCalledWith(router)
+    })
+
+    it("should not initialize default dependencies more than once", function () {
+      var dispatcherFactory = helpers.requireSource("server/dispatcher")
+      spyOn(dispatcherFactory, "build").and.callThrough()
+      
+      var http = require("http")
+      spyOn(http, "createServer").and.returnValue(webServer)
+
+      var application = applicationFactory.build()
+      application.start(port)
+
+      expect(dispatcherFactory.build.calls.count()).toBe(1)
     })
   })
 })
