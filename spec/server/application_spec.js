@@ -27,10 +27,10 @@ describe("the application", function () {
 
     it("should start default servers if none are specified", function () {
       var http = require("http")
-      var referee = helpers.requireSource("server/referee")
+      var gameServerFactory = helpers.requireSource("server/game_server")
 
       spyOn(http, "createServer").and.returnValue(webServer)
-      spyOn(referee, "build").and.returnValue(gameServer)
+      spyOn(gameServerFactory, "build").and.returnValue(gameServer)
 
       var application = applicationFactory.build()
 

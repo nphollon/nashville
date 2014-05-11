@@ -1,26 +1,26 @@
-describe("The referee", function () {
+describe("The game server", function () {
   "use strict";
 
   var helpers = require("../spec_helper")
   var dummy = helpers.dummy
   var mock = helpers.mock
-  var refereeFactory = helpers.requireSource("server/referee")
+  var gameServerFactory = helpers.requireSource("server/game_server")
 
-  var referee, dispatcher, stateManager, chancePlayer
+  var gameServer, dispatcher, stateManager, chancePlayer
 
   beforeEach(function () {
     dispatcher = mock(["sendDispatch"])
     stateManager = mock(["initialize", "advance"])
     chancePlayer = mock(["getNextEvent"])
-    referee = refereeFactory.build(dispatcher, stateManager, chancePlayer)
+    gameServer = gameServerFactory.build(dispatcher, stateManager, chancePlayer)
   })
 
   describe("starting a game", function () {
     it("should query state manager for initial game state", function (done) {
-      referee.start()
+      gameServer.start()
 
       process.nextTick(function () {
-        expect(stateManager.initialize).toHaveBeenCalledWith(referee.getNextEvent)
+        expect(stateManager.initialize).toHaveBeenCalledWith(gameServer.getNextEvent)
         done()
       })
     })
@@ -35,10 +35,10 @@ describe("The referee", function () {
 
       chancePlayer.getNextEvent.and.returnValue(chanceEvent)
 
-      referee.getNextEvent(null, game)
+      gameServer.getNextEvent(null, game)
 
       process.nextTick(function () {
-        expect(stateManager.advance).toHaveBeenCalledWith(game, chanceEvent, referee.getNextEvent)
+        expect(stateManager.advance).toHaveBeenCalledWith(game, chanceEvent, gameServer.getNextEvent)
         done()
       })
     })
@@ -56,12 +56,12 @@ describe("The referee", function () {
         callback(null, clientEvent)
 
         process.nextTick(function () {
-          expect(stateManager.advance).toHaveBeenCalledWith(game, clientEvent, referee.getNextEvent)
+          expect(stateManager.advance).toHaveBeenCalledWith(game, clientEvent, gameServer.getNextEvent)
           done()
         })
       }
 
-      referee.getNextEvent(null, game)
+      gameServer.getNextEvent(null, game)
     })
   })
 })

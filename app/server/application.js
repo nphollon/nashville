@@ -40,7 +40,7 @@ var defaultDependencies = {
   },
 
   gameServer: function () {
-    return require("./referee").build(
+    return require("./game_server").build(
       this.dispatcher(),
       this.stateManager(),
       this.chancePlayer()

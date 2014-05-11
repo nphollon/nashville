@@ -5,7 +5,7 @@ exports.build = function () {
 	var mostRecentDispatch = null
 	var mostRecentDecision = null
 	var clientCallback = null
-	var refereeCallback = null
+	var serverCallback = null
 
   var fulfillWithError = function (callback) {
     var error = new Error("Client submitted decision while waiting for an update")
@@ -26,11 +26,11 @@ exports.build = function () {
 	}
 
 	var fullfillRefereeCallback = function () {
-    if (mostRecentDecision !== null && refereeCallback !== null) {
+    if (mostRecentDecision !== null && serverCallback !== null) {
   		process.nextTick(function () {
-  			refereeCallback(null, mostRecentDecision)
+  			serverCallback(null, mostRecentDecision)
   			mostRecentDecision = null
-        refereeCallback = null
+        serverCallback = null
   		})
       return true
     }
@@ -39,7 +39,7 @@ exports.build = function () {
 
 	dispatcher.sendDispatch = function (dispatch, callback) {
 		mostRecentDispatch = dispatch
-		refereeCallback = callback
+		serverCallback = callback
 
 		if (!fullfillRefereeCallback()) {
 			fulfillClientCallback()

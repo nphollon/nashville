@@ -83,25 +83,25 @@ describe("The dispatcher", function () {
 		3) DISPATCHER sends an ERROR to the new REQUEST CALLBACK
 	*/
 	describe("submitting a decision", function () {
-		it("should send decision to referee callback if callback exists", function (done) {
+		it("should send decision to server callback if callback exists", function (done) {
 			var decision = dummy()
 
-			var refereeCallback = function (error, data) {
+			var serverCallback = function (error, data) {
 				expect(error).toBe(null)
 				expect(data).toBe(decision)
 				done()
 			}
 
-			dispatcher.sendDispatch(dummy(), refereeCallback)
+			dispatcher.sendDispatch(dummy(), serverCallback)
 
 			process.nextTick(function () {
 				dispatcher.submitDecision(decision, dummy())
 			})
 		})
 
-		it("should discard decision after it is sent to referee callback", function (done) {
+		it("should discard decision after it is sent to server callback", function (done) {
       var decision = dummy()
-      var refereeCallback = jasmine.createSpy("referee callback")
+      var serverCallback = jasmine.createSpy("server callback")
 
       dispatcher.sendDispatch(dummy(), dummy())
 
@@ -109,10 +109,10 @@ describe("The dispatcher", function () {
         dispatcher.submitDecision(decision, dummy())
 
         process.nextTick(function () {
-          dispatcher.sendDispatch(dummy(), refereeCallback)
+          dispatcher.sendDispatch(dummy(), serverCallback)
 
           process.nextTick(function () {
-            expect(refereeCallback).not.toHaveBeenCalled()
+            expect(serverCallback).not.toHaveBeenCalled()
             done()
           })
         })
@@ -120,21 +120,21 @@ describe("The dispatcher", function () {
     })
 
     // This tests that sendDispatch discards a used callback
-		it("should not send decision to referee callback that was immediately fulfilled", function (done) {
-			var refereeCallback = jasmine.createSpy("referee callback")
+		it("should not send decision to server callback that was immediately fulfilled", function (done) {
+			var serverCallback = jasmine.createSpy("server callback")
 
 			dispatcher.submitDecision(dummy(), dummy())
 
 			process.nextTick(function() {
-				dispatcher.sendDispatch(dummy(), refereeCallback)
+				dispatcher.sendDispatch(dummy(), serverCallback)
 
 				process.nextTick(function() {
-					refereeCallback.calls.reset()
+					serverCallback.calls.reset()
 
 					dispatcher.submitDecision(dummy(), dummy())
 
 					process.nextTick(function () {
-						expect(refereeCallback).not.toHaveBeenCalled()
+						expect(serverCallback).not.toHaveBeenCalled()
 						done()
 					})
 				})
@@ -142,21 +142,21 @@ describe("The dispatcher", function () {
 		})
 
     // This tests that submitDecision discards a used callback
-    it("should not send multiple decisions to referee callback", function (done) {
-      var refereeCallback = jasmine.createSpy("referee callback")
+    it("should not send multiple decisions to server callback", function (done) {
+      var serverCallback = jasmine.createSpy("server callback")
 
-      dispatcher.sendDispatch(dummy(), refereeCallback)
+      dispatcher.sendDispatch(dummy(), serverCallback)
 
       process.nextTick(function() {
         dispatcher.submitDecision(dummy(), dummy())
 
         process.nextTick(function() {
-          refereeCallback.calls.reset()
+          serverCallback.calls.reset()
 
           dispatcher.submitDecision(dummy(), dummy())
 
           process.nextTick(function () {
-            expect(refereeCallback).not.toHaveBeenCalled()
+            expect(serverCallback).not.toHaveBeenCalled()
             done()
           })
         })
@@ -201,7 +201,7 @@ describe("The dispatcher", function () {
 		it("should not replace old decision if one exists", function (done) {
       var firstDecision = dummy()
 
-      var refereeCallback = function (error, data) {
+      var serverCallback = function (error, data) {
         expect(error).toBe(null)
         expect(data).toBe(firstDecision)
         done()
@@ -213,7 +213,7 @@ describe("The dispatcher", function () {
         dispatcher.submitDecision(dummy(), dummy())
 
         process.nextTick(function () {
-          dispatcher.sendDispatch(dummy(), refereeCallback)
+          dispatcher.sendDispatch(dummy(), serverCallback)
         })
       })
     })
@@ -278,10 +278,10 @@ describe("The dispatcher", function () {
 			})
 		})
 
-		it("should send decision to referee callback if decision exists", function (done) {
+		it("should send decision to server callback if decision exists", function (done) {
 			var decision = dummy()
 
-			var refereeCallback = function (error, data) {
+			var serverCallback = function (error, data) {
 				expect(error).toBe(null)
 				expect(data).toBe(decision)
 				done()
@@ -290,14 +290,14 @@ describe("The dispatcher", function () {
 			dispatcher.submitDecision(decision, dummy())
 
 			process.nextTick(function () {
-				dispatcher.sendDispatch(dummy(), refereeCallback)
+				dispatcher.sendDispatch(dummy(), serverCallback)
 			})
 		})
 
-		it("should still send decision to referee if update requests were made in the meantime", function (done) {
+		it("should still send decision to server if update requests were made in the meantime", function (done) {
 			var decision = dummy()
 
-			var refereeCallback = function (error, data) {
+			var serverCallback = function (error, data) {
 				process.nextTick(function () {
 					expect(data).toBe(decision)
 					done()
@@ -310,13 +310,13 @@ describe("The dispatcher", function () {
 				dispatcher.requestUpdate(dummy())
 
 				process.nextTick(function () {
-					dispatcher.sendDispatch(dummy(), refereeCallback)
+					dispatcher.sendDispatch(dummy(), serverCallback)
 				})
 			})
 		})
 		
-		it("should discard decision after it is passed to referee callback", function (done) {
-			var refereeCallback = jasmine.createSpy("referee callback")
+		it("should discard decision after it is passed to server callback", function (done) {
+			var serverCallback = jasmine.createSpy("server callback")
 
 			dispatcher.submitDecision(dummy(), dummy())
 
@@ -324,10 +324,10 @@ describe("The dispatcher", function () {
 				dispatcher.sendDispatch(dummy(), dummy())
 
 				process.nextTick(function () {
-					dispatcher.sendDispatch(dummy(), refereeCallback)
+					dispatcher.sendDispatch(dummy(), serverCallback)
 
 					process.nextTick(function () {
-						expect(refereeCallback).not.toHaveBeenCalled()
+						expect(serverCallback).not.toHaveBeenCalled()
 						done()
 					})
 				})
@@ -343,7 +343,7 @@ describe("The dispatcher", function () {
 				done()
 			}
 
-			var refereeCallback = function () {
+			var serverCallback = function () {
 				process.nextTick(function () {
 					dispatcher.sendDispatch(secondDispatch, dummy())
 				})
@@ -352,7 +352,7 @@ describe("The dispatcher", function () {
 			dispatcher.submitDecision(dummy(), clientCallback)
 
 			process.nextTick(function () {
-				dispatcher.sendDispatch(dummy(), refereeCallback)
+				dispatcher.sendDispatch(dummy(), serverCallback)
 			})
 		})
 	})

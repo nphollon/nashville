@@ -2,7 +2,7 @@
 
 exports.build = function (dispatcher, stateManager, chancePlayer) {
   var gameState = null
-  var referee = {}
+  var gameServer = {}
 
   var updateDispatcher = function () {
     process.nextTick(function () {
@@ -12,17 +12,17 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
 
   var updateGame = function (error, gameEvent) {
     process.nextTick(function () {
-      stateManager.advance(gameState, gameEvent, referee.getNextEvent)
+      stateManager.advance(gameState, gameEvent, gameServer.getNextEvent)
     })
   }
 
-  referee.start = function () {
+  gameServer.start = function () {
     process.nextTick(function () {
-      stateManager.initialize(referee.getNextEvent)
+      stateManager.initialize(gameServer.getNextEvent)
     })
   }
 
-  referee.getNextEvent = function (error, newGameState) {
+  gameServer.getNextEvent = function (error, newGameState) {
     gameState = newGameState
     if (gameState.needChanceEvent === true) {
       updateGame(null, chancePlayer.getNextEvent())
@@ -31,5 +31,5 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
     }
   }
 
-  return referee
+  return gameServer
 }
