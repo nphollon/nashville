@@ -10,11 +10,11 @@ module.exports = function(grunt) {
       },
 
       compileStatic: {
-        command: "nodejs app/compile_static_resources.js"
+        command: "node app/compile_static_resources.js"
       },
 
       startServer: {
-        command: "nodejs app/main.js"
+        command: "node app/main.js"
       }
     },
 
