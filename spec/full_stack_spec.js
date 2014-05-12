@@ -2,26 +2,27 @@ describe("The application", function () {
 	"use strict";
 	var Browser = require("zombie")
 	var requireSource = require("./spec_helper").requireSource
-	var application = requireSource("server/application")
+	var applicationFactory = requireSource("server/application")
 
-	var browser, server, port
+	var browser, application, port
 
 	beforeEach(function () {
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000
 		port = 3000
-		server = application.build().start(port)
+		application = applicationFactory.build()
+		application.start(port)
 		browser = new Browser()
 	})
 
-	xit("should let the user submit a decision and display the result", function (done) {
+	it("should let the user submit a decision and display the result", function (done) {
 		var playGame = function () {
-			expect(browser.text("#status")).toEqual("Hello")
+			expect(browser.text("#status")).toEqual("Place your bet.")
 			expect(browser.text("#score")).toEqual("0")
 
-			browser.fill("#wager", 5, function () {
-				browser.pressButton("#submit", function () {
-					expect(browser.text("#score")).toEqual("5")
-					done()
-				})
+			browser.fill("#wager", 5)
+			browser.fire("#submit", "click", function () {
+				expect(browser.text("#score")).toEqual("5")
+				done()
 			})
 		}
 
@@ -30,6 +31,6 @@ describe("The application", function () {
 	})
 
 	afterEach(function () {
-		server.close()
+		application.stop()
 	})
 })

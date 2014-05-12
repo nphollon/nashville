@@ -8,7 +8,7 @@ exports.createState = function (original) {
       nextEventType: events.playerType,
       wager: 1,
       score: 0,
-      status: ""
+      status: "Place your bet."
     }
   } else {
     return {
@@ -50,6 +50,10 @@ exports.build = function () {
     })
   }
 
+  var mutator = {}
+  mutator[events.chanceType] = adjustScore
+  mutator[events.playerType] = setWager
+
   stateManager.initialize = function (callback) {
     process.nextTick(function () {
       callback(null, exports.createState())
@@ -58,10 +62,6 @@ exports.build = function () {
 
   stateManager.advance = function (previousState, decision, callback) {
     var nextState = exports.createState(previousState)
-
-    var mutator = {}
-    mutator[events.chanceType] = adjustScore
-    mutator[events.playerType] = setWager
 
     if (decision.type === nextState.nextEventType) {
       mutator[decision.type].call(null, nextState, decision, callback)

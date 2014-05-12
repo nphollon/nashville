@@ -5,7 +5,7 @@ exports.buildRenderer = function (interfaceElements) {
 
   renderer.render = function (data) {
     interfaceElements.wagerField.val(data.wager)
-    interfaceElements.statusDiv.text(data.message)
+    interfaceElements.statusDiv.text(data.status)
     interfaceElements.scoreDiv.text(data.score)
   }
 

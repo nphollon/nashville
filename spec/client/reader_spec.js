@@ -56,15 +56,24 @@ describe("The reader", function () {
       expect(clientCallback).not.toHaveBeenCalled()
     })
 
-    it("should return a function that sends the decision to the client callback", function () {
+    it("should not get a decision", function () {
+      spyOn(reader, "getDecision")
+      reader.buildOnClickCallback(dummy())
+      expect(reader.getDecision).not.toHaveBeenCalled()
+    })
+
+    it("should return a function that sends the decision to the client callback", function (done) {
       var decision = dummy()
       spyOn(reader, "getDecision").and.returnValue(decision)
-      var clientCallback = jasmine.createSpy("clientCallback")
+
+      var clientCallback = function (data) {
+        expect(data).toBe(decision)
+        done()
+      }
 
       var callbackWrapper = reader.buildOnClickCallback(clientCallback)
 
       callbackWrapper()
-      expect(clientCallback).toHaveBeenCalledWith(decision)
     })
   })
 

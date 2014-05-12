@@ -72,7 +72,11 @@ var defaults = {
   chancePlayer: {
     dependencies: [],
     factory: function () {
-      return null
+      return {
+        getNextEvent: function () {
+          return require("./game_events").chanceEvent(true)
+        }
+      }
     }
   }
 }
@@ -102,6 +106,10 @@ exports.build = function (substitutions) {
   application.start = function (port) {
     objects.gameServer.start()
     objects.webServer.listen(port)
+  }
+
+  application.stop = function () {
+    objects.webServer.close()
   }
   
   return application

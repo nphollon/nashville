@@ -1,19 +1,28 @@
 "use strict";
 
+var events = require("./game_events")
+
 exports.build = function (dispatcher, stateManager, chancePlayer) {
-  var gameState = null
   var gameServer = {}
 
-  var updateDispatcher = function () {
+  var gameState = null
+
+  var advanceGame = function (event) {
+    stateManager.advance(gameState, event, gameServer.getNextEvent)
+  }
+
+  var dispatcherCallback = function (error, event) {
     process.nextTick(function () {
-      dispatcher.sendDispatch(gameState, updateGame)
+      advanceGame(event)
     })
   }
 
-  var updateGame = function (error, gameEvent) {
-    process.nextTick(function () {
-      stateManager.advance(gameState, gameEvent, gameServer.getNextEvent)
-    })
+  var update = {}
+
+  update[events.chanceType] = advanceGame
+
+  update[events.playerType] = function () {
+    dispatcher.sendDispatch(gameState, dispatcherCallback)
   }
 
   gameServer.start = function () {
@@ -24,11 +33,10 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
 
   gameServer.getNextEvent = function (error, newGameState) {
     gameState = newGameState
-    if (gameState.needChanceEvent === true) {
-      updateGame(null, chancePlayer.getNextEvent())
-    } else {
-      updateDispatcher()
-    }
+
+    process.nextTick(function () {
+      update[gameState.nextEventType].call(null, chancePlayer.getNextEvent())
+    })
   }
 
   return gameServer

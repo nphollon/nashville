@@ -26,7 +26,7 @@ describe("The renderer", function () {
 
     it("should set the status message", function () {
       var message = "status message"
-      renderer.render({ message: message })
+      renderer.render({ status: message })
       expect(statusDiv.text).toHaveBeenCalledWith(message)
     })
 

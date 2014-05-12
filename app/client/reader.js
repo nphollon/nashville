@@ -17,9 +17,11 @@ exports.buildReader = function (interfaceElements) {
   }
 
   reader.buildOnClickCallback = function (clientCallback) {
-    var decision = this.getDecision()
     return function () {
-      clientCallback(decision)
+      var decision = reader.getDecision()
+      process.nextTick(function () {
+        clientCallback(decision)
+      })
     }
   }
 

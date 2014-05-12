@@ -1,6 +1,7 @@
 describe("the application", function () {
   "use strict";
 
+  var http = require("http")
   var helpers = require("../spec_helper")
   var applicationFactory = helpers.requireSource("server/application")
 
@@ -8,12 +9,17 @@ describe("the application", function () {
 
   beforeEach(function () {
     gameServer = jasmine.createSpyObj("game server", ["start"])
-    webServer = jasmine.createSpyObj("web server", ["listen"])
+    webServer = jasmine.createSpyObj("web server", ["listen", "close"])
+
+    spyOn(http, "createServer").and.returnValue(webServer)
+
     port = 1
   })
 
   describe("starting", function () {
     it("should start declared game server and web server", function () {
+      http.createServer.and.returnValue(null)
+
       var application = applicationFactory.build({
         gameServer: gameServer,
         webServer: webServer
@@ -26,10 +32,7 @@ describe("the application", function () {
     })
 
     it("should start default servers if none are specified", function () {
-      var http = require("http")
       var gameServerFactory = helpers.requireSource("server/game_server")
-
-      spyOn(http, "createServer").and.returnValue(webServer)
       spyOn(gameServerFactory, "build").and.returnValue(gameServer)
 
       var application = applicationFactory.build()
@@ -42,8 +45,6 @@ describe("the application", function () {
 
     it("should inject declared dependencies into defaults", function () {
       var router = helpers.dummy()
-      var http = require("http")
-      spyOn(http, "createServer").and.returnValue(webServer)
 
       var application = applicationFactory.build({
         router: router
@@ -58,13 +59,20 @@ describe("the application", function () {
       var dispatcherFactory = helpers.requireSource("server/dispatcher")
       spyOn(dispatcherFactory, "build").and.callThrough()
       
-      var http = require("http")
-      spyOn(http, "createServer").and.returnValue(webServer)
-
       var application = applicationFactory.build()
       application.start(port)
 
       expect(dispatcherFactory.build.calls.count()).toBe(1)
+    })
+  })
+
+  describe("stopping", function () {
+    it("should close the web server", function () {
+      var application = applicationFactory.build()
+
+      application.stop()
+
+      expect(webServer.close).toHaveBeenCalled()
     })
   })
 })

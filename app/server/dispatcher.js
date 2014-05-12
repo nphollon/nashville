@@ -25,7 +25,7 @@ exports.build = function () {
     return false
 	}
 
-	var fullfillRefereeCallback = function () {
+	var fullfillServerCallback = function () {
     if (mostRecentDecision !== null && serverCallback !== null) {
   		process.nextTick(function () {
   			serverCallback(null, mostRecentDecision)
@@ -41,7 +41,7 @@ exports.build = function () {
 		mostRecentDispatch = dispatch
 		serverCallback = callback
 
-		if (!fullfillRefereeCallback()) {
+		if (!fullfillServerCallback()) {
 			fulfillClientCallback()
     }
 	}
@@ -58,7 +58,7 @@ exports.build = function () {
     
     mostRecentDecision = decision
 		clientCallback = callback
-		fullfillRefereeCallback()
+		fullfillServerCallback()
 	}
 
 	return dispatcher

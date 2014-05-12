@@ -5,6 +5,7 @@ describe("The game server", function () {
   var dummy = helpers.dummy
   var mock = helpers.mock
   var gameServerFactory = helpers.requireSource("server/game_server")
+  var events = helpers.requireSource("server/game_events")
 
   var gameServer, dispatcher, stateManager, chancePlayer
 
@@ -30,7 +31,7 @@ describe("The game server", function () {
     it("should get a chance event if the state manager needs one", function (done) {
       var chanceEvent = dummy()
       var game = {
-        needChanceEvent: true,
+        nextEventType: events.chanceType
       }
 
       chancePlayer.getNextEvent.and.returnValue(chanceEvent)
@@ -47,7 +48,7 @@ describe("The game server", function () {
       var clientEvent = dummy()
 
       var game = {
-        needChanceEvent: false,
+        nextEventType: events.playerType
       }
 
       dispatcher.sendDispatch = function (data, callback) {
