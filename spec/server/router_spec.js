@@ -2,7 +2,7 @@ describe("The router", function () {
   "use strict";
 
   var helpers = require("../spec_helper")
-  var mock = helpers.mock
+  var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
   var requireSource = helpers.requireSource
 
@@ -23,7 +23,7 @@ describe("The router", function () {
     routes[postUrl] = { method: POST, responseType: "text/plain" }
 
     router = routerFactory.build(routes)
-    responseStream = mock(["writeHead", "end"])
+    responseStream = mock("response stream", ["writeHead", "end"])
   })
 
   afterEach(function () {

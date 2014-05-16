@@ -2,16 +2,16 @@ describe("The client", function () {
 	"use strict";
 	
 	var helpers = require("../spec_helper")
-	var mock = helpers.mock
+	var mock = jasmine.createSpyObj
 	var dummy = helpers.dummy
 	var clientFactory = helpers.requireSource("client/client")
 
 	var requester, renderer, reader, client
 
 	beforeEach(function () {
-		requester = mock(["request", "submit"])
-		renderer = mock(["render"])
-		reader = mock(["disable", "enable"])
+		requester = mock("requester", ["request", "submit"])
+		renderer = mock("renderer", ["render"])
+		reader = mock("reader", ["disable", "enable"])
 		client = clientFactory.buildClient(requester, renderer, reader)
 	})
 

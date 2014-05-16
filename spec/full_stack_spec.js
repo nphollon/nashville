@@ -1,10 +1,10 @@
 describe("The application", function () {
 	"use strict";
 	var Browser = require("zombie")
-	var requireSource = require("./spec_helper").requireSource
-	var applicationFactory = requireSource("server/application")
+	var helpers = require("./spec_helper")
+	var applicationFactory = helpers.requireSource("server/application")
 
-	var browser, application, usualTimeout
+	var browser, application
 
 	var port = 3000
 
@@ -15,22 +15,25 @@ describe("The application", function () {
 	}
 
 	beforeEach(function () {
-		usualTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL
-		jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000
+		helpers.setSpecTimeout(5000)
 
 		application = applicationFactory.build(substitutions)
-		
 		application.start(port)
 
 		browser = new Browser()
 	})
 
 	afterEach(function () {
-		jasmine.DEFAULT_TIMEOUT_INTERVAL = usualTimeout
+		helpers.resetSpecTimeout()
 	})
 
 	it("should let the user submit a decision and display the result", function (done) {
-		var playGame = function () {
+		var playGame = function (error) {
+			if (error) {
+				console.log(error)
+				done()
+			}
+
 			expect(browser.text("#status")).toEqual("Place your bet.")
 			expect(browser.text("#score")).toEqual("0")
 

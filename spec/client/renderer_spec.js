@@ -1,15 +1,15 @@
 describe("The renderer", function () {
   "use strict";
   var helpers = require("../spec_helper")
-  var mock = helpers.mock
   var rendererFactory = helpers.requireSource("client/renderer")
+  var mock = jasmine.createSpyObj
 
   var wagerField, statusDiv, scoreDiv, renderer
 
   beforeEach(function () {
-    wagerField = mock(["val"])
-    statusDiv = mock(["text"])
-    scoreDiv = mock(["text"])
+    wagerField = mock("wager field", ["val"])
+    statusDiv = mock("status div", ["text"])
+    scoreDiv = mock("score div", ["text"])
     renderer = rendererFactory.buildRenderer({
       statusDiv: statusDiv, 
       wagerField: wagerField,

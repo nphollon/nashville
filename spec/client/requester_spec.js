@@ -2,13 +2,12 @@ describe("The requester", function () {
   "use strict";
 
   var helpers = require("../spec_helper")
-  var mock = helpers.mock
   var requesterFactory = helpers.requireSource("client/requester")
 
   var jQuery, requestUrl, submitUrl, requester
 
   beforeEach(function () {
-    jQuery = mock(["post"])
+    jQuery = {}
     requestUrl = "request url"
     submitUrl = "submit url"
     requester = requesterFactory.buildRequester(jQuery, {
@@ -21,11 +20,11 @@ describe("The requester", function () {
     it("posts an empty message to the request url", function (done) {
       var response = { key: "value" }
       
-      jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
+      jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(requestUrl)
         expect(JSON.parse(postBody)).toEqual({})
         postCallback(response)
-      })
+      }
 
       var callback = function (postResponse) {
         expect(postResponse).toEqual(response)
@@ -41,11 +40,11 @@ describe("The requester", function () {
       var decision = { decision: "value" }
       var response = { key: "value" }
 
-      jQuery.post.and.callFake(function (postUrl, postBody, postCallback) {
+      jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(submitUrl)
         expect(JSON.parse(postBody)).toEqual(decision)
         postCallback(response)
-      })
+      }
 
       var callback = function (postResponse) {
         expect(postResponse).toEqual(response)

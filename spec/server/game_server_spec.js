@@ -3,16 +3,16 @@ describe("The game server", function () {
 
   var helpers = require("../spec_helper")
   var dummy = helpers.dummy
-  var mock = helpers.mock
+  var mock = jasmine.createSpyObj
   var gameServerFactory = helpers.requireSource("server/game_server")
   var events = helpers.requireSource("server/game_events")
 
   var gameServer, dispatcher, stateManager, chancePlayer
 
   beforeEach(function () {
-    dispatcher = mock(["sendDispatch"])
-    stateManager = mock(["initialize", "advance"])
-    chancePlayer = mock(["getNextEvent"])
+    dispatcher = mock("dispatcher", ["sendDispatch"])
+    stateManager = mock("state manager", ["initialize", "advance"])
+    chancePlayer = mock("chance player", ["getNextEvent"])
     gameServer = gameServerFactory.build(dispatcher, stateManager, chancePlayer)
   })
 

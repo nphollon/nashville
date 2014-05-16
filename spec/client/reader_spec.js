@@ -2,16 +2,15 @@ describe("The reader", function () {
   "use strict";
 
   var helpers = require("../spec_helper")
-  var mock = helpers.mock
+  var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
-  var checkArgumentAndReturn = helpers.checkArgumentAndReturn
   var readerFactory = helpers.requireSource("client/reader")
 
   var submitButton, wagerField, reader
   
   beforeEach(function () {
-    submitButton = mock(["prop", "off", "click"])
-    wagerField = mock(["val"])
+    submitButton = mock("submit button", ["prop", "off", "click"])
+    wagerField = mock("wager field", ["val"])
     reader = readerFactory.buildReader({
       submitButton: submitButton,
       wagerField: wagerField
@@ -40,8 +39,9 @@ describe("The reader", function () {
       var clientCallback = dummy()
       var callbackWrapper = dummy()
 
-      spyOn(reader, "buildOnClickCallback")
-        .and.callFake(checkArgumentAndReturn(clientCallback, callbackWrapper))
+      reader.buildOnClickCallback = function (callback) {
+        return (callback === clientCallback) ? callbackWrapper : undefined
+      }
 
       reader.enable(clientCallback)
 
@@ -64,7 +64,7 @@ describe("The reader", function () {
 
     it("should return a function that sends the decision to the client callback", function (done) {
       var decision = dummy()
-      spyOn(reader, "getDecision").and.returnValue(decision)
+      reader.getDecision = function () { return decision }
 
       var clientCallback = function (data) {
         expect(data).toBe(decision)
