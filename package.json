@@ -19,6 +19,7 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-shell": "^0.7.0",
     "jasmine-node": "^2.0.0-beta3",
+    "random-js": "^1.0.4",
     "webgenjs": "0.0.1",
     "zombie": "^2.0.0-alpha31"
   },

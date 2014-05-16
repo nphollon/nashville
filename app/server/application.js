@@ -45,12 +45,13 @@ var defaultFactories = {
     return require("./state_manager").build()
   },
 
-  chancePlayer: function () {
-    return {
-      getNextEvent: function () {
-        return require("./game_events").chanceEvent(true)
-      }
-    }
+  chancePlayer: function (that) {
+    return require("./chance_player").build(that.random)
+  },
+
+  random: function () {
+    var Random = require("random-js");
+    return new Random(Random.engines.mt19937().autoSeed());
   }
 }
 

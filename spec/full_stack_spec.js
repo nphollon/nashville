@@ -4,14 +4,29 @@ describe("The application", function () {
 	var requireSource = require("./spec_helper").requireSource
 	var applicationFactory = requireSource("server/application")
 
-	var browser, application, port
+	var browser, application, usualTimeout
+
+	var port = 3000
+
+	var substitutions = {
+		random: {
+			bool: function () { return true }
+		}
+	}
 
 	beforeEach(function () {
+		usualTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL
 		jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000
-		port = 3000
-		application = applicationFactory.build()
+
+		application = applicationFactory.build(substitutions)
+		
 		application.start(port)
+
 		browser = new Browser()
+	})
+
+	afterEach(function () {
+		jasmine.DEFAULT_TIMEOUT_INTERVAL = usualTimeout
 	})
 
 	it("should let the user submit a decision and display the result", function (done) {

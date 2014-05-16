@@ -4,25 +4,19 @@ var events = require("./game_events")
 
 exports.build = function (dispatcher, stateManager, chancePlayer) {
   var gameServer = {}
-
+  var eventGetter = {}
   var gameState = null
 
-  var advanceGame = function (event) {
+  var advanceGame = function (error, event) {
     stateManager.advance(gameState, event, gameServer.getNextEvent)
   }
 
-  var dispatcherCallback = function (error, event) {
-    process.nextTick(function () {
-      advanceGame(event)
-    })
+  eventGetter[events.chanceType] = function () {
+    chancePlayer.getNextEvent(gameState, advanceGame)
   }
 
-  var update = {}
-
-  update[events.chanceType] = advanceGame
-
-  update[events.playerType] = function () {
-    dispatcher.sendDispatch(gameState, dispatcherCallback)
+  eventGetter[events.playerType] = function () {
+    dispatcher.sendDispatch(gameState, advanceGame)    
   }
 
   gameServer.start = function () {
@@ -34,9 +28,7 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
   gameServer.getNextEvent = function (error, newGameState) {
     gameState = newGameState
 
-    process.nextTick(function () {
-      update[gameState.nextEventType].call(null, chancePlayer.getNextEvent())
-    })
+    process.nextTick(eventGetter[gameState.nextEventType])
   }
 
   return gameServer

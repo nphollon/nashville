@@ -34,14 +34,18 @@ describe("The game server", function () {
         nextEventType: events.chanceType
       }
 
-      chancePlayer.getNextEvent.and.returnValue(chanceEvent)
+      chancePlayer.getNextEvent = function (data, callback) {
+        expect(data).toBe(game)
+
+        callback(null, chanceEvent)
+
+        process.nextTick(function () {
+          expect(stateManager.advance).toHaveBeenCalledWith(game, chanceEvent, gameServer.getNextEvent)
+          done()
+        })
+      }
 
       gameServer.getNextEvent(null, game)
-
-      process.nextTick(function () {
-        expect(stateManager.advance).toHaveBeenCalledWith(game, chanceEvent, gameServer.getNextEvent)
-        done()
-      })
     })
 
     it("should get a client event from the dispatcher if the state manager needs one", function (done) {
