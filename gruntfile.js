@@ -11,24 +11,6 @@ module.exports = function(grunt) {
       }
     },
 
-    sass: {
-      dist: {
-        files: {
-          "public/index.css": "public/index.scss"
-        }
-      }
-    },
-
-    shell: {
-      runJasmine: {
-        command: "node_modules/jasmine-node/bin/jasmine-node spec --captureExceptions"
-      },
-
-      startServer: {
-        command: "node app/main.js"
-      }
-    },
-
     jshint: {
       options: {
         asi: true,
@@ -70,13 +52,31 @@ module.exports = function(grunt) {
           src: ["spec/**/*.js"]
         }
       }
+    },
+
+    sass: {
+      dist: {
+        files: {
+          "public/index.css": "public/index.scss"
+        }
+      }
+    },
+
+    shell: {
+      runJasmine: {
+        command: "node_modules/jasmine-node/bin/jasmine-node spec --captureExceptions"
+      },
+
+      startServer: {
+        command: "node app/main.js"
+      }
     }
   })
 
   grunt.loadNpmTasks("grunt-browserify")
-  grunt.loadNpmTasks("grunt-shell")
   grunt.loadNpmTasks("grunt-contrib-jshint")
   grunt.loadNpmTasks("grunt-sass")
+  grunt.loadNpmTasks("grunt-shell")
 
   grunt.registerTask("compile", ["jshint:source", "browserify", "sass"])
   grunt.registerTask("test", ["compile", "jshint:spec", "shell:runJasmine"])
