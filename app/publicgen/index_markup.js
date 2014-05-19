@@ -47,7 +47,8 @@ var wagerInput = {
 	tag: "input",
 	id: "wager",
 	type: "text",
-	value: "1"
+	autofocus: "true",
+	value: ""
 }
 
 var wagerHeader = {
@@ -97,7 +98,7 @@ var fieldHeight = "20px"
 var buttonHeight = "30px"
 
 exports.styles = [
-	{ id: "main", style: {
+	{ id: mainDiv.id, style: {
 		"background-color": bkgColor,
 	  color: textColor,
 	  "font-family": "sans-serif",

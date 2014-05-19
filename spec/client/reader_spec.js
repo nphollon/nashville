@@ -10,7 +10,7 @@ describe("The reader", function () {
   
   beforeEach(function () {
     submitButton = mock("submit button", ["prop", "off", "click"])
-    wagerField = mock("wager field", ["val"])
+    wagerField = mock("wager field", ["val", "keypress"])
     reader = readerFactory.buildReader({
       submitButton: submitButton,
       wagerField: wagerField

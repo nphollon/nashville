@@ -6,6 +6,12 @@ exports.buildReader = function (interfaceElements) {
   var submitButton = interfaceElements.submitButton
   var wagerField = interfaceElements.wagerField
 
+  wagerField.keypress(function (event) {
+    if (event.which === 13) {
+      submitButton.click()
+    }
+  })
+
   reader.enable = function (callback) {
     setButtonDisabled(false)
     submitButton.click(this.buildOnClickCallback(callback))
