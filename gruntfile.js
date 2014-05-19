@@ -3,14 +3,25 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
+    
+    browserify: {
+      build: {
+        src: "app/client/main.js",
+        dest: "public/index.js"
+      }
+    },
+
+    sass: {
+      dist: {
+        files: {
+          "public/index.css": "public/index.scss"
+        }
+      }
+    },
 
     shell: {
       runJasmine: {
         command: "node_modules/jasmine-node/bin/jasmine-node spec --captureExceptions"
-      },
-
-      compileStatic: {
-        command: "node app/compile_static_resources.js"
       },
 
       startServer: {
@@ -55,15 +66,19 @@ module.exports = function(grunt) {
         options: {
           predef: ["jasmine", "beforeEach", "describe", "it", "xit", "spyOn", "expect", "afterEach" ]
         },
-        files: { src: ["spec/**/*.js"] } 
+        files: {
+          src: ["spec/**/*.js"]
+        }
       }
     }
   })
 
+  grunt.loadNpmTasks("grunt-browserify")
   grunt.loadNpmTasks("grunt-shell")
   grunt.loadNpmTasks("grunt-contrib-jshint")
+  grunt.loadNpmTasks("grunt-sass")
 
-  grunt.registerTask("compile", ["jshint:source", "shell:compileStatic"])
+  grunt.registerTask("compile", ["jshint:source", "browserify", "sass"])
   grunt.registerTask("test", ["compile", "jshint:spec", "shell:runJasmine"])
   grunt.registerTask("launch", ["test", "shell:startServer"])
   grunt.registerTask("default", ["test"])
