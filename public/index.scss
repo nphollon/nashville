@@ -63,4 +63,8 @@ var {
   &:hover {
     background-color: $btn_hover_color;
   }
+
+  &:disabled {
+    background-color: $btn_txt_color;
+  }
 }
