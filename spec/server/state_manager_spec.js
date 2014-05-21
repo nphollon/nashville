@@ -22,7 +22,7 @@ describe("The state manager", function () {
 
   it("should request chance event after client makes a wager", function (done) {
     var decision = events.playerEvent(3)
-    var initialState = { nextEventType: events.playerType, wager: 1, score: 0 }
+    var initialState = { nextEventType: events.playerType, wager: 1, score: 0, status: "" }
 
     var callback = function (error, data) {
       expect(error).toBe(null)
@@ -37,13 +37,14 @@ describe("The state manager", function () {
 
   it("should deduct wager from score if chance event is false", function (done) {
     var decision = events.chanceEvent(false)
-    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5 }
+    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
 
     var callback = function (error, data) {
       expect(error).toBe(null)
       expect(data.nextEventType).toBe(events.playerType)
       expect(data.wager).toBe(3)
       expect(data.score).toBe(2)
+      expect(data.status).toBe("You lost.")
       done()
     }
 
@@ -52,13 +53,14 @@ describe("The state manager", function () {
 
   it("should add wager to score if chance event is true", function (done) {
     var decision = events.chanceEvent(true)
-    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5 }
+    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
 
     var callback = function (error, data) {
       expect(error).toBe(null)
       expect(data.nextEventType).toBe(events.playerType)
       expect(data.wager).toBe(3)
       expect(data.score).toBe(8)
+      expect(data.status).toBe("You won.")
       done()
     }
 

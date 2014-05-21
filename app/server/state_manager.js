@@ -24,7 +24,14 @@ exports.build = function () {
   var stateManager = {}
 
   var adjustScore = function (state, decision, callback) {
-    state.score += state.wager * (decision.userWins ? 1 : -1)
+    if (decision.userWins) {
+      state.score += state.wager
+      state.status = "You won."
+    } else {
+      state.score -= state.wager
+      state.status = "You lost."
+    }
+    
     state.nextEventType = events.playerType
 
     process.nextTick(function () {
