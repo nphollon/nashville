@@ -5,14 +5,19 @@ exports.buildRequester = function ($, urls) {
 
   var sendResponseTo = function (callback) {
     return function (data) {
-      process.nextTick(function () {
-        callback(data)
-      })
+      callback(null, data)
+    }
+  }
+
+  var sendErrorTo = function (callback) {
+    return function (xhr) {
+      callback(xhr.responseText)
     }
   }
 
   var post = function (url, postObject, callback) {
     $.post(url, JSON.stringify(postObject), sendResponseTo(callback), "json")
+      .fail(sendErrorTo(callback))
   }
 
   requester.request = function (callback) {

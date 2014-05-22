@@ -36,4 +36,13 @@ describe("The renderer", function () {
       expect(scoreDiv.text).toHaveBeenCalledWith(score)
     })
   })
+
+  describe("displaying an error", function () {
+    it("should zero interface and display error message", function () {
+      renderer.error()
+      expect(statusDiv.text).toHaveBeenCalledWith("We're sorry. Something went wrong.")
+      expect(wagerField.val).toHaveBeenCalledWith(0)
+      expect(scoreDiv.text).toHaveBeenCalledWith(0)
+    })
+  })
 })

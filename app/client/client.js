@@ -3,19 +3,31 @@
 exports.buildClient = function (requester, renderer, reader) {
 	var client = {}
 
-
-	client.start = function () {
-		process.nextTick(requestUpdate)
-		reader.disable()
+	var recordError = function (error) {
+		console.log(error)
+		renderer.error()
 	}
 
-	client.update = function (response) {
+	var processResponse = function (response) {
 		renderer.render(response)
 
 		if (response.enableInput === true) {
 			reader.enable(client.submit)
 		} else {
 			process.nextTick(requestUpdate)
+		}
+	}
+
+	client.start = function () {
+		process.nextTick(requestUpdate)
+		reader.disable()
+	}
+
+	client.update = function (error, response) {
+		if (error === null) {
+			processResponse(response)
+		} else {
+			recordError(error)
 		}
 	}
 

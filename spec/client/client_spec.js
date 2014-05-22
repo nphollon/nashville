@@ -9,8 +9,9 @@ describe("The client", function () {
 	var requester, renderer, reader, client
 
 	beforeEach(function () {
+		spyOn(console, "log")
 		requester = mock("requester", ["request", "submit"])
-		renderer = mock("renderer", ["render"])
+		renderer = mock("renderer", ["render", "error"])
 		reader = mock("reader", ["disable", "enable"])
 		client = clientFactory.buildClient(requester, renderer, reader)
 	})
@@ -33,44 +34,63 @@ describe("The client", function () {
 	describe("updating the user interface", function () {
 		it("displays the info if the response asks for user input", function () {
 			var response = createResponse(true)
-			client.update(response)
+			client.update(null, response)
 			expect(renderer.render).toHaveBeenCalledWith(response)
 		})
 
 		it("enables user input if the response asks for user input", function () {
-			client.update(createResponse(true))
+			client.update(null, createResponse(true))
 			expect(reader.enable).toHaveBeenCalledWith(client.submit)
 		})
 
 		it("does not send a request if the response asks for user input", function () {
 			spyOn(process, "nextTick")
-			client.update(createResponse(true))
+			client.update(null, createResponse(true))
 			expect(process.nextTick).not.toHaveBeenCalled()
 		})
 
 		it("displays the info if the response forbids user input", function () {
 			var response = createResponse(false)
-			client.update(response)
+			client.update(null, response)
 			expect(renderer.render).toHaveBeenCalledWith(response)
 		})
 
 		it("does not enable user input if the response forbids it", function () {
-			client.update(createResponse(false))
+			client.update(null, createResponse(false))
 			expect(reader.enable).not.toHaveBeenCalled()
 		})
 
 		it("sends a request if the response forbids user input", function (done) {
-			client.update(createResponse(false))
 			requester.request.and.callFake(function (callback) {
 				expect(callback).toBe(client.update)
 				done()
 			})
+			client.update(null, createResponse(false))
+		})
+
+		it("logs the error if it receives one", function (done) {
+			var error = dummy()
+
+			console.log.and.callFake(function (data) {
+				expect(data).toBe(error)
+				done()
+			})
+
+			client.update(error)
+		})
+
+		it("displays error message if one is received", function () {
+			var error = dummy()
+
+			client.update(error)
+
+			expect(renderer.error).toHaveBeenCalled()
 		})
 	})
 
 	describe("submitting user input", function () {
 		it("sends the submission as a request", function (done) {
-			var decision = dummy
+			var decision = dummy()
 			client.submit(decision)
 			requester.submit.and.callFake(function (submission, callback) {
 				expect(submission).toBe(decision)

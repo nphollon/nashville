@@ -9,5 +9,13 @@ exports.buildRenderer = function (interfaceElements) {
     interfaceElements.scoreDiv.text(data.score)
   }
 
+  renderer.error = function () {
+    this.render({
+      status: "We're sorry. Something went wrong.",
+      score: 0,
+      wager: 0
+    })
+  }
+
   return renderer
 }

@@ -4,10 +4,11 @@ describe("The requester", function () {
   var helpers = require("../spec_helper")
   var requesterFactory = helpers.requireSource("client/requester")
 
-  var jQuery, requestUrl, submitUrl, requester
+  var jQuery, requestUrl, submitUrl, requester, postXHR
 
   beforeEach(function () {
     jQuery = {}
+    postXHR = { fail: function () {} }
     requestUrl = "request url"
     submitUrl = "submit url"
     requester = requesterFactory.buildRequester(jQuery, {
@@ -23,11 +24,36 @@ describe("The requester", function () {
       jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(requestUrl)
         expect(JSON.parse(postBody)).toEqual({})
-        postCallback(response)
+        postCallback(response, "success", { status: 200 })
+        return postXHR
       }
 
-      var callback = function (postResponse) {
+      var callback = function (error, postResponse) {
+        expect(error).toBe(null)
         expect(postResponse).toEqual(response)
+        done()
+      }
+
+      requester.request(callback)
+    })
+
+    it("sends error to callback if Ajax returns unexpected status code", function (done) {
+      var response = JSON.stringify({ key: "value" })
+      var responseXHR = {
+        status: 422,
+        responseText: response
+      }
+
+      jQuery.post = function () {
+        return {
+          fail: function (callback) {
+            callback(responseXHR)
+          }
+        }
+      }
+
+      var callback = function (error) {
+        expect(error).toBe(response)
         done()
       }
 
@@ -43,10 +69,12 @@ describe("The requester", function () {
       jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(submitUrl)
         expect(JSON.parse(postBody)).toEqual(decision)
-        postCallback(response)
+        postCallback(response, "success", { status: 200 })
+        return postXHR
       }
 
-      var callback = function (postResponse) {
+      var callback = function (error, postResponse) {
+        expect(error).toBe(null)
         expect(postResponse).toEqual(response)
         done()
       }
