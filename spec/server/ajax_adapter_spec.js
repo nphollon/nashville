@@ -80,4 +80,23 @@ describe("Ajax adapter", function () {
 
     adapter.submitDecision("{}", clientCallback)
   })
+
+  it("should cast dispatcher errors to JSON", function (done) {
+    var dispatcherError = new Error("dispatcher error")
+
+    var forwardedError = {
+      status: dispatcherError.message
+    }
+
+    var clientCallback = function (error) {
+      expect(error).toBe(JSON.stringify(forwardedError))
+      done()
+    }
+
+    dispatcher.requestUpdate = function (callback) {
+      callback(dispatcherError)
+    }
+
+    adapter.requestUpdate("{}", clientCallback)
+  })
 })

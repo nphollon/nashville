@@ -2,30 +2,30 @@
 
 var events = require("./game_events")
 
-var returnDummyResponse = function (requestBody, callback) {
-	var responseData = { wager: 5, score: 0, message: "Hello", enableInput: true }
-	process.nextTick(function () {
-		callback(null, JSON.stringify(responseData))
-	})
-}
-
-exports.requestUpdate = returnDummyResponse
-exports.submitDecision = returnDummyResponse
-
 exports.build = function (dispatcher) {
   var adapter = {}
 
   var stringifyResponse = function (callback) {
-    return function (error, state) {
-      var response = {
-        enableInput: true,
-        wager: state.wager,
-        score: state.score,
-        status: state.status
+    return function (dispatcherError, state) {
+      var response, errorResponse
+      
+      if (dispatcherError === null) {
+        response = JSON.stringify({
+          enableInput: true,
+          wager: state.wager,
+          score: state.score,
+          status: state.status
+        })
+
+        errorResponse = null
+      } else {
+        errorResponse = JSON.stringify({
+          status: dispatcherError.message
+        })
       }
 
       process.nextTick(function () {
-        callback(null, JSON.stringify(response))
+        callback(errorResponse, response)
       })
     }
   }

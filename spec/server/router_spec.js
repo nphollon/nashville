@@ -85,7 +85,7 @@ describe("The router", function () {
 
   it("should return 422 if route sends error to callback", function (done) {    
     var requestStream = buildRequestStream(postUrl, POST, dummy())
-    var error = new Error("test error")
+    var error = "test error"
 
     var responseType = "application/json"
 
