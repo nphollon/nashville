@@ -5,6 +5,11 @@ exports.buildReader = function (interfaceElements) {
 
   var submitButton = interfaceElements.submitButton
   var wagerField = interfaceElements.wagerField
+  var errorDiv = interfaceElements.errorDiv
+
+  var isValidWager = function (wager) {
+    return (typeof wager === "number" && wager > 0)
+  }
 
   wagerField.keypress(function (event) {
     if (event.which === 13) {
@@ -25,9 +30,18 @@ exports.buildReader = function (interfaceElements) {
   reader.buildOnClickCallback = function (clientCallback) {
     return function () {
       var decision = reader.getDecision()
+      var canSubmit = isValidWager(decision.wager)
+      var errorMessage = canSubmit ? "" : "Wager must be a positive number."
+
       process.nextTick(function () {
-        clientCallback(decision)
+        errorDiv.text(errorMessage)
       })
+      
+      if (canSubmit) {
+        process.nextTick(function () {
+          clientCallback(decision)
+        })
+      }
     }
   }
 

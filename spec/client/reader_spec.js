@@ -6,14 +6,17 @@ describe("The reader", function () {
   var dummy = helpers.dummy
   var readerFactory = helpers.requireSource("client/reader")
 
-  var submitButton, wagerField, reader
+  var submitButton, wagerField, errorDiv, reader
   
   beforeEach(function () {
     submitButton = mock("submit button", ["prop", "off", "click"])
     wagerField = mock("wager field", ["val", "keypress"])
+    errorDiv = mock("errors", ["text"])
+
     reader = readerFactory.buildReader({
       submitButton: submitButton,
-      wagerField: wagerField
+      wagerField: wagerField,
+      errorDiv: errorDiv
     })
   })
 
@@ -50,6 +53,23 @@ describe("The reader", function () {
   })
 
   describe("building the onClick callback", function () {
+    var expectError = function (done, decision) {
+      reader.getDecision = function () {
+        return decision
+      }
+
+      var clientCallback = jasmine.createSpy("callback")
+      var callbackWrapper = reader.buildOnClickCallback(clientCallback)
+
+      callbackWrapper()
+
+      process.nextTick(function () {
+        expect(clientCallback).not.toHaveBeenCalled()
+        expect(errorDiv.text).toHaveBeenCalledWith("Wager must be a positive number.")
+        done()
+      })
+    }
+
     it("should not call the client callback", function () {
       var clientCallback = jasmine.createSpy("clientCallback")
       reader.buildOnClickCallback(clientCallback)
@@ -63,17 +83,30 @@ describe("The reader", function () {
     })
 
     it("should return a function that sends the decision to the client callback", function (done) {
-      var decision = dummy()
+      var decision = { wager: 1 }
       reader.getDecision = function () { return decision }
 
       var clientCallback = function (data) {
         expect(data).toBe(decision)
+        expect(errorDiv.text).toHaveBeenCalledWith("")
         done()
       }
 
       var callbackWrapper = reader.buildOnClickCallback(clientCallback)
 
       callbackWrapper()
+    })
+
+    it("should reject decision with a non-numerical wager", function (done) {
+      expectError(done, { wager: "a potato" })
+    })
+
+    it("should reject decision with a negative wager", function (done) {
+      expectError(done, {wager: -1})
+    })
+
+    it("should reject decision with a zero wager", function (done) {
+      expectError(done, {wager: 0})
     })
   })
 

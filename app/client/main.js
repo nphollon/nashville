@@ -16,7 +16,8 @@
 			statusDiv: $("#status"),
 			scoreDiv: $("#score"),
 			wagerField: $("#wager"),
-			submitButton: $("#submit")
+			submitButton: $("#submit"),
+			errorDiv: $("#error")
 		}
 		
 		var requester = require("./requester").buildRequester($, urls)
