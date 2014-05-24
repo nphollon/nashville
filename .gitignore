@@ -2,3 +2,5 @@ nashville.iml
 .idea/
 .vagrant/
 node_modules/
+public/index.css
+public/index.js

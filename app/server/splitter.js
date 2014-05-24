@@ -1,9 +1,11 @@
 "use strict";
 
-exports.build = function (dispatcher) {
+exports.build = function (dispatcher, count) {
   var splitter = {}
+  var decisions = []
+  var callbacks = []
 
-  var splitDispatch = function (n, callback) {
+  var fulfillRequest = function (n, callback) {
     return function (error, data) {
       var response = (error === null) ? data[n] : undefined
 
@@ -13,20 +15,55 @@ exports.build = function (dispatcher) {
     }
   }
 
+  var fulfillWithError = function (error) {
+    return function (callback) {
+      process.nextTick(function () {
+        callback(error)
+      })
+    }
+  }
+
+  var fulfillWithData = function (data) {
+    return function (callback, index) {
+      process.nextTick(function () {
+        callback(null, data[index])
+      })
+    }
+  }
+
+  var processDispatch = function (error, data) {
+    var fulfill
+
+    if (error === null) {
+      fulfill = fulfillWithData(data)
+    } else {
+      fulfill = fulfillWithError(error)
+    }
+
+    callbacks.forEach(fulfill)
+  }
+
+  var allPlayersSubmitted = function () {
+    return Object.keys(decisions).length === count
+  }
+
   splitter.submitDecision = function (n) {
     return function (decision, callback) {
-      var decisionList = [ decision ]
+      decisions[n] = decision
+      callbacks[n] = callback
     
-      process.nextTick(function () {
-        dispatcher.submitDecision(decisionList, splitDispatch(n, callback))
-      })
+      if (allPlayersSubmitted()) {
+        process.nextTick(function () {
+          dispatcher.submitDecision(decisions, processDispatch)
+        })
+      }
     }
   }
 
   splitter.requestUpdate = function (n) {
     return function (callback) {
       process.nextTick(function () {
-        dispatcher.requestUpdate(splitDispatch(n, callback))
+        dispatcher.requestUpdate(fulfillRequest(n, callback))
       })
     }
   }
