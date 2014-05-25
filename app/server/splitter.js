@@ -41,17 +41,31 @@ exports.build = function (dispatcher, count) {
     }
 
     callbacks.forEach(fulfill)
+
+    decisions = []
+    callbacks = []
   }
 
   var allPlayersSubmitted = function () {
+    // Why does this break unrelated tests when callbacks replaces decisions?
     return Object.keys(decisions).length === count
+  }
+
+  var registerSubmission = function (decision, callback, n) {
+    if (decisions[n] !== undefined) {
+      process.nextTick(function () {
+        callback(new Error("Client submitted decision while waiting for an update"))
+      })
+    } else {
+      decisions[n] = decision
+      callbacks[n] = callback
+    }
   }
 
   splitter.submitDecision = function (n) {
     return function (decision, callback) {
-      decisions[n] = decision
-      callbacks[n] = callback
-    
+      registerSubmission(decision, callback, n)
+
       if (allPlayersSubmitted()) {
         process.nextTick(function () {
           dispatcher.submitDecision(decisions, processDispatch)

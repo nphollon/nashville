@@ -122,6 +122,48 @@ describe("The splitter", function () {
       splitter.submitDecision(1)(decisions[1], playerCallback)
     })
 
-    // TODO: reset callbacks and decisions after first use
+    it("should delete decisions after they are used", function (done) {
+      dispatcher.submitDecision = function (decisionList, callback) {
+        callback(null, responses)
+      }
+
+      splitter.submitDecision(0)(dummy(), dummy())
+      splitter.submitDecision(1)(dummy(), function () {
+
+        dispatcher.submitDecision = function (decisionList) {
+          expect(decisionList).toEqual(decisions)
+          done()
+        }
+
+        splitter.submitDecision(0)(decisions[0], dummy())
+        splitter.submitDecision(1)(decisions[1], dummy())        
+      })
+    })
+
+    it("should delete callbacks after they are used", function (done) {
+      dispatcher.submitDecision = function (decisionList, callback) {
+        callback(null, responses)
+      }
+
+      splitter.submitDecision(0)(dummy(), dummy())
+      splitter.submitDecision(1)(dummy(), function () {
+
+        splitter.submitDecision(0)(decisions[0], dummy())
+        splitter.submitDecision(1)(decisions[1], function (error, data) {
+
+          expect(error).toBe(null)
+          expect(data).toBe(responses[1])
+          done()
+        })        
+      })
+    })
+
+    it("should return error if player submits decision before last callback fulfilled", function (done) {
+      splitter.submitDecision(0)(dummy(), dummy())
+      splitter.submitDecision(0)(dummy(), function (error) {
+        expect(error.message).toBe("Client submitted decision while waiting for an update")
+        done()
+      })
+    })
   })
 })
