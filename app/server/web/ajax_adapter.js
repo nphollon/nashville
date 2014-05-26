@@ -1,6 +1,6 @@
 "use strict";
 
-var events = require("./game_events")
+var events = require("../game/game_events")
 
 exports.build = function (dispatcher) {
   var adapter = {}

@@ -1,9 +1,9 @@
 "use strict";
 
 describe("The state manager", function () {
-  var helpers = require("../spec_helper")
-  var events = helpers.requireSource("server/game_events")
-  var stateManagerFactory = helpers.requireSource("server/state_manager")
+  var helpers = require("../../spec_helper")
+  var events = helpers.requireSource("server/game/game_events")
+  var stateManagerFactory = helpers.requireSource("server/game/state_manager")
   var stateManager
 
   beforeEach(function () {

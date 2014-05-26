@@ -1,11 +1,11 @@
 describe("The game server", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
+  var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
   var mock = jasmine.createSpyObj
-  var gameServerFactory = helpers.requireSource("server/game_server")
-  var events = helpers.requireSource("server/game_events")
+  var gameServerFactory = helpers.requireSource("server/game/game_server")
+  var events = helpers.requireSource("server/game/game_events")
 
   var gameServer, dispatcher, stateManager, chancePlayer
 

@@ -1,10 +1,10 @@
 describe("Ajax adapter", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
+  var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
-  var adapterFactory = helpers.requireSource("server/ajax_adapter")
-  var events = helpers.requireSource("server/game_events")
+  var adapterFactory = helpers.requireSource("server/web/ajax_adapter")
+  var events = helpers.requireSource("server/game/game_events")
   var adapter, dispatcher
 
   beforeEach(function () {

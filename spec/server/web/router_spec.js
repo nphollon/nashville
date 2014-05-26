@@ -1,12 +1,12 @@
 describe("The router", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
+  var helpers = require("../../spec_helper")
   var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
   var requireSource = helpers.requireSource
 
-  var routerFactory = requireSource("server/router")
+  var routerFactory = requireSource("server/web/router")
 
   var routes, router, responseStream
   var getUrl, postUrl, badUrl, GET, POST

@@ -8,9 +8,9 @@ describe("The dispatcher", function () {
   C) DISPATCHER has a DECISION and an unfulfilled REQUEST CALLBACK
   */
 
-  var helpers = require("../spec_helper")
+  var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
-  var dispatcherFactory = helpers.requireSource("server/dispatcher")
+  var dispatcherFactory = helpers.requireSource("server/web/dispatcher")
 
 	var dispatcher
 	

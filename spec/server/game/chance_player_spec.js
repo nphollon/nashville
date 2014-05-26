@@ -1,9 +1,9 @@
 describe("The chance player", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
-  var chancePlayerFactory = helpers.requireSource("server/chance_player")
-  var events = helpers.requireSource("server/game_events")
+  var helpers = require("../../spec_helper")
+  var chancePlayerFactory = helpers.requireSource("server/game/chance_player")
+  var events = helpers.requireSource("server/game/game_events")
 
   it("should decide the user wins if RNG returns true", function (done) {
     var random = {

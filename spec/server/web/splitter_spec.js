@@ -1,9 +1,9 @@
 describe("The splitter", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
+  var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
-  var splitterFactory = helpers.requireSource("server/splitter")
+  var splitterFactory = helpers.requireSource("server/web/splitter")
 
   var splitter, dispatcher
 

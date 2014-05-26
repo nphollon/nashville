@@ -6,7 +6,7 @@ var defaultFactories = {
   },
 
   router: function (that) {
-    return require("./router").build(that.routes)
+    return require("./web/router").build(that.routes)
   },
 
   routes: function (that) {
@@ -22,19 +22,19 @@ var defaultFactories = {
   },
 
   routeFactory: function () {
-    return require("./routes")
+    return require("./web/routes")
   },
 
   adapter: function (that) {
-    return require("./ajax_adapter").build(that.dispatcher)
+    return require("./web/ajax_adapter").build(that.dispatcher)
   },
 
   dispatcher: function () {
-    return require("./dispatcher").build()
+    return require("./web/dispatcher").build()
   },
 
   gameServer: function (that) {
-    return require("./game_server").build(
+    return require("./game/game_server").build(
       that.dispatcher,
       that.stateManager,
       that.chancePlayer
@@ -42,11 +42,11 @@ var defaultFactories = {
   },
 
   stateManager: function () {
-    return require("./state_manager").build()
+    return require("./game/state_manager").build()
   },
 
   chancePlayer: function (that) {
-    return require("./chance_player").build(that.random)
+    return require("./game/chance_player").build(that.random)
   },
 
   random: function () {
