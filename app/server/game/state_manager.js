@@ -6,6 +6,7 @@ exports.createState = function (original) {
   if (original === undefined) {
     return {
       nextEventType: events.playerType,
+      nextPlayerIndex: 0,
       wager: 1,
       score: 0,
       status: "Place your bet."
@@ -13,6 +14,7 @@ exports.createState = function (original) {
   } else {
     return {
       nextEventType: original.nextEventType,
+      nextPlayerIndex: original.nextPlayerIndex,
       wager: original.wager,
       score: original.score,
       status: original.status

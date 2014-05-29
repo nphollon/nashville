@@ -22,11 +22,15 @@ describe("The state manager", function () {
 
   it("should request chance event after client makes a wager", function (done) {
     var decision = events.playerEvent({ wager: 3 })
-    var initialState = { nextEventType: events.playerType, wager: 1, score: 0, status: "" }
+    var initialState = stateManagerFactory.createState()
+    initialState.nextEventType = events.playerType
+    initialState.wager = 1
+    initialState.score = 0
 
     var callback = function (error, data) {
       expect(error).toBe(null)
       expect(data.nextEventType).toBe(events.chanceType)
+      expect(data.nextPlayerIndex).toBe(0)
       expect(data.wager).toBe(3)
       expect(data.score).toBe(0)
       done()
@@ -37,7 +41,10 @@ describe("The state manager", function () {
 
   it("should deduct wager from score if chance event is false", function (done) {
     var decision = events.chanceEvent(false)
-    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
+    var initialState = stateManagerFactory.createState()
+    initialState.nextEventType = events.chanceType
+    initialState.wager = 3
+    initialState.score = 5
 
     var callback = function (error, data) {
       expect(error).toBe(null)
@@ -53,7 +60,10 @@ describe("The state manager", function () {
 
   it("should add wager to score if chance event is true", function (done) {
     var decision = events.chanceEvent(true)
-    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
+    var initialState = stateManagerFactory.createState()
+    initialState.nextEventType = events.chanceType
+    initialState.wager = 3
+    initialState.score = 5
 
     var callback = function (error, data) {
       expect(error).toBe(null)
@@ -69,7 +79,8 @@ describe("The state manager", function () {
 
   it("should return error if an unexpected chance event is received", function (done) {
     var decision = events.chanceEvent(true)
-    var initialState = { nextEventType: events.playerType, wager: 3, score: 5, status: "" }
+    var initialState = stateManagerFactory.createState()
+    initialState.nextEventType = events.playerType
 
     var callback = function (error) {
       expect(error.message).toBe("State manager received invalid decision.")
@@ -83,7 +94,8 @@ describe("The state manager", function () {
 
   it("should return error if an unexpected client event is received", function (done) {
     var decision = events.playerEvent({ wager: 3 })
-    var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
+    var initialState = stateManagerFactory.createState()
+    initialState.nextEventType = events.chanceType
 
     var callback = function (error) {
       expect(error.message).toBe("State manager received invalid decision.")
