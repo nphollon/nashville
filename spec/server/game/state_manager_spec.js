@@ -21,7 +21,7 @@ describe("The state manager", function () {
   })
 
   it("should request chance event after client makes a wager", function (done) {
-    var decision = events.playerEvent(3)
+    var decision = events.playerEvent({ wager: 3 })
     var initialState = { nextEventType: events.playerType, wager: 1, score: 0, status: "" }
 
     var callback = function (error, data) {
@@ -82,7 +82,7 @@ describe("The state manager", function () {
   })
 
   it("should return error if an unexpected client event is received", function (done) {
-    var decision = events.playerEvent(3)
+    var decision = events.playerEvent({ wager: 3 })
     var initialState = { nextEventType: events.chanceType, wager: 3, score: 5, status: "" }
 
     var callback = function (error) {

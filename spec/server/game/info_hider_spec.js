@@ -50,7 +50,7 @@ describe("The information hider", function () {
 
     var serverCallback = function (error, data) {
       expect(error).toBe(null)
-      expect(data).toEqual(events.playerEvent(1))
+      expect(data).toEqual(events.playerEvent(decisions[0]))
       done()
     }
 
@@ -68,7 +68,7 @@ describe("The information hider", function () {
 
     var serverCallback = function (error, data) {
       expect(error).toBe(null)
-      expect(data).toEqual(events.playerEvent(2))
+      expect(data).toEqual(events.playerEvent(decisions[1]))
       done()
     }
 

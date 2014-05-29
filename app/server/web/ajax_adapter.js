@@ -38,7 +38,7 @@ exports.build = function (dispatcher) {
 
   adapter.submitDecision = function (requestBody, callback) {
     var jsonDecision = JSON.parse(requestBody)
-    var decision = events.playerEvent(jsonDecision.wager)
+    var decision = events.playerEvent(jsonDecision)
 
     process.nextTick(function () {
       dispatcher.submitDecision(decision, stringifyResponse(callback))

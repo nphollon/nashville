@@ -17,7 +17,7 @@ exports.build = function (dispatcher, playerCount) {
     return function (error, data) {
       process.nextTick(function () {
         if (error === null) {
-          var decision = events.playerEvent(data[playerIndex].wager)
+          var decision = events.playerEvent(data[playerIndex])
           callback(null, decision)
         } else {
           callback(error)
