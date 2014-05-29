@@ -35,7 +35,7 @@ describe("The application", function () {
 		helpers.resetSpecTimeout()
 	})
 
-	it("should let the user submit a decision and display the result", function (done) {
+	xit("should let the user submit a decision and display the result", function (done) {
 		var winningRandom = {
 			bool: function () { return true }
 		}
@@ -54,7 +54,7 @@ describe("The application", function () {
 		}))
 	})
 
-	it("should cope with server-side errors gracefully", function (done) {
+	xit("should cope with server-side errors gracefully", function (done) {
 		var failingDispatcher = {
 			requestUpdate: function (callback) {
 				callback(new Error("dispatcher error"))

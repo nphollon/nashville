@@ -10,7 +10,7 @@
     "url": "https://github.com/nphollon/nashville.git"
   },
   "dependencies": {
-    "depdep": "^0.1.0",
+    "depdep": "^1.0.0",
     "jquery": "^2.1.0",
     "random-js": "^1.0.4"
   },

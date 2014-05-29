@@ -51,22 +51,24 @@ var defaultFactories = {
 
   random: function () {
     var Random = require("random-js");
-    return new Random(Random.engines.mt19937().autoSeed());
+    return new Random(Random.engines.mt19937().autoSeed())
   }
 }
 
 exports.build = function (substitutions) {
   var application = {}
 
-  var objects = require("depdep").buildApplicationContext(defaultFactories, substitutions)
+  Object.defineProperty(application, "context", {
+    value: require("depdep").buildContext(defaultFactories, substitutions)
+  })
   
   application.start = function (port) {
-    objects.gameServer.start()
-    objects.webServer.listen(port)
+    this.context.gameServer.start()
+    this.context.webServer.listen(port)
   }
 
   application.stop = function () {
-    objects.webServer.close()
+    this.context.webServer.close()
   }
   
   return application

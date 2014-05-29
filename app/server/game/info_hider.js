@@ -1,5 +1,7 @@
 "use strict";
 
+var events = require("./game_events")
+
 exports.build = function (dispatcher, playerCount) {
   var infoHider = {}
 
@@ -15,7 +17,8 @@ exports.build = function (dispatcher, playerCount) {
     return function (error, data) {
       process.nextTick(function () {
         if (error === null) {
-          callback(null, data[playerIndex])
+          var decision = events.playerEvent(data[playerIndex].wager)
+          callback(null, decision)
         } else {
           callback(error)
         }

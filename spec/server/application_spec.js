@@ -16,7 +16,7 @@ describe("the application", function () {
 
     var context = { gameServer: gameServer, webServer: webServer }
 
-    spyOn(dependencyManager, "buildApplicationContext").and.callFake(
+    spyOn(dependencyManager, "buildContext").and.callFake(
       function (defaultContext, subs) {
         return (subs === expectedSubs) ? context : undefined
       }
