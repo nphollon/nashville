@@ -41,7 +41,6 @@ exports.build = function (dispatcher, count) {
     }
 
     callbacks.forEach(fulfill)
-
     decisions = []
     callbacks = []
   }

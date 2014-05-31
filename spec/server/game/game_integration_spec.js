@@ -53,7 +53,7 @@ describe("The game", function () {
   }
 
 
-  xit("plays a 2 player game", function (done) {
+  it("plays a 2 player game", function (done) {
     var context = depdep.buildContext(factories)
     var splitter = context.splitter
 

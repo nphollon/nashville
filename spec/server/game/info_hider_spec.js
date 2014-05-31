@@ -5,6 +5,7 @@ describe("The information hider", function () {
   var dummy = helpers.dummy
   var infoHiderFactory = helpers.requireSource("server/game/info_hider")
   var events = helpers.requireSource("server/game/events")
+  var states = helpers.requireSource("server/game/states")
   var dispatcher, infoHider
 
   beforeEach(function () {
@@ -12,10 +13,10 @@ describe("The information hider", function () {
   })
 
   it("should wrap state in a list if there is one player", function (done) {
-    var state = dummy()
+    var state = states.build({ nextPlayerIndex: 0 })
     
     dispatcher.sendDispatch = function (data) {
-      expect(data).toEqual([ state ])
+      expect(data).toEqual([ state.toResponse(0) ])
       done()
     }
 
@@ -24,10 +25,10 @@ describe("The information hider", function () {
   })
 
   it("should duplicate state if there are two players", function (done) {
-    var state = dummy()
+    var state = states.build({ nextPlayerIndex: 0 })
 
     dispatcher.sendDispatch = function (data) {
-      expect(data).toEqual([ state, state ])
+      expect(data).toEqual([ state.toResponse(0), state.toResponse(1) ])
       done()
     }
 
@@ -36,7 +37,7 @@ describe("The information hider", function () {
   })
 
   it("should send first player's decision to callback if it is their turn", function (done) {
-    var state = { nextPlayerIndex: 0 }
+    var state = states.build({ nextPlayerIndex: 0 })
     var decisions = [ { wager: 1 }, dummy() ]
 
     dispatcher.sendDispatch = function (data, callback) {
@@ -54,7 +55,7 @@ describe("The information hider", function () {
   })
 
   it("should send second player's decision to callback if it is their turn", function (done) {
-    var state = { nextPlayerIndex: 1 }
+    var state = states.build({ nextPlayerIndex: 1 })
     var decisions = [ dummy(), { wager: 2 } ]
 
     dispatcher.sendDispatch = function (data, callback) {
@@ -72,6 +73,7 @@ describe("The information hider", function () {
   })
 
   it("should forward dispatcher error to callback", function (done) {
+    var state = states.build()
     var dispatcherError = dummy()
 
     dispatcher.sendDispatch = function (data, callback) {
@@ -84,6 +86,6 @@ describe("The information hider", function () {
     }
 
     infoHider = infoHiderFactory.build(dispatcher, 1)
-    infoHider.sendDispatch(dummy(), serverCallback)
+    infoHider.sendDispatch(state, serverCallback)
   })
 })

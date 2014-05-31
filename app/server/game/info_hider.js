@@ -11,7 +11,7 @@ exports.build = function (dispatcher, playerCount) {
     async.whilst(
       function () { return dispatch.length < playerCount },
       function (done) {
-        dispatch.push(state)
+        dispatch.push(state.toResponse(dispatch.length))
         done()
       },
       function () { send(dispatch) }
