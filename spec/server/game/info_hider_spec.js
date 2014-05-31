@@ -4,7 +4,7 @@ describe("The information hider", function () {
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
   var infoHiderFactory = helpers.requireSource("server/game/info_hider")
-  var events = helpers.requireSource("server/game/game_events")
+  var events = helpers.requireSource("server/game/events")
   var dispatcher, infoHider
 
   beforeEach(function () {

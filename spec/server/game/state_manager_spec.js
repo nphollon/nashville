@@ -2,8 +2,8 @@
 
 describe("The state manager", function () {
   var helpers = require("../../spec_helper")
-  var events = helpers.requireSource("server/game/game_events")
-  var states = helpers.requireSource("server/game/game_states")
+  var events = helpers.requireSource("server/game/events")
+  var states = helpers.requireSource("server/game/states")
   var stateManagerFactory = helpers.requireSource("server/game/state_manager")
   var stateManager
 

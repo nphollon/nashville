@@ -1,7 +1,7 @@
 "use strict";
 
-var events = require("./game_events")
-var states = require("./game_states")
+var events = require("./events")
+var states = require("./states")
 
 exports.build = function () {
   var stateManager = {}

@@ -1,6 +1,6 @@
 "use strict";
 
-var events = require("./game_events")
+var events = require("./events")
 
 exports.build = function (random) {
   var chancePlayer = {}

@@ -1,7 +1,7 @@
 "use strict";
 
 var async = require("async")
-var events = require("./game_events")
+var events = require("./events")
 
 exports.build = function (dispatcher, playerCount) {
   var infoHider = {}

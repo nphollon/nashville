@@ -29,8 +29,8 @@ describe("The game", function () {
       )
     },
 
-    gameServer: function (that) {
-      return requireSource("server/game/game_server").build(
+    gameDriver: function (that) {
+      return requireSource("server/game/driver").build(
         that.infoHider,
         that.stateManager,
         that.chancePlayer
@@ -57,7 +57,7 @@ describe("The game", function () {
     var context = depdep.buildContext(factories)
     var splitter = context.splitter
 
-    context.gameServer.start()
+    context.gameDriver.start()
 
     splitter.submitDecision(1)(dummy(), dummy())
 

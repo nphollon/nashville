@@ -33,8 +33,8 @@ var defaultFactories = {
     return require("./web/dispatcher").build()
   },
 
-  gameServer: function (that) {
-    return require("./game/game_server").build(
+  gameDriver: function (that) {
+    return require("./game/driver").build(
       that.dispatcher,
       that.stateManager,
       that.chancePlayer
@@ -63,7 +63,7 @@ exports.build = function (substitutions) {
   })
   
   application.start = function (port) {
-    this.context.gameServer.start()
+    this.context.gameDriver.start()
     this.context.webServer.listen(port)
   }
 
