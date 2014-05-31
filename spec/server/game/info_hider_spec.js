@@ -11,11 +11,6 @@ describe("The information hider", function () {
     dispatcher = {}
   })
 
-  /**
-  state: { nextEventType, nextPlayerIndex, wager, score, status }
-  response: { enableInput, wager, score, status }
-  **/
-
   it("should wrap state in a list if there is one player", function (done) {
     var state = dummy()
     

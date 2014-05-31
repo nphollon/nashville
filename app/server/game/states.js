@@ -40,6 +40,17 @@ statePrototype.setWager = function (wager) {
   return newState
 }
 
+statePrototype.toResponse = function (playerIndex) {
+  var response = {
+    enableInput: (this.nextPlayerIndex === playerIndex),
+    wager: this.wager,
+    score: this.score,
+    status: this.status
+  }
+  Object.freeze(response)
+  return response
+}
+
 exports.build = function (spec) {
   var defaults = {
     nextEventType: events.playerType,
