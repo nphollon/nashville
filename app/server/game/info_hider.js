@@ -1,16 +1,21 @@
 "use strict";
 
+var async = require("async")
 var events = require("./game_events")
 
 exports.build = function (dispatcher, playerCount) {
   var infoHider = {}
 
-  var buildDispatch = function (state) {
+  var buildDispatch = function (state, send) {
     var dispatch = []
-    while (dispatch.length < playerCount) {
-      dispatch.push(state)
-    }
-    return dispatch
+    async.whilst(
+      function () { return dispatch.length < playerCount },
+      function (done) {
+        dispatch.push(state)
+        done()
+      },
+      function () { send(dispatch) }
+    )
   }
 
   var extractDecision = function (callback, playerIndex) {
@@ -27,9 +32,10 @@ exports.build = function (dispatcher, playerCount) {
   }
 
   infoHider.sendDispatch = function (state, callback) {
-    var dispatch = buildDispatch(state)
     var playerIndex = state.nextPlayerIndex
-    dispatcher.sendDispatch(dispatch, extractDecision(callback, playerIndex))
+    buildDispatch(state, function (dispatch) {
+      dispatcher.sendDispatch(dispatch, extractDecision(callback, playerIndex))
+    })
   }
 
   return infoHider

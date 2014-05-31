@@ -1,62 +1,28 @@
 "use strict";
 
 var events = require("./game_events")
-
-exports.createState = function (original) {
-  if (original === undefined) {
-    return {
-      nextEventType: events.playerType,
-      nextPlayerIndex: 0,
-      wager: 1,
-      score: 0,
-      status: "Place your bet."
-    }
-  } else {
-    return {
-      nextEventType: original.nextEventType,
-      nextPlayerIndex: original.nextPlayerIndex,
-      wager: original.wager,
-      score: original.score,
-      status: original.status
-    }  
-  }
-}
+var states = require("./game_states")
 
 exports.build = function () {
   var stateManager = {}
 
   var adjustScore = function (state, decision, callback) {
     if (decision.userWins) {
-      state.score += state.wager
-      state.status = "You won."
+      callback(null, state.win())
     } else {
-      state.score -= state.wager
-      state.status = "You lost."
+      callback(null, state.lose())
     }
-    
-    state.nextEventType = events.playerType
-
-    process.nextTick(function () {
-      callback(null, state)
-    })
   }
 
   var setWager = function (state, decision, callback) {
-    state.wager = decision.wager
-    state.nextEventType = events.chanceType
-
-    process.nextTick(function () {
-      callback(null, state)
-    })
+    callback(null, state.setWager(decision.wager))
   }
 
   var raiseStateError = function (state, decision, callback) {
-    process.nextTick(function () {
-      var error = new Error("State manager received invalid decision.")
-      error.decision = decision
-      error.state = state
-      callback(error)
-    })
+    var error = new Error("State manager received invalid decision.")
+    error.decision = decision
+    error.state = state
+    callback(error)
   }
 
   var mutator = {}
@@ -65,18 +31,18 @@ exports.build = function () {
 
   stateManager.initialize = function (callback) {
     process.nextTick(function () {
-      callback(null, exports.createState())
+      callback(null, states.build())
     })
   }
 
-  stateManager.advance = function (previousState, decision, callback) {
-    var nextState = exports.createState(previousState)
-
-    if (decision.type === nextState.nextEventType) {
-      mutator[decision.type].call(null, nextState, decision, callback)
-    } else {
-      raiseStateError(nextState, decision, callback)
-    }
+  stateManager.advance = function (state, decision, callback) {
+    process.nextTick(function () {
+      if (decision.type === state.nextEventType) {
+        mutator[decision.type].call(null, state, decision, callback)
+      } else {
+        raiseStateError(state, decision, callback)
+      }
+    })
   }
 
   return stateManager
