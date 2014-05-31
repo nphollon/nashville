@@ -1,47 +1,31 @@
 "use strict";
 
-var events = require("../game/events")
-
 exports.build = function (dispatcher) {
   var adapter = {}
 
-  var stringifyResponse = function (callback) {
-    return function (dispatcherError, state) {
-      var response, errorResponse
-      
-      if (dispatcherError === null) {
-        response = JSON.stringify({
-          enableInput: true,
-          wager: state.wager,
-          score: state.score,
-          status: state.status
-        })
-
-        errorResponse = null
-      } else {
-        errorResponse = JSON.stringify({
-          status: dispatcherError.message
-        })
-      }
-
+  var sendJsonTo = function (callback) {
+    return function (error, response) {
       process.nextTick(function () {
-        callback(errorResponse, response)
+        if (error === null) {
+          callback(null, JSON.stringify(response))
+        } else {
+          callback(JSON.stringify({ status: error.message }))
+        }
       })
     }
   }
 
   adapter.requestUpdate = function (requestBody, callback) {
     process.nextTick(function () {
-      dispatcher.requestUpdate(stringifyResponse(callback))
+      dispatcher.requestUpdate(sendJsonTo(callback))
     })
   }
 
   adapter.submitDecision = function (requestBody, callback) {
-    var jsonDecision = JSON.parse(requestBody)
-    var decision = events.playerEvent(jsonDecision)
+    var decision = JSON.parse(requestBody)
 
     process.nextTick(function () {
-      dispatcher.submitDecision(decision, stringifyResponse(callback))
+      dispatcher.submitDecision(decision, sendJsonTo(callback))
     })
   }
 
