@@ -26,23 +26,48 @@ var defaultFactories = {
   },
 
   adapter: function (that) {
-    return require("./web/ajax_adapter").build(that.dispatcher)
+    return require("./web/ajax_adapter").build(that.firstPlayerEntry)
+  },
+
+  playerCount: function () {
+    return 1
+  },
+
+  firstPlayerEntry: function (that) {
+    return {
+      submitDecision: that.splitter.submitDecision(0),
+      requestUpdate: that.splitter.requestUpdate(0)
+    }
+  },
+
+  splitter: function (that) {
+    return require("./web/splitter").build(
+      that.dispatcher,
+      that.playerCount
+    )
   },
 
   dispatcher: function () {
     return require("./web/dispatcher").build()
   },
 
+  infoHider: function (that) {
+    return require("./game/info_hider").build(
+      that.dispatcher,
+      that.playerCount
+    )
+  },
+
   gameDriver: function (that) {
     return require("./game/driver").build(
-      that.dispatcher,
+      that.infoHider,
       that.stateManager,
       that.chancePlayer
     )
   },
 
-  stateManager: function () {
-    return require("./game/state_manager").build()
+  stateManager: function (that) {
+    return require("./game/state_manager").build(that.playerCount)
   },
 
   chancePlayer: function (that) {
