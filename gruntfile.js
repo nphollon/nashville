@@ -46,7 +46,7 @@ module.exports = function(grunt) {
 
       spec: {
         options: {
-          predef: ["jasmine", "beforeEach", "describe", "xdescribe", "it", "xit", "spyOn", "expect", "afterEach" ]
+          predef: ["jasmine", "beforeEach", "describe", "it", "xit", "spyOn", "expect", "afterEach", "pending" ]
         },
         files: {
           src: ["spec/**/*.js"]

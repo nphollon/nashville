@@ -3,7 +3,6 @@ describe("The response", function () {
 
   var helpers = require("../../spec_helper")
   var stateFactory = helpers.requireSource("server/game/states")
-  var dummy = helpers.dummy
 
   it("should not contain the next event type or player index", function () {
     var state = stateFactory.build()
@@ -14,12 +13,28 @@ describe("The response", function () {
     expect(response.hasOwnProperty("nextPlayerIndex")).toBe(false)
   })
 
-  it("should contain the same wager, score, and status", function () {
-    var state = stateFactory.build({ wager: dummy(), score: dummy(), status: dummy() })
+  it("should contain the same wager", function () {
+    var state = stateFactory.build({ wager: 1 })
     var response = state.toResponse(0)
     expect(response.wager).toEqual(state.wager)
-    expect(response.score).toEqual(state.score)
-    expect(response.status).toEqual(state.status)
+  })
+
+  it("should contain lose message if player lost", function () {
+    var state = stateFactory.build({ winnerIndex: 1 })
+    var response = state.toResponse(0)
+    expect(response.status).toEqual("You lost.")
+  })
+
+  it("should contain win message if player won", function () {
+    var state = stateFactory.build({ winnerIndex: 0 })
+    var response = state.toResponse(0)
+    expect(response.status).toEqual("You won.")
+  })
+
+  it("should contain instruction if nobody has won yet", function () {
+    var state = stateFactory.build({ winnerIndex: undefined })
+    var response = state.toResponse(0)
+    expect(response.status).toEqual("Place your bet.")
   })
 
   it("should enable input for first player if it is their turn", function () {

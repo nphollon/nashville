@@ -1,5 +1,7 @@
 describe("The application", function () {
 	"use strict";
+	pending()
+	
 	var Browser = require("zombie")
 	var helpers = require("./spec_helper")
 	var applicationFactory = helpers.requireSource("server/application")

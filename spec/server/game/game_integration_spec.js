@@ -1,7 +1,9 @@
 describe("The game", function () {
   "use strict";
+  pending()
 
   var depdep = require("depdep")
+  var async = require("async")
   var helpers = require("../../spec_helper")
   var requireSource = helpers.requireSource
   var dummy = helpers.dummy
@@ -53,23 +55,39 @@ describe("The game", function () {
   }
 
 
-  it("plays a 2 player game", function (done) {
+  it("plays a 2 player game", function (testDone) {
     var context = depdep.buildContext(factories)
     var splitter = context.splitter
 
     context.gameDriver.start()
 
-    splitter.submitDecision(1)(dummy(), dummy())
+    var firstRound = [
+      function (taskDone) {
+        splitter.submitDecision(0)({ wager: 2 }, function (error, data) {
+          expect(error).toBe(null)
+          expect(data).toEqual({
+            enableInput: true,
+            status: "You won.",
+            score: 2,
+            wager: 2
+          })
+          taskDone()
+        })
+      },
+      function (taskDone) {
+        splitter.submitDecision(1)(dummy(), function (error, data) {
+          expect(error).toBe(null)
+          expect(data).toEqual({
+            enableInput: false,
+            status: "You lost.",
+            score: -2,
+            wager: 2
+          })
+          taskDone()
+        })
+      }
+    ]
 
-    splitter.submitDecision(0)({ wager: 2 }, function (error, data) {
-      expect(error).toBe(null)
-      expect(data).toEqual({
-        enableInput: true,
-        status: "You won.",
-        score: 2,
-        wager: 2
-      })
-      done()
-    })
+    async.parallel(firstRound, testDone)
   })
 })

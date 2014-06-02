@@ -54,7 +54,7 @@ describe("The state manager", function () {
       expect(data.nextEventType).toBe(events.playerType)
       expect(data.wager).toBe(3)
       expect(data.score).toBe(2)
-      expect(data.status).toBe("You lost.")
+      expect(data.winnerIndex).toBe(1)
       done()
     }
 
@@ -74,7 +74,7 @@ describe("The state manager", function () {
       expect(data.nextEventType).toBe(events.playerType)
       expect(data.wager).toBe(3)
       expect(data.score).toBe(8)
-      expect(data.status).toBe("You won.")
+      expect(data.winnerIndex).toBe(0)
       done()
     }
 

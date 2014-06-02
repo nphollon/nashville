@@ -4,20 +4,30 @@ var events = require("./events")
 
 var statePrototype = {}
 
+var getStatus = function (winnerIndex, playerIndex) {
+  if (winnerIndex === undefined) {
+    return "Place your bet."
+  }
+  if (winnerIndex === playerIndex) {
+    return "You won."
+  }
+  return "You lost."
+}
+
 var copy = function (original) {
   var state = Object.create(statePrototype)
   state.nextEventType = original.nextEventType
   state.nextPlayerIndex = original.nextPlayerIndex
   state.wager = original.wager
   state.score = original.score
-  state.status = original.status
+  state.winnerIndex = original.winnerIndex
   return state
 }
 
 statePrototype.win = function () {
   var newState = copy(this)
   newState.score += newState.wager
-  newState.status = "You won."
+  newState.winnerIndex = 0
   newState.nextEventType = events.playerType
   Object.freeze(newState)
   return newState
@@ -26,7 +36,7 @@ statePrototype.win = function () {
 statePrototype.lose = function () {
   var newState = copy(this)
   newState.score -= newState.wager
-  newState.status = "You lost."
+  newState.winnerIndex = 1
   newState.nextEventType = events.playerType
   Object.freeze(newState)
   return newState
@@ -45,7 +55,7 @@ statePrototype.toResponse = function (playerIndex) {
     enableInput: (this.nextPlayerIndex === playerIndex),
     wager: this.wager,
     score: this.score,
-    status: this.status
+    status: getStatus(this.winnerIndex, playerIndex)
   }
   Object.freeze(response)
   return response
@@ -57,7 +67,6 @@ exports.build = function (spec) {
     nextPlayerIndex: 0,
     wager: 1, 
     score: 0,
-    status: "Place your bet."
   }
 
   Object.keys(spec || {}).forEach(function (key) {
