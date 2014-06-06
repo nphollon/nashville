@@ -19,14 +19,16 @@ var copy = function (original) {
   state.nextEventType = original.nextEventType
   state.nextPlayerIndex = original.nextPlayerIndex
   state.wager = original.wager
-  state.score = original.score
+  state.scores = original.scores
   state.winnerIndex = original.winnerIndex
   return state
 }
 
+// TODO: win() and lose() only work for 2-player game
 statePrototype.win = function () {
   var newState = copy(this)
-  newState.score += newState.wager
+  newState.scores[0] += newState.wager
+  newState.scores[1] -= newState.wager
   newState.winnerIndex = 0
   newState.nextEventType = events.playerType
   Object.freeze(newState)
@@ -35,7 +37,8 @@ statePrototype.win = function () {
 
 statePrototype.lose = function () {
   var newState = copy(this)
-  newState.score -= newState.wager
+  newState.scores[0] -= newState.wager
+  newState.scores[1] += newState.wager
   newState.winnerIndex = 1
   newState.nextEventType = events.playerType
   Object.freeze(newState)
@@ -52,26 +55,31 @@ statePrototype.setWager = function (wager) {
 
 statePrototype.toResponse = function (playerIndex) {
   var response = {
+    playerIndex: playerIndex,
     enableInput: (this.nextPlayerIndex === playerIndex),
     wager: this.wager,
-    score: this.score,
+    scores: this.scores,
     status: getStatus(this.winnerIndex, playerIndex)
   }
   Object.freeze(response)
   return response
 }
 
-exports.build = function (spec) {
+exports.build = function (playerCount, spec) {
   var defaults = {
     nextEventType: events.playerType,
     nextPlayerIndex: 0,
-    wager: 1, 
-    score: 0,
+    wager: 1,
+    scores: []
   }
 
   Object.keys(spec || {}).forEach(function (key) {
     defaults[key] = spec[key]
   })
+
+  while (defaults.scores.length < playerCount) {
+    defaults.scores.push(0)
+  }
 
   var state = copy(defaults)
   Object.freeze(state)

@@ -3,6 +3,7 @@ describe("The renderer", function () {
   var helpers = require("../spec_helper")
   var rendererFactory = helpers.requireSource("client/renderer")
   var mock = jasmine.createSpyObj
+  var dummy = helpers.dummy
 
   var wagerField, statusDiv, scoreDiv, renderer
 
@@ -18,22 +19,18 @@ describe("The renderer", function () {
   })
 
   describe("displaying the data", function () {
-    it("should set the wager amount in the wager field", function () {
-      var wager = 8
-      renderer.render({ wager: wager })
-      expect(wagerField.val).toHaveBeenCalledWith(wager)
-    })
+    it("should set the wager, status message, and score", function () {
+      var data = {
+        playerIndex: 1,
+        wager: dummy(),
+        status: dummy(),
+        scores: [ null, dummy(), null ]
+      }
 
-    it("should set the status message", function () {
-      var message = "status message"
-      renderer.render({ status: message })
-      expect(statusDiv.text).toHaveBeenCalledWith(message)
-    })
-
-    it("should set the score", function () {
-      var score = 0
-      renderer.render({ score: score })
-      expect(scoreDiv.text).toHaveBeenCalledWith(score)
+      renderer.render(data)
+      expect(wagerField.val).toHaveBeenCalledWith(data.wager)
+      expect(statusDiv.text).toHaveBeenCalledWith(data.status)
+      expect(scoreDiv.text).toHaveBeenCalledWith(data.scores[1])
     })
   })
 

@@ -1,6 +1,5 @@
 describe("The application", function () {
 	"use strict";
-	pending()
 	
 	var Browser = require("zombie")
 	var helpers = require("./spec_helper")

@@ -6,6 +6,7 @@ describe("The game driver", function () {
   var mock = jasmine.createSpyObj
   var driverFactory = helpers.requireSource("server/game/driver")
   var events = helpers.requireSource("server/game/events")
+  var states = helpers.requireSource("server/game/states")
 
   var driver, dispatcher, stateManager, chancePlayer
 
@@ -18,12 +19,19 @@ describe("The game driver", function () {
 
   describe("starting a game", function () {
     it("should query state manager for initial game state", function (done) {
-      driver.start()
-
-      process.nextTick(function () {
-        expect(stateManager.initialize).toHaveBeenCalledWith(driver.getNextEvent)
-        done()
+      var expectedPlayerCount = 3
+      var state = dummy()
+      spyOn(states, "build").and.callFake(function (playerCount) {
+        return (playerCount === expectedPlayerCount) ? state : undefined
       })
+
+      driver.getNextEvent = function (error, data) {
+        expect(error).toBe(null)
+        expect(data).toBe(state)
+        done()
+      }
+      
+      driver.start(expectedPlayerCount)
     })
   })
 

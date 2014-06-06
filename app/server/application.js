@@ -88,7 +88,7 @@ exports.build = function (substitutions) {
   })
   
   application.start = function (port) {
-    this.context.gameDriver.start()
+    this.context.gameDriver.start(this.context.playerCount)
     this.context.webServer.listen(port)
   }
 

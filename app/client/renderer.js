@@ -6,13 +6,14 @@ exports.buildRenderer = function (interfaceElements) {
   renderer.render = function (data) {
     interfaceElements.wagerField.val(data.wager)
     interfaceElements.statusDiv.text(data.status)
-    interfaceElements.scoreDiv.text(data.score)
+    interfaceElements.scoreDiv.text(data.scores[data.playerIndex])
   }
 
   renderer.error = function () {
     this.render({
+      playerIndex: 0,
       status: "We're sorry. Something went wrong.",
-      score: 0,
+      scores: [0],
       wager: 0
     })
   }

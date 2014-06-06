@@ -1,6 +1,7 @@
 "use strict";
 
 var events = require("./events")
+var states = require("./states")
 
 exports.build = function (dispatcher, stateManager, chancePlayer) {
   var gameServer = {}
@@ -19,9 +20,9 @@ exports.build = function (dispatcher, stateManager, chancePlayer) {
     dispatcher.sendDispatch(gameState, advanceGame)    
   }
 
-  gameServer.start = function () {
+  gameServer.start = function (playerCount) {
     process.nextTick(function () {
-      stateManager.initialize(gameServer.getNextEvent)
+      gameServer.getNextEvent(null, states.build(playerCount))
     })
   }
 

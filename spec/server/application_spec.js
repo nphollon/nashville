@@ -6,15 +6,16 @@ describe("the application", function () {
   var helpers = require("../spec_helper")
   var applicationFactory = helpers.requireSource("server/application")
 
-  var gameDriver, webServer, port, expectedSubs
+  var gameDriver, webServer, port, expectedSubs, playerCount
 
   beforeEach(function () {
     port = 1
     gameDriver = jasmine.createSpyObj("game driver", ["start"])
     webServer = jasmine.createSpyObj("web server", ["listen", "close"])
-    expectedSubs = helpers.dummy()
+    playerCount = 3
+    expectedSubs = {}
 
-    var context = { gameDriver: gameDriver, webServer: webServer }
+    var context = { gameDriver: gameDriver, webServer: webServer, playerCount: playerCount }
 
     spyOn(dependencyManager, "buildContext").and.callFake(
       function (defaultContext, subs) {
@@ -29,7 +30,7 @@ describe("the application", function () {
 
       application.start(port)
 
-      expect(gameDriver.start).toHaveBeenCalled()
+      expect(gameDriver.start).toHaveBeenCalledWith(playerCount)
       expect(webServer.listen).toHaveBeenCalledWith(port)
     })
   })

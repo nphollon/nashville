@@ -1,6 +1,5 @@
 describe("The game", function () {
   "use strict";
-  pending()
 
   var depdep = require("depdep")
   var async = require("async")
@@ -39,8 +38,8 @@ describe("The game", function () {
       )
     },
 
-    stateManager: function (that) {
-      return requireSource("server/game/state_manager").build(that.playerCount)
+    stateManager: function () {
+      return requireSource("server/game/state_manager").build()
     },
 
     chancePlayer: function (that) {
@@ -59,16 +58,17 @@ describe("The game", function () {
     var context = depdep.buildContext(factories)
     var splitter = context.splitter
 
-    context.gameDriver.start()
+    context.gameDriver.start(context.playerCount)
 
     var firstRound = [
       function (taskDone) {
         splitter.submitDecision(0)({ wager: 2 }, function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
+            playerIndex: 0,
             enableInput: true,
+            scores: [2, -2],
             status: "You won.",
-            score: 2,
             wager: 2
           })
           taskDone()
@@ -78,9 +78,10 @@ describe("The game", function () {
         splitter.submitDecision(1)(dummy(), function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
+            playerIndex: 1,
             enableInput: false,
+            scores: [2, -2],
             status: "You lost.",
-            score: -2,
             wager: 2
           })
           taskDone()

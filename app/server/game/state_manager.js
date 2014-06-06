@@ -1,7 +1,6 @@
 "use strict";
 
 var events = require("./events")
-var states = require("./states")
 
 exports.build = function () {
   var stateManager = {}
@@ -28,12 +27,6 @@ exports.build = function () {
   var mutator = {}
   mutator[events.chanceType] = adjustScore
   mutator[events.playerType] = setWager
-
-  stateManager.initialize = function (callback) {
-    process.nextTick(function () {
-      callback(null, states.build())
-    })
-  }
 
   stateManager.advance = function (state, decision, callback) {
     process.nextTick(function () {
