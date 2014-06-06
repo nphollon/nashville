@@ -26,18 +26,11 @@ var defaultFactories = {
   },
 
   adapter: function (that) {
-    return require("./web/ajax_adapter").build(that.firstPlayerEntry)
+    return require("./web/ajax_adapter").build(that.splitter.input(0))
   },
 
   playerCount: function () {
     return 1
-  },
-
-  firstPlayerEntry: function (that) {
-    return {
-      submitDecision: that.splitter.submitDecision(0),
-      requestUpdate: that.splitter.requestUpdate(0)
-    }
   },
 
   splitter: function (that) {

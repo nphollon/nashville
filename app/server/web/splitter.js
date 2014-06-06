@@ -61,7 +61,7 @@ exports.build = function (dispatcher, count) {
     }
   }
 
-  splitter.submitDecision = function (n) {
+  var submitDecision = function (n) {
     return function (decision, callback) {
       registerSubmission(decision, callback, n)
 
@@ -73,11 +73,18 @@ exports.build = function (dispatcher, count) {
     }
   }
 
-  splitter.requestUpdate = function (n) {
+  var requestUpdate = function (n) {
     return function (callback) {
       process.nextTick(function () {
         dispatcher.requestUpdate(fulfillRequest(n, callback))
       })
+    }
+  }
+
+  splitter.input = function (n) {
+    return {
+      submitDecision: submitDecision(n),
+      requestUpdate: requestUpdate(n)
     }
   }
 

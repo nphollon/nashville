@@ -62,7 +62,7 @@ describe("The game", function () {
 
     var firstRound = [
       function (taskDone) {
-        splitter.submitDecision(0)({ wager: 2 }, function (error, data) {
+        splitter.input(0).submitDecision({ wager: 2 }, function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
             playerIndex: 0,
@@ -75,7 +75,7 @@ describe("The game", function () {
         })
       },
       function (taskDone) {
-        splitter.submitDecision(1)(dummy(), function (error, data) {
+        splitter.input(1).submitDecision(dummy(), function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
             playerIndex: 1,

@@ -29,7 +29,7 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(0)(decision, playerCallback)
+      splitter.input(0).submitDecision(decision, playerCallback)
     })
 
     it("should forward dispatcher error to callback on player submission", function (done) {
@@ -44,7 +44,7 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(0)(decision, playerCallback)
+      splitter.input(0).submitDecision(decision, playerCallback)
     })
 
     it("should forward dispatch immediately on player request", function (done) {
@@ -58,7 +58,7 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.requestUpdate(0)(playerCallback)
+      splitter.input(0).requestUpdate(playerCallback)
     })
   })
 
@@ -78,8 +78,8 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(0)(decisions[0], dummy())
-      splitter.submitDecision(1)(decisions[1], dummy())
+      splitter.input(0).submitDecision(decisions[0], dummy())
+      splitter.input(1).submitDecision(decisions[1], dummy())
     })
 
     it("should allow players to submit in either order", function (done) {
@@ -88,8 +88,8 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(1)(decisions[1], dummy())
-      splitter.submitDecision(0)(decisions[0], dummy())
+      splitter.input(1).submitDecision(decisions[1], dummy())
+      splitter.input(0).submitDecision(decisions[0], dummy())
     })
 
     it("should fulfill callback for player 1", function (done) {
@@ -103,8 +103,8 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(0)(decisions[0], playerCallback)
-      splitter.submitDecision(1)(decisions[1], dummy())
+      splitter.input(0).submitDecision(decisions[0], playerCallback)
+      splitter.input(1).submitDecision(decisions[1], dummy())
     })
 
     it("should fulfill callback for player 2", function (done) {
@@ -118,8 +118,8 @@ describe("The splitter", function () {
         done()
       }
 
-      splitter.submitDecision(0)(decisions[0], dummy())
-      splitter.submitDecision(1)(decisions[1], playerCallback)
+      splitter.input(0).submitDecision(decisions[0], dummy())
+      splitter.input(1).submitDecision(decisions[1], playerCallback)
     })
 
     it("should delete decisions after they are used", function (done) {
@@ -127,16 +127,16 @@ describe("The splitter", function () {
         callback(null, responses)
       }
 
-      splitter.submitDecision(0)(dummy(), dummy())
-      splitter.submitDecision(1)(dummy(), function () {
+      splitter.input(0).submitDecision(dummy(), dummy())
+      splitter.input(1).submitDecision(dummy(), function () {
 
         dispatcher.submitDecision = function (decisionList) {
           expect(decisionList).toEqual(decisions)
           done()
         }
 
-        splitter.submitDecision(0)(decisions[0], dummy())
-        splitter.submitDecision(1)(decisions[1], dummy())        
+        splitter.input(0).submitDecision(decisions[0], dummy())
+        splitter.input(1).submitDecision(decisions[1], dummy())        
       })
     })
 
@@ -145,11 +145,11 @@ describe("The splitter", function () {
         callback(null, responses)
       }
 
-      splitter.submitDecision(0)(dummy(), dummy())
-      splitter.submitDecision(1)(dummy(), function () {
+      splitter.input(0).submitDecision(dummy(), dummy())
+      splitter.input(1).submitDecision(dummy(), function () {
 
-        splitter.submitDecision(0)(decisions[0], dummy())
-        splitter.submitDecision(1)(decisions[1], function (error, data) {
+        splitter.input(0).submitDecision(decisions[0], dummy())
+        splitter.input(1).submitDecision(decisions[1], function (error, data) {
 
           expect(error).toBe(null)
           expect(data).toBe(responses[1])
@@ -159,8 +159,8 @@ describe("The splitter", function () {
     })
 
     it("should return error if player submits decision before last callback fulfilled", function (done) {
-      splitter.submitDecision(0)(dummy(), dummy())
-      splitter.submitDecision(0)(dummy(), function (error) {
+      splitter.input(0).submitDecision(dummy(), dummy())
+      splitter.input(0).submitDecision(dummy(), function (error) {
         expect(error.message).toBe("Client submitted decision while waiting for an update")
         done()
       })
