@@ -6,11 +6,7 @@ exports.build = function () {
   var stateManager = {}
 
   var adjustScore = function (state, decision, callback) {
-    if (decision.userWins) {
-      callback(null, state.win())
-    } else {
-      callback(null, state.lose())
-    }
+    callback(null, state.win(decision.userWins).nextPlayer())
   }
 
   var setWager = function (state, decision, callback) {

@@ -42,22 +42,57 @@ describe("The state", function () {
     expectIsFrozen(startState.setWager(dummy()))
   })
 
-  it("awards the wager to the winner", function () {
-    var startState = stateFactory.build(2)
-    var wager = 5
-    var endState = startState.setWager(wager).win()
-    expect(endState.scores).toEqual([ 5, -5 ])
-    expect(endState.nextEventType).toBe(events.playerType)
-    expect(endState.winnerIndex).toBe(0)
+  describe("deciding an outcome", function () {
+    it("awards the wager to first player if they won", function () {
+      var startState = stateFactory.build(2)
+      var wager = 5
+      var endState = startState.setWager(wager).win(0)
+      expect(endState.scores).toEqual([ 5, -5 ])
+      expect(endState.nextEventType).toBe(events.playerType)
+      expect(endState.winnerIndex).toBe(0)
+    })
+
+    it("awards the wager to second player if they won", function() {
+      var startState = stateFactory.build(2)
+      var wager = 5
+      var endState = startState.setWager(wager).win(1)
+      expect(endState.scores).toEqual([ -5, 5 ])
+      expect(endState.nextEventType).toBe(events.playerType)
+      expect(endState.winnerIndex).toBe(1)
+    })
+
+    it("awards twice the wager to winner in three player game", function () {
+      var startState = stateFactory.build(3)
+      var wager = 2
+      var endState = startState.setWager(wager).win(0)
+      expect(endState.scores).toEqual([ 4, -2, -2 ])
+    })
   })
 
-  it("deducts the wager from the loser", function() {
-    var startState = stateFactory.build(2)
-    var wager = 5
-    var endState = startState.setWager(wager).lose()
-    expect(endState.scores).toEqual([ -5, 5 ])
-    expect(endState.nextEventType).toBe(events.playerType)
-    expect(endState.winnerIndex).toBe(1)
+  describe("getting the next player", function () {
+    it("increments player index from 0 to 1 if there are 2 players", function () {
+      var startState = stateFactory.build(2, { nextPlayerIndex: 0 })
+      var endState = startState.nextPlayer()
+      expect(endState.nextPlayerIndex).toBe(1)
+    })
+
+    it("increments player index from 1 to 2 if there are 3 players", function () {
+      var startState = stateFactory.build(3, { nextPlayerIndex: 1 })
+      var endState = startState.nextPlayer()
+      expect(endState.nextPlayerIndex).toBe(2)
+    })
+
+    it("increments player index from 2 to 0 if there are 3 players", function () {
+      var startState = stateFactory.build(3, { nextPlayerIndex: 2 })
+      var endState = startState.nextPlayer()
+      expect(endState.nextPlayerIndex).toBe(0)
+    })
+
+    it("expects a player event next", function () {
+      var startState = stateFactory.build(2, { nextEventType: "none" })
+      var endState = startState.nextPlayer()
+      expect(endState.nextEventType).toBe(events.playerType)
+    })
   })
 
   describe("The response", function () {

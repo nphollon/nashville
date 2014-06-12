@@ -14,12 +14,16 @@ exports.buildClient = function (requester, renderer, reader) {
 		if (response.enableInput === true) {
 			reader.enable(client.submit)
 		} else {
-			process.nextTick(requestUpdate)
+			process.nextTick(function () {
+				requester.submit({}, client.update)
+			})
 		}
 	}
 
 	client.start = function () {
-		process.nextTick(requestUpdate)
+		process.nextTick(function () {
+			requester.request(client.update)
+		})
 		reader.disable()
 	}
 
@@ -37,8 +41,6 @@ exports.buildClient = function (requester, renderer, reader) {
 		})
 		reader.disable()
 	}
-	
-	var requestUpdate = requester.request.bind(requester, client.update)
 
 	return client
 }

@@ -1,6 +1,7 @@
 describe("The application", function () {
 	"use strict";
-	
+	pending()
+
 	var Browser = require("zombie")
 	var helpers = require("./spec_helper")
 	var applicationFactory = helpers.requireSource("server/application")
@@ -38,7 +39,7 @@ describe("The application", function () {
 
 	it("should let the user submit a decision and display the result", function (done) {
 		var winningRandom = {
-			bool: function () { return true }
+			integer: function () { return 0 }
 		}
 
 		startApplication({ random: winningRandom })

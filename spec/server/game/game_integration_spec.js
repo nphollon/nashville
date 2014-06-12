@@ -48,25 +48,31 @@ describe("The game", function () {
 
     random: function () {
       return {
-        bool: function () { return true }
+        integer: function () { return 0 }
       }
     }
   }
 
+  var play = function (round) {
+    return function (done) {
+      async.parallel(round, done)
+    }
+  }
 
   it("plays a 2 player game", function (testDone) {
     var context = depdep.buildContext(factories)
-    var splitter = context.splitter
+    var playerOne = context.splitter.input(0)
+    var playerTwo = context.splitter.input(1)
 
     context.gameDriver.start(context.playerCount)
 
     var firstRound = [
       function (taskDone) {
-        splitter.input(0).submitDecision({ wager: 2 }, function (error, data) {
+        playerOne.submitDecision({ wager: 2 }, function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
             playerIndex: 0,
-            enableInput: true,
+            enableInput: false,
             scores: [2, -2],
             status: "You won.",
             wager: 2
@@ -75,11 +81,11 @@ describe("The game", function () {
         })
       },
       function (taskDone) {
-        splitter.input(1).submitDecision(dummy(), function (error, data) {
+        playerTwo.submitDecision(dummy(), function (error, data) {
           expect(error).toBe(null)
           expect(data).toEqual({
             playerIndex: 1,
-            enableInput: false,
+            enableInput: true,
             scores: [2, -2],
             status: "You lost.",
             wager: 2
@@ -89,6 +95,35 @@ describe("The game", function () {
       }
     ]
 
-    async.parallel(firstRound, testDone)
+    var secondRound = [
+      function (taskDone) {
+        playerOne.submitDecision(dummy(), function (error, data) {
+          expect(error).toBe(null)
+          expect(data).toEqual({
+            playerIndex: 0,
+            enableInput: true,
+            scores: [7, -7],
+            status: "You won.",
+            wager: 5
+          })
+          taskDone()
+        })
+      },
+      function (taskDone) {
+        playerTwo.submitDecision({ wager: 5 }, function (error, data) {
+          expect(error).toBe(null)
+          expect(data).toEqual({
+            playerIndex: 1,
+            enableInput: false,
+            scores: [7, -7],
+            status: "You lost.",
+            wager: 5
+          })
+          taskDone()
+        })
+      }
+    ]
+
+    async.series([play(firstRound), play(secondRound)], testDone)
   })
 })

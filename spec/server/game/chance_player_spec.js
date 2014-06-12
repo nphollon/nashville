@@ -5,30 +5,29 @@ describe("The chance player", function () {
   var chancePlayerFactory = helpers.requireSource("server/game/chance_player")
   var events = helpers.requireSource("server/game/events")
 
-  it("should decide the user wins if RNG returns true", function (done) {
-    var random = {
-      bool: function () { return true }
-    }
+  var state, random, chancePlayer
 
-    var chancePlayer = chancePlayerFactory.build(random)
+  beforeEach(function () {
+    random = {}
+    chancePlayer = chancePlayerFactory.build(random)
+    state = { scores: new Array(3) }
+  })
 
-    chancePlayer.getNextEvent(null, function (error, decision) {
-      expect(error).toBe(null)
-      expect(decision).toEqual(events.chanceEvent(true))
+  it("should select a winner randomly from the list of players", function (done) {
+    random.integer = jasmine.createSpy("integer")
+
+    chancePlayer.getNextEvent(state, function () {
+      expect(random.integer).toHaveBeenCalledWith(0, 2)
       done()
     })
   })
 
-  it("should decide the user loses if RNG returns false", function (done) {
-    var random = {
-      bool: function () { return false }
-    }
+  it("should return the index of the winning player", function (done) {
+    random.integer = function () { return 1 }
 
-    var chancePlayer = chancePlayerFactory.build(random)
-
-    chancePlayer.getNextEvent(null, function (error, decision) {
+    chancePlayer.getNextEvent(state, function (error, decision) {
       expect(error).toBe(null)
-      expect(decision).toEqual(events.chanceEvent(false))
+      expect(decision).toEqual(events.chanceEvent(1))
       done()
     })
   })

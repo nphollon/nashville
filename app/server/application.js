@@ -25,12 +25,16 @@ var defaultFactories = {
     return require("./web/routes")
   },
 
+  playerCount: function () {
+    return 2
+  },
+
   adapter: function (that) {
     return require("./web/ajax_adapter").build(that.splitter.input(0))
   },
 
-  playerCount: function () {
-    return 1
+  player2: function (that) {
+    return require("./game/opponent").build(that.splitter.input(1))
   },
 
   splitter: function (that) {
@@ -82,6 +86,7 @@ exports.build = function (substitutions) {
   
   application.start = function (port) {
     this.context.gameDriver.start(this.context.playerCount)
+    this.context.player2.start()
     this.context.webServer.listen(port)
   }
 

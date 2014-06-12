@@ -60,9 +60,10 @@ describe("The client", function () {
 			expect(reader.enable).not.toHaveBeenCalled()
 		})
 
-		it("sends a request if the response forbids user input", function (done) {
-			requester.request.and.callFake(function (callback) {
-				expect(callback).toBe(client.update)
+		it("submits an empty decision if the response forbids user input", function (done) {
+			requester.submit.and.callFake(function (decision, callback) {
+				expect(decision).toEqual({})
+				expect(callback).toEqual(client.update)
 				done()
 			})
 			client.update(null, createResponse(false))

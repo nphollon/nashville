@@ -4,7 +4,7 @@ describe("The state manager", function () {
   var helpers = require("../../spec_helper")
   var events = helpers.requireSource("server/game/events")
   var stateManagerFactory = helpers.requireSource("server/game/state_manager")
-  var dummy = helpers.dummy()
+  var dummy = helpers.dummy
 
   var stateManager, initialState, expectedState
 
@@ -34,26 +34,17 @@ describe("The state manager", function () {
     stateManager.advance(initialState, decision, expectations(done))
   })
 
-  it("should award a loss if chance event is false", function (done) {
-    var decision = events.chanceEvent(false)
-
-    initialState = {
-      nextEventType: events.chanceType,
-      lose: function () {
-        return expectedState
-      }
-    }
-
-    stateManager.advance(initialState, decision, expectations(done))
-  })
-
-  it("should add wager to score if chance event is true", function (done) {
+  it("should award a win to the player who wins", function (done) {
     var decision = events.chanceEvent(true)
 
+    var intermediateState = {
+      nextPlayer: function () { return expectedState }
+    }
+
     initialState = {
       nextEventType: events.chanceType,
-      win: function () {
-        return expectedState
+      win: function (winnerIndex) {
+        return (winnerIndex === decision.userWins) ? intermediateState : undefined
       }
     }
 
