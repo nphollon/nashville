@@ -2,17 +2,23 @@
 
 var events = require("./events")
 
-exports.build = function (random) {
+exports.build = function (random, inputCallbacks) {
   var chancePlayer = {}
 
   var playerCount = function (state) {
     return state.scores.length - 1
   }
 
-  chancePlayer.getNextEvent = function (state, callback) {
+  chancePlayer.start = function () {
+    process.nextTick(function () {
+      inputCallbacks.requestUpdate(chancePlayer.getNextEvent)
+    })
+  }
+
+  chancePlayer.getNextEvent = function (error, state) {
     var winningPlayerIndex = random.integer(0, playerCount(state))
     process.nextTick(function () {
-      callback(null, events.chanceEvent(winningPlayerIndex))
+      inputCallbacks.submitDecision(events.chanceEvent(winningPlayerIndex), chancePlayer.getNextEvent)
     })
   }
 

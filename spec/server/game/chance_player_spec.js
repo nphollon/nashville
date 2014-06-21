@@ -5,30 +5,48 @@ describe("The chance player", function () {
   var chancePlayerFactory = helpers.requireSource("server/game/chance_player")
   var events = helpers.requireSource("server/game/events")
 
-  var state, random, chancePlayer
+  var state, random, chancePlayer, inputCallbacks
 
   beforeEach(function () {
     random = {}
-    chancePlayer = chancePlayerFactory.build(random)
+    inputCallbacks = {}
+    chancePlayer = chancePlayerFactory.build(random, inputCallbacks)
     state = { scores: new Array(3) }
   })
 
-  it("should select a winner randomly from the list of players", function (done) {
-    random.integer = jasmine.createSpy("integer")
+  describe("starting", function () {
+    it("requests an update", function (done) {
+      inputCallbacks.requestUpdate = function (callback) {
+        expect(callback).toBe(chancePlayer.getNextEvent)
+        done()
+      }
 
-    chancePlayer.getNextEvent(state, function () {
-      expect(random.integer).toHaveBeenCalledWith(0, 2)
-      done()
+      chancePlayer.start()
     })
   })
 
-  it("should return the index of the winning player", function (done) {
-    random.integer = function () { return 1 }
+  describe ("getting the next event", function () {
+    it("should select a winner randomly from the list of players", function (done) {
+      random.integer = jasmine.createSpy("integer")
 
-    chancePlayer.getNextEvent(state, function (error, decision) {
-      expect(error).toBe(null)
-      expect(decision).toEqual(events.chanceEvent(1))
-      done()
+      inputCallbacks.submitDecision = function () {
+        expect(random.integer).toHaveBeenCalledWith(0, 2)
+        done()
+      }
+
+      chancePlayer.getNextEvent(null, state)
+    })
+
+    it("should return the index of the winning player", function (done) {
+      random.integer = function () { return 1 }
+
+      inputCallbacks.submitDecision = function (data, callback) {
+        expect(data).toEqual(events.chanceEvent(1))
+        expect(callback).toBe(chancePlayer.getNextEvent)
+        done()
+      } 
+
+      chancePlayer.getNextEvent(null, state)
     })
   })
 })

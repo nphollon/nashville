@@ -3,17 +3,7 @@
 exports.build = function (dispatcher, count) {
   var splitter = {}
   var decisions = []
-  var callbacks = []
-
-  var fulfillRequest = function (n, callback) {
-    return function (error, data) {
-      var response = (error === null) ? data[n] : undefined
-
-      process.nextTick(function () {
-        callback(error, response)
-      })
-    }
-  }
+  var submitCallbacks = []
 
   var fulfillWithError = function (error) {
     return function (callback) {
@@ -31,7 +21,19 @@ exports.build = function (dispatcher, count) {
     }
   }
 
-  var processDispatch = function (error, data) {
+  var fulfillRequestCallback = function (callback, n) {
+    return function (error, data) {
+      process.nextTick(function () {
+        if (error === null) {
+          callback(null, data[n])
+        } else {
+          callback(error)
+        }
+      })
+    }
+  }
+
+  var fulfillSubmitCallbacks = function (error, data) {
     var fulfill
 
     if (error === null) {
@@ -40,13 +42,12 @@ exports.build = function (dispatcher, count) {
       fulfill = fulfillWithError(error)
     }
 
-    callbacks.forEach(fulfill)
+    submitCallbacks.forEach(fulfill)
+    submitCallbacks = []
     decisions = []
-    callbacks = []
   }
 
   var allPlayersSubmitted = function () {
-    // Why does this break unrelated tests when callbacks replaces decisions?
     return Object.keys(decisions).length === count
   }
 
@@ -57,7 +58,7 @@ exports.build = function (dispatcher, count) {
       })
     } else {
       decisions[n] = decision
-      callbacks[n] = callback
+      submitCallbacks[n] = callback
     }
   }
 
@@ -67,7 +68,7 @@ exports.build = function (dispatcher, count) {
 
       if (allPlayersSubmitted()) {
         process.nextTick(function () {
-          dispatcher.submitDecision(decisions, processDispatch)
+          dispatcher.submitDecision(decisions, fulfillSubmitCallbacks)
         })
       }
     }
@@ -76,7 +77,7 @@ exports.build = function (dispatcher, count) {
   var requestUpdate = function (n) {
     return function (callback) {
       process.nextTick(function () {
-        dispatcher.requestUpdate(fulfillRequest(n, callback))
+        dispatcher.requestUpdate(fulfillRequestCallback(callback, n))
       })
     }
   }

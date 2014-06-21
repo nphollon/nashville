@@ -4,7 +4,6 @@ describe("The information hider", function () {
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
   var infoHiderFactory = helpers.requireSource("server/game/info_hider")
-  var events = helpers.requireSource("server/game/events")
   var dispatcher, infoHider, state
 
   beforeEach(function () {
@@ -38,7 +37,7 @@ describe("The information hider", function () {
   })
 
   it("should send first player's decision to callback if it is their turn", function (done) {
-    var decisions = [ { wager: 1 }, dummy() ]
+    var decisions = [ dummy(), dummy() ]
     state.nextPlayerIndex = 0
 
     dispatcher.sendDispatch = function (data, callback) {
@@ -47,7 +46,7 @@ describe("The information hider", function () {
 
     var serverCallback = function (error, data) {
       expect(error).toBe(null)
-      expect(data).toEqual(events.playerEvent(decisions[0]))
+      expect(data).toEqual(decisions[0])
       done()
     }
 
@@ -56,7 +55,7 @@ describe("The information hider", function () {
   })
 
   it("should send second player's decision to callback if it is their turn", function (done) {
-    var decisions = [ dummy(), { wager: 2 } ]
+    var decisions = [ dummy(), dummy() ]
     state.nextPlayerIndex = 1
 
     dispatcher.sendDispatch = function (data, callback) {
@@ -65,7 +64,7 @@ describe("The information hider", function () {
 
     var serverCallback = function (error, data) {
       expect(error).toBe(null)
-      expect(data).toEqual(events.playerEvent(decisions[1]))
+      expect(data).toEqual(decisions[1])
       done()
     }
 

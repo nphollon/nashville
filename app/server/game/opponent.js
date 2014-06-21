@@ -1,8 +1,10 @@
 "use strict";
 
+var events = require("./events")
+
 exports.build = function (inputCallbacks) {
   var opponent = {}
-  var decision = { wager: 1}
+  var decision = events.playerEvent({ wager: 1 })
 
   opponent.start = function () {
     process.nextTick(function () {

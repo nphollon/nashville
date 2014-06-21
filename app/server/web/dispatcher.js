@@ -2,64 +2,51 @@
 
 exports.build = function () {
 	var dispatcher = {}
-	var mostRecentDispatch = null
-	var mostRecentDecision = null
-	var clientCallback = null
-	var serverCallback = null
+	var mostRecentDispatch, serverCallback
 
-  var fulfillWithError = function (callback) {
-    var error = new Error("Client submitted decision while waiting for an update")
-    process.nextTick(function () {
-      callback(error)
-    })
+  var defaultSubmitCallback = function () {}
+
+  var submitCallback = defaultSubmitCallback
+
+  var serverHasStarted = function () {
+    return serverCallback !== undefined
   }
 
-	var fulfillClientCallback = function () {
-    if (mostRecentDispatch !== null && clientCallback !== null) {
-  		process.nextTick(function () {
-  			clientCallback(null, mostRecentDispatch)
-  			clientCallback = null
-  		})
-      return true
-    }
-    return false
-	}
-
-	var fullfillServerCallback = function () {
-    if (mostRecentDecision !== null && serverCallback !== null) {
-  		process.nextTick(function () {
-  			serverCallback(null, mostRecentDecision)
-  			mostRecentDecision = null
-        serverCallback = null
-  		})
-      return true
-    }
-    return false
-	}
+  var serverExpectingDecision = function () {
+    return (submitCallback === defaultSubmitCallback) && serverHasStarted()
+  }
 
 	dispatcher.sendDispatch = function (dispatch, callback) {
-		mostRecentDispatch = dispatch
-		serverCallback = callback
-
-		if (!fullfillServerCallback()) {
-			fulfillClientCallback()
-    }
+    process.nextTick(function () {
+  		mostRecentDispatch = dispatch
+      serverCallback = callback
+      submitCallback(null, mostRecentDispatch)
+      submitCallback = defaultSubmitCallback
+    })
 	}
 
 	dispatcher.requestUpdate = function (callback) {
-		clientCallback = callback
-    fulfillClientCallback()
-	}
-	
-	dispatcher.submitDecision = function (decision, callback) {
-    if (clientCallback !== null) {
-      return fulfillWithError(callback)
+    if (serverHasStarted()) {
+      process.nextTick(function () {
+        callback(null, mostRecentDispatch)
+      })
+    } else {
+      setTimeout(function () {
+        dispatcher.requestUpdate(callback)
+      }, 10)
     }
-    
-    mostRecentDecision = decision
-		clientCallback = callback
-		fullfillServerCallback()
 	}
+
+  dispatcher.submitDecision = function (decision, callback) {
+    process.nextTick(function () {
+      if (serverExpectingDecision()) {
+        submitCallback = callback
+        serverCallback(null, decision)
+      } else {
+        callback(new Error("Game server received unexpected client submission."))
+      }
+    })
+  }
 
 	return dispatcher
 }

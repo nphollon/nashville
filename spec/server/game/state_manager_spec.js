@@ -6,19 +6,16 @@ describe("The state manager", function () {
   var stateManagerFactory = helpers.requireSource("server/game/state_manager")
   var dummy = helpers.dummy
 
-  var stateManager, initialState, expectedState
-
-  var expectations = function (done) {
-    return function (error, data) {
-      expect(error).toBe(null)
-      expect(data).toBe(expectedState)
-      done()
-    }
-  }
+  var stateManager, initialState, expectedState, intermediateState
 
   beforeEach(function () {
     stateManager = stateManagerFactory.build()
+    
     expectedState = dummy()
+
+    intermediateState = {
+      nextPlayer: function () { return expectedState }
+    }
   })
 
   it("should request chance event after client makes a wager", function (done) {
@@ -27,19 +24,19 @@ describe("The state manager", function () {
     initialState = {
       nextEventType: events.playerType,
       setWager: function (wager) { 
-        return (wager === decision.wager) ? expectedState : undefined
+        return (wager === decision.wager) ? intermediateState : undefined
       }
     }
 
-    stateManager.advance(initialState, decision, expectations(done))
+    stateManager.advance(initialState, decision, function (error, data) {
+      expect(error).toBe(null)
+      expect(data).toBe(expectedState)
+      done()
+    })
   })
 
   it("should award a win to the player who wins", function (done) {
     var decision = events.chanceEvent(true)
-
-    var intermediateState = {
-      nextPlayer: function () { return expectedState }
-    }
 
     initialState = {
       nextEventType: events.chanceType,
@@ -48,7 +45,11 @@ describe("The state manager", function () {
       }
     }
 
-    stateManager.advance(initialState, decision, expectations(done))
+    stateManager.advance(initialState, decision, function (error, data) {
+      expect(error).toBe(null)
+      expect(data).toBe(expectedState)
+      done()
+    })
   })
 
   it("should return error if an unexpected chance event is received", function (done) {

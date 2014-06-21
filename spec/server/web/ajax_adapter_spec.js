@@ -4,6 +4,7 @@ describe("Ajax adapter", function () {
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
   var adapterFactory = helpers.requireSource("server/web/ajax_adapter")
+  var events = helpers.requireSource("server/game/events")
   var adapter, dispatcher
 
   beforeEach(function () {
@@ -28,10 +29,11 @@ describe("Ajax adapter", function () {
   })
 
   it("should send player decision to dispatcher", function (done) {
-    var jsonDecision = JSON.stringify({ wager: 3 })
+    var decision = { wager: 3 }
+    var jsonDecision = JSON.stringify(decision)
 
     dispatcher.submitDecision = function (playerEvent) {
-      expect(playerEvent.wager).toBe(3)
+      expect(playerEvent).toEqual(events.playerEvent(decision))
       done()
     }
 

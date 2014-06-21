@@ -1,5 +1,7 @@
 "use strict";
 
+var events = require("../game/events")
+
 exports.build = function (dispatcher) {
   var adapter = {}
 
@@ -22,7 +24,7 @@ exports.build = function (dispatcher) {
   }
 
   adapter.submitDecision = function (requestBody, callback) {
-    var decision = JSON.parse(requestBody)
+    var decision = events.playerEvent(JSON.parse(requestBody))
 
     process.nextTick(function () {
       dispatcher.submitDecision(decision, sendJsonTo(callback))

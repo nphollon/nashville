@@ -1,7 +1,6 @@
 "use strict";
 
 var async = require("async")
-var events = require("./events")
 
 exports.build = function (dispatcher, playerCount) {
   var infoHider = {}
@@ -22,8 +21,7 @@ exports.build = function (dispatcher, playerCount) {
     return function (error, data) {
       process.nextTick(function () {
         if (error === null) {
-          var decision = events.playerEvent(data[playerIndex])
-          callback(null, decision)
+          callback(null, data[playerIndex])
         } else {
           callback(error)
         }

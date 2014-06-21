@@ -10,7 +10,7 @@ exports.build = function () {
   }
 
   var setWager = function (state, decision, callback) {
-    callback(null, state.setWager(decision.wager))
+    callback(null, state.setWager(decision.wager).nextPlayer())
   }
 
   var raiseStateError = function (state, decision, callback) {

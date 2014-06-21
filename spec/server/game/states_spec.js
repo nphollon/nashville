@@ -16,12 +16,6 @@ describe("The state", function () {
       expect(state.wager).toBe(1)
     })
 
-    it("expects first player to move", function () {
-      var state = stateFactory.build(1)
-      expect(state.nextPlayerIndex).toBe(0)
-      expect(state.nextEventType).toBe(events.playerType)
-    })
-
     it("has one score if there is one player", function () {
       var state = stateFactory.build(1)
       expect(state.scores).toEqual([0])
@@ -38,8 +32,7 @@ describe("The state", function () {
     var wager = dummy()
     var endState = startState.setWager(wager)
     expect(endState.wager).toBe(wager)
-    expect(endState.nextEventType).toBe(events.chanceType)
-    expectIsFrozen(startState.setWager(dummy()))
+    expectIsFrozen(endState)
   })
 
   describe("deciding an outcome", function () {
@@ -48,7 +41,6 @@ describe("The state", function () {
       var wager = 5
       var endState = startState.setWager(wager).win(0)
       expect(endState.scores).toEqual([ 5, -5 ])
-      expect(endState.nextEventType).toBe(events.playerType)
       expect(endState.winnerIndex).toBe(0)
     })
 
@@ -57,7 +49,6 @@ describe("The state", function () {
       var wager = 5
       var endState = startState.setWager(wager).win(1)
       expect(endState.scores).toEqual([ -5, 5 ])
-      expect(endState.nextEventType).toBe(events.playerType)
       expect(endState.winnerIndex).toBe(1)
     })
 
@@ -70,27 +61,49 @@ describe("The state", function () {
   })
 
   describe("getting the next player", function () {
-    it("increments player index from 0 to 1 if there are 2 players", function () {
-      var startState = stateFactory.build(2, { nextPlayerIndex: 0 })
+    var startState, playerCount
+
+    beforeEach(function () {
+      playerCount = 3
+      startState = stateFactory.build(playerCount)
+    })
+
+    it("should be frozen", function () {
+      expectIsFrozen(startState.nextPlayer())
+    })
+
+    it("expects first player to move", function () {
+      var state = stateFactory.build(1)
+      expect(state.nextPlayerIndex).toBe(0)
+      expect(state.nextEventType).toBe(events.playerType)
+    })
+
+    it("should expect the chance player second", function () {
       var endState = startState.nextPlayer()
+      expect(endState.nextPlayerIndex).toBe(playerCount)
+      expect(endState.nextEventType).toBe(events.chanceType)
+    })
+
+    it("should expect player 2 after the chance player", function () {
+      var endState = startState.nextPlayer().nextPlayer()
       expect(endState.nextPlayerIndex).toBe(1)
+      expect(endState.nextEventType).toBe(events.playerType)
     })
 
-    it("increments player index from 1 to 2 if there are 3 players", function () {
-      var startState = stateFactory.build(3, { nextPlayerIndex: 1 })
-      var endState = startState.nextPlayer()
+    it("should expect player 3 fifth", function () {
+      var endState = startState
+        .nextPlayer().nextPlayer() // player 2
+        .nextPlayer().nextPlayer() // player 3
       expect(endState.nextPlayerIndex).toBe(2)
+      expect(endState.nextEventType).toBe(events.playerType)
     })
 
-    it("increments player index from 2 to 0 if there are 3 players", function () {
-      var startState = stateFactory.build(3, { nextPlayerIndex: 2 })
-      var endState = startState.nextPlayer()
+    it("should expect player 1 seventh", function () {
+      var endState = startState
+        .nextPlayer().nextPlayer() // player 2
+        .nextPlayer().nextPlayer() // player 3
+        .nextPlayer().nextPlayer() // player 1
       expect(endState.nextPlayerIndex).toBe(0)
-    })
-
-    it("expects a player event next", function () {
-      var startState = stateFactory.build(2, { nextEventType: "none" })
-      var endState = startState.nextPlayer()
       expect(endState.nextEventType).toBe(events.playerType)
     })
   })
@@ -172,6 +185,12 @@ describe("The state", function () {
         var state = stateFactory.build(2, { nextPlayerIndex: 1 })
         var response = state.toResponse(1)
         expect(response.enableInput).toBe(true)
+      })
+
+      it("should not enable input for any player if a chance event is expected", function () {
+        var state = stateFactory.build(1, { nextPlayerIndex: 0, nextEventType: events.chanceType })
+        var response = state.toResponse(0)
+        expect(response.enableInput).toBe(false)
       })
     })
   })

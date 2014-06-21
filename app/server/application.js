@@ -37,10 +37,22 @@ var defaultFactories = {
     return require("./game/opponent").build(that.splitter.input(1))
   },
 
+  chancePlayer: function (that) {
+    return require("./game/chance_player").build(
+      that.random,
+      that.splitter.input(that.playerCount)
+    )
+  },
+
+  random: function () {
+    var Random = require("random-js");
+    return new Random(Random.engines.mt19937().autoSeed())
+  },
+
   splitter: function (that) {
     return require("./web/splitter").build(
       that.dispatcher,
-      that.playerCount
+      that.playerCount + 1
     )
   },
 
@@ -51,29 +63,19 @@ var defaultFactories = {
   infoHider: function (that) {
     return require("./game/info_hider").build(
       that.dispatcher,
-      that.playerCount
+      that.playerCount + 1
     )
   },
 
   gameDriver: function (that) {
     return require("./game/driver").build(
       that.infoHider,
-      that.stateManager,
-      that.chancePlayer
+      that.stateManager
     )
   },
 
   stateManager: function (that) {
     return require("./game/state_manager").build(that.playerCount)
-  },
-
-  chancePlayer: function (that) {
-    return require("./game/chance_player").build(that.random)
-  },
-
-  random: function () {
-    var Random = require("random-js");
-    return new Random(Random.engines.mt19937().autoSeed())
   }
 }
 
@@ -87,6 +89,7 @@ exports.build = function (substitutions) {
   application.start = function (port) {
     this.context.gameDriver.start(this.context.playerCount)
     this.context.player2.start()
+    this.context.chancePlayer.start()
     this.context.webServer.listen(port)
   }
 

@@ -60,6 +60,20 @@ describe("The splitter", function () {
 
       splitter.input(0).requestUpdate(playerCallback)
     })
+
+    it("should forward error immediately on player request", function (done) {
+      var dispatcherError = dummy()
+      dispatcher.requestUpdate = function (callback) {
+        callback(dispatcherError)
+      }
+
+      var playerCallback = function (error) {
+        expect(error).toBe(dispatcherError)
+        done()
+      }
+
+      splitter.input(0).requestUpdate(playerCallback)
+    })
   })
 
   describe("with two players", function () {

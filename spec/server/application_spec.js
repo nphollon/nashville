@@ -22,7 +22,7 @@ describe("the application", function () {
     expect(dependencyManager.buildContext).toHaveBeenCalledWith(jasmine.any(Object), substitutions)
   })
 
-  it("should start web server and game driver", function () {
+  xit("should start web server and game driver", function () {
     var application = applicationFactory.build(substitutions)
 
     application.start(port)

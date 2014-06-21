@@ -14,9 +14,30 @@ var getStatus = function (winnerIndex, playerIndex) {
   return "You lost."
 }
 
+var shouldEnableInput = function (state, playerIndex) {
+  return state.nextPlayerIndex === playerIndex && state.nextEventType !== events.chanceType
+}
+
+var playerMutator = {}
+
+playerMutator[events.playerType] = {
+  incrementPlayerIndex: function (state) {
+    return state.chancePlayerIndex
+  },
+  nextEventType: events.chanceType
+}
+
+playerMutator[events.chanceType] = {
+  incrementPlayerIndex: function (state) {
+    return (state.lastPlayerIndex + 1) % state.playerCount
+  },
+  nextEventType: events.playerType
+}
+
 var copy = function (original) {
   var state = Object.create(statePrototype)
   state.nextEventType = original.nextEventType
+  state.lastPlayerIndex = original.lastPlayerIndex
   state.nextPlayerIndex = original.nextPlayerIndex
   state.wager = original.wager
   state.scores = original.scores
@@ -37,7 +58,6 @@ statePrototype.win = function (winnerIndex) {
   })
 
   newState.winnerIndex = winnerIndex
-  newState.nextEventType = events.playerType
   Object.freeze(newState)
   return newState
 }
@@ -45,7 +65,6 @@ statePrototype.win = function (winnerIndex) {
 statePrototype.setWager = function (wager) {
   var newState = copy(this)
   newState.wager = wager
-  newState.nextEventType = events.chanceType
   Object.freeze(newState)
   return newState
 }
@@ -53,7 +72,7 @@ statePrototype.setWager = function (wager) {
 statePrototype.toResponse = function (playerIndex) {
   var response = {
     playerIndex: playerIndex,
-    enableInput: (this.nextPlayerIndex === playerIndex),
+    enableInput: shouldEnableInput(this, playerIndex),
     wager: this.wager,
     scores: this.scores,
     status: getStatus(this.winnerIndex, playerIndex)
@@ -64,8 +83,13 @@ statePrototype.toResponse = function (playerIndex) {
 
 statePrototype.nextPlayer = function () {
   var newState = copy(this)
-  newState.nextPlayerIndex = (this.nextPlayerIndex + 1) % this.playerCount
-  newState.nextEventType = events.playerType
+  var mutator = playerMutator[this.nextEventType]
+
+  newState.lastPlayerIndex = this.nextPlayerIndex
+  newState.nextPlayerIndex = mutator.incrementPlayerIndex(this)
+
+  newState.nextEventType = mutator.nextEventType
+
   Object.freeze(newState)
   return newState
 }
@@ -74,9 +98,14 @@ Object.defineProperty(statePrototype, "playerCount", {
   get: function () { return this.scores.length }
 })
 
+Object.defineProperty(statePrototype, "chancePlayerIndex", {
+  get: function () { return this.scores.length }
+})
+
 exports.build = function (playerCount, spec) {
   var defaults = {
     nextEventType: events.playerType,
+    lastPlayerIndex: playerCount,
     nextPlayerIndex: 0,
     numberOfPlayers: playerCount,
     wager: 1,
