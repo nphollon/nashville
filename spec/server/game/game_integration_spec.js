@@ -44,86 +44,82 @@ describe("The game", function () {
     }
   }
 
-  var play = function (round) {
-    return function (done) {
-      async.parallel(round, done)
-    }
-  }
-
 
   it("plays a 2 player game", function (testDone) {
     var context = depdep.buildContext(factories)
-    var playerOne = context.splitter.input(0)
-    var playerTwo = context.splitter.input(1)
-    var chancePlayer = context.splitter.input(2)
+
+    var play = function (round) {
+      return function (done) {
+        async.each([0, 1, 2], function (i, taskDone) {
+          var submit = context.splitter.input(i).submitDecision
+          var testData = round[i]
+
+          submit(testData.decision, function (error, data) {
+            expect(error).toBe(null)
+            expect(data).toEqual(testData.expectedResponse)
+            taskDone()
+          })
+        }, done)
+      }
+    }
 
     context.gameDriver.start(context.playerCount)
 
     var waitForStart = function (taskDone) {
-      playerOne.requestUpdate(taskDone)
+      context.splitter.input(0).requestUpdate(taskDone)
     }
 
     var firstRound = [
-      function (taskDone) {
-        playerOne.submitDecision(events.playerEvent({ wager: 2 }), function (error, data) {
-          expect(error).toBe(null)
-          expect(data).toEqual({
-            playerIndex: 0,
-            enableInput: false,
-            scores: [0, 0],
-            status: jasmine.any(String),
-            wager: 2
-          })
-          taskDone()
-        })
+      {
+        decision: events.playerEvent({ wager: 2 }),
+        expectedResponse: {
+          playerIndex: 0,
+          enableInput: false,
+          scores: [0, 0],
+          status: jasmine.any(String),
+          wager: 2
+        }
       },
-      function (taskDone) {
-        playerTwo.submitDecision(dummy(), function (error, data) {
-          expect(error).toBe(null)
-          expect(data).toEqual({
-            playerIndex: 1,
-            enableInput: false,
-            scores: [0, 0],
-            status: jasmine.any(String),
-            wager: 2
-          })
-          taskDone()
-        })
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 1,
+          enableInput: false,
+          scores: [0, 0],
+          status: jasmine.any(String),
+          wager: 2
+        }
       },
-      function (taskDone) {
-        chancePlayer.submitDecision(dummy(), taskDone)
+      {
+        decision: dummy(),
+        expectedResponse: jasmine.any(Object)
       }
     ]
 
     var secondRound = [
-      function (taskDone) {
-        playerOne.submitDecision(dummy(), function (error, data) {
-          expect(error).toBe(null)
-          expect(data).toEqual({
-            playerIndex: 0,
-            enableInput: false,
-            scores: [2, -2],
-            status: "You won.",
-            wager: 2
-          })
-          taskDone()
-        })
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 0,
+          enableInput: false,
+          scores: [2, -2],
+          status: "You won.",
+          wager: 2
+        }
       },
-      function (taskDone) {
-        playerTwo.submitDecision(dummy(), function (error, data) {
-          expect(error).toBe(null)
-          expect(data).toEqual({
-            playerIndex: 1,
-            enableInput: true,
-            scores: [2, -2],
-            status: "You lost.",
-            wager: 2
-          })
-          taskDone()
-        })
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 1,
+          enableInput: true,
+          scores: [2, -2],
+          status: "You lost.",
+          wager: 2
+        }
       },
-      function (taskDone) {
-        chancePlayer.submitDecision(events.chanceEvent(0), taskDone)
+      {
+        decision: events.chanceEvent(0),
+        expectedResponse: jasmine.any(Object)
       }
     ]
 
