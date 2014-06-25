@@ -68,14 +68,7 @@ var defaultFactories = {
   },
 
   gameDriver: function (that) {
-    return require("./game/driver").build(
-      that.infoHider,
-      that.stateManager
-    )
-  },
-
-  stateManager: function (that) {
-    return require("./game/state_manager").build(that.playerCount)
+    return require("./game/state_manager").build(that.infoHider)
   }
 }
 

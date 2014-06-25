@@ -32,15 +32,7 @@ describe("The game", function () {
     },
 
     gameDriver: function (that) {
-      return requireSource("server/game/driver").build(
-        that.infoHider,
-        that.stateManager,
-        that.chancePlayer
-      )
-    },
-
-    stateManager: function () {
-      return requireSource("server/game/state_manager").build()
+      return requireSource("server/game/state_manager").build(that.infoHider)
     }
   }
 

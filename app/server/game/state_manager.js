@@ -1,35 +1,50 @@
 "use strict";
 
 var events = require("./events")
+var states = require("./states")
 
-exports.build = function () {
+exports.build = function (dispatcher) {
   var stateManager = {}
 
-  var adjustScore = function (state, decision, callback) {
-    callback(null, state.win(decision.userWins).nextPlayer())
+  var adjustScore = function (state, decision) {
+    return state.win(decision.userWins).nextPlayer()
   }
 
-  var setWager = function (state, decision, callback) {
-    callback(null, state.setWager(decision.wager).nextPlayer())
+  var setWager = function (state, decision) {
+    return state.setWager(decision.wager).nextPlayer()
   }
 
-  var raiseStateError = function (state, decision, callback) {
+  var stateError = function (state, decision) {
     var error = new Error("State manager received invalid decision.")
     error.decision = decision
     error.state = state
-    callback(error)
+    return error
   }
 
-  var mutator = {}
-  mutator[events.chanceType] = adjustScore
-  mutator[events.playerType] = setWager
+  var mutateState = {}
+  mutateState[events.chanceType] = adjustScore
+  mutateState[events.playerType] = setWager
+
+  stateManager.start = function (playerCount) {
+    process.nextTick(function () {
+      stateManager.getNextEvent(null, states.build(playerCount))
+    })
+  }
+
+  stateManager.getNextEvent = function (error, state) {
+    process.nextTick(function () {
+      dispatcher.sendDispatch(state, function (error, decision) {
+        stateManager.advance(state, decision, stateManager.getNextEvent)
+      })
+    })
+  }
 
   stateManager.advance = function (state, decision, callback) {
     process.nextTick(function () {
       if (decision.type === state.nextEventType) {
-        mutator[decision.type].call(null, state, decision, callback)
+        callback(null, mutateState[decision.type](state, decision))
       } else {
-        raiseStateError(state, decision, callback)
+        callback(stateError(state, decision))
       }
     })
   }
