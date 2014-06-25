@@ -5,8 +5,12 @@ exports.build = function () {
 	var mostRecentDispatch, serverCallback
 
   var defaultSubmitCallback = function () {}
-
   var submitCallback = defaultSubmitCallback
+
+  var fulfillSubmitCallback = function (error, data) {
+    submitCallback(error, data)
+    submitCallback = defaultSubmitCallback
+  }
 
   var serverHasStarted = function () {
     return serverCallback !== undefined
@@ -20,10 +24,15 @@ exports.build = function () {
     process.nextTick(function () {
   		mostRecentDispatch = dispatch
       serverCallback = callback
-      submitCallback(null, mostRecentDispatch)
-      submitCallback = defaultSubmitCallback
+      fulfillSubmitCallback(null, dispatch)
     })
 	}
+
+  dispatcher.sendError = function (error) {
+    process.nextTick(function() {
+      fulfillSubmitCallback(error)
+    })
+  }
 
 	dispatcher.requestUpdate = function (callback) {
     if (serverHasStarted()) {

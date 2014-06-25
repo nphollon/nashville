@@ -132,16 +132,20 @@ describe("The dispatcher", function () {
       dispatcher.submitDecision(dummy(), secondSubmitCallback)
     })
   })
+
+  it("should forward server error to submit callback", function (done) {
+    var expectedError = dummy()
+
+    var submitCallback = function (error) {
+      expect(error).toBe(expectedError)
+      done()
+    }
+
+    dispatcher.sendDispatch(dummy(), dummy())
+    dispatcher.submitDecision(dummy(), submitCallback)
+
+    process.nextTick(function () {
+      dispatcher.sendError(expectedError)
+    })
+  })
 })
-
-/**
-send dispatch
-submit decision
-submit decision
-send dispatch
-
-send dispatch
-submit decision
-request update
-send dispatch
-**/
