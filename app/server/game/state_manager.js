@@ -25,28 +25,26 @@ exports.build = function (dispatcher) {
   mutateState[events.chanceType] = adjustScore
   mutateState[events.playerType] = setWager
 
+  var processDecision = function (state) {
+    return function (error, decision) {
+      if (decision.type === state.nextEventType) {
+        stateManager.getNextEvent(null, mutateState[decision.type](state, decision))
+      } else {
+        stateManager.getNextEvent(stateError(state, decision))
+      }
+    }
+  }
+
   stateManager.start = function (playerCount) {
-    process.nextTick(function () {
-      stateManager.getNextEvent(null, states.build(playerCount))
-    })
+    stateManager.getNextEvent(null, states.build(playerCount))
   }
 
   stateManager.getNextEvent = function (error, state) {
-    process.nextTick(function () {
-      dispatcher.sendDispatch(state, function (error, decision) {
-        stateManager.advance(state, decision, stateManager.getNextEvent)
-      })
-    })
-  }
-
-  stateManager.advance = function (state, decision, callback) {
-    process.nextTick(function () {
-      if (decision.type === state.nextEventType) {
-        callback(null, mutateState[decision.type](state, decision))
-      } else {
-        callback(stateError(state, decision))
-      }
-    })
+    if (error === null) {
+      dispatcher.sendDispatch(state, processDecision(state))
+    } else {
+      dispatcher.sendError(error)
+    }
   }
 
   return stateManager

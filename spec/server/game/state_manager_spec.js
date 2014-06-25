@@ -47,25 +47,18 @@ describe("The state manager", function () {
     stateManager.getNextEvent(null, expectedState)
   })
 
-  it("should use the dispatcher's decision to advance the game state", function (done) {
-    var expectedDecision = dummy()
-    
-    dispatcher.sendDispatch = function (dispatch, callback) {
-      callback(null, expectedDecision)
-    }
+  it("should request chance event after client makes a wager", function (done) {
+    var decision = events.playerEvent({ wager: 3 })
 
-    stateManager.advance = function (state, decision, callback) {
-      expect(state).toBe(expectedState)
-      expect(decision).toBe(expectedDecision)
-      expect(callback).toBe(stateManager.getNextEvent)
+    var expectations = function (dispatch) {
+      expect(dispatch).toBe(expectedState)
       done()
     }
 
-    stateManager.getNextEvent(null, expectedState)
-  })
-
-  it("should request chance event after client makes a wager", function (done) {
-    var decision = events.playerEvent({ wager: 3 })
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      dispatcher.sendDispatch = expectations
+      callback(null, decision)
+    }
 
     initialState = {
       nextEventType: events.playerType,
@@ -74,15 +67,21 @@ describe("The state manager", function () {
       }
     }
 
-    stateManager.advance(initialState, decision, function (error, data) {
-      expect(error).toBe(null)
-      expect(data).toBe(expectedState)
-      done()
-    })
+    stateManager.getNextEvent(null, initialState)
   })
 
   it("should award a win to the player who wins", function (done) {
     var decision = events.chanceEvent(true)
+
+    var expectations = function (dispatch) {
+      expect(dispatch).toBe(expectedState)
+      done()
+    }
+
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      dispatcher.sendDispatch = expectations
+      callback(null, decision)
+    }
 
     initialState = {
       nextEventType: events.chanceType,
@@ -91,11 +90,18 @@ describe("The state manager", function () {
       }
     }
 
-    stateManager.advance(initialState, decision, function (error, data) {
-      expect(error).toBe(null)
-      expect(data).toBe(expectedState)
+    stateManager.getNextEvent(null, initialState)
+  })
+
+  it("should send error to dispatcher", function (done) {
+    var expectedError = dummy()
+
+    dispatcher.sendError = function (error) {
+      expect(error).toBe(expectedError)
       done()
-    })
+    }
+
+    stateManager.getNextEvent(expectedError)
   })
 
   it("should return error if an unexpected chance event is received", function (done) {
@@ -104,14 +110,18 @@ describe("The state manager", function () {
       nextEventType: events.playerType
     }
 
-    var callback = function (error) {
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      callback(null, decision)
+    }
+
+    dispatcher.sendError = function (error) {
       expect(error.message).toBe("State manager received invalid decision.")
       expect(error.decision).toEqual(decision)
       expect(error.state).toEqual(initialState)
       done()
     }
 
-    stateManager.advance(initialState, decision, callback)
+    stateManager.getNextEvent(null, initialState)
   })
 
   it("should return error if an unexpected client event is received", function (done) {
@@ -120,13 +130,17 @@ describe("The state manager", function () {
       nextEventType: events.chanceType
     }
 
-    var callback = function (error) {
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      callback(null, decision)
+    }
+
+    dispatcher.sendError = function (error) {
       expect(error.message).toBe("State manager received invalid decision.")
       expect(error.decision).toEqual(decision)
       expect(error.state).toEqual(initialState)
       done()
     }
 
-    stateManager.advance(initialState, decision, callback)    
+    stateManager.getNextEvent(null, initialState)    
   })
 })
