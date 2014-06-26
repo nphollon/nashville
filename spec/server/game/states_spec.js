@@ -27,36 +27,46 @@ describe("The state", function () {
     })
   })
 
-  it("allows a wager to be set", function () {
+  it("allows a wager to be set", function (done) {
     var startState = stateFactory.build(1)
     var wager = dummy()
-    var endState = startState.setWager(wager)
-    expect(endState.wager).toBe(wager)
-    expectIsFrozen(endState)
+    stateFactory.setWager(wager)(startState, function (error, endState) {
+      expect(error).toBe(null)
+      expect(endState.wager).toBe(wager)
+      expectIsFrozen(endState)
+      done()
+    })
   })
 
   describe("deciding an outcome", function () {
-    it("awards the wager to first player if they won", function () {
-      var startState = stateFactory.build(2)
+    it("awards the wager to first player if they won", function (done) {
       var wager = 5
-      var endState = startState.setWager(wager).win(0)
-      expect(endState.scores).toEqual([ 5, -5 ])
-      expect(endState.winnerIndex).toBe(0)
+      var startState = stateFactory.build(2, { wager: wager })
+      stateFactory.win(0)(startState, function (error, endState) {
+        expect(error).toBe(null)
+        expect(endState.scores).toEqual([ wager, -wager ])
+        expect(endState.winnerIndex).toBe(0)
+        done()
+      })
     })
 
-    it("awards the wager to second player if they won", function() {
-      var startState = stateFactory.build(2)
+    it("awards the wager to second player if they won", function (done) {
       var wager = 5
-      var endState = startState.setWager(wager).win(1)
-      expect(endState.scores).toEqual([ -5, 5 ])
-      expect(endState.winnerIndex).toBe(1)
+      var startState = stateFactory.build(2, { wager: wager })
+      stateFactory.win(1)(startState, function (error, endState) {
+        expect(endState.scores).toEqual([ -wager, wager ])
+        expect(endState.winnerIndex).toBe(1)
+        done()
+      })
     })
 
-    it("awards twice the wager to winner in three player game", function () {
-      var startState = stateFactory.build(3)
+    it("awards twice the wager to winner in three player game", function (done) {
       var wager = 2
-      var endState = startState.setWager(wager).win(0)
-      expect(endState.scores).toEqual([ 4, -2, -2 ])
+      var startState = stateFactory.build(3, { wager: wager })
+      stateFactory.win(0)(startState, function (error, endState) {
+        expect(endState.scores).toEqual([ 2*wager, -wager, -wager ])
+        done()
+      })
     })
   })
 

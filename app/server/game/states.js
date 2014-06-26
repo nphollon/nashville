@@ -102,6 +102,24 @@ Object.defineProperty(statePrototype, "chancePlayerIndex", {
   get: function () { return this.scores.length }
 })
 
+
+
+exports.setWager = function (wager) {
+  return function (state, callback) {
+    process.nextTick(function () {
+      callback(null, state.setWager(wager))
+    })
+  }
+}
+
+exports.win = function (winnerIndex) {
+  return function (state, callback) {
+    process.nextTick(function () {
+      callback(null, state.win(winnerIndex))
+    })
+  }
+}
+
 exports.build = function (playerCount, spec) {
   var defaults = {
     nextEventType: events.playerType,
