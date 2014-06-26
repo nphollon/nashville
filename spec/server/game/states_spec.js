@@ -78,43 +78,71 @@ describe("The state", function () {
       startState = stateFactory.build(playerCount)
     })
 
-    it("should be frozen", function () {
-      expectIsFrozen(startState.nextPlayer())
+    it("should be frozen", function (done) {
+      stateFactory.nextPlayer(startState, function (error, endState) {
+        expect(error).toBe(null)
+        expectIsFrozen(endState)
+        done()
+      })
     })
 
     it("expects first player to move", function () {
-      var state = stateFactory.build(1)
+      var state = stateFactory.build(playerCount)
       expect(state.nextPlayerIndex).toBe(0)
+      expect(state.lastPlayerIndex).toBe(playerCount)
       expect(state.nextEventType).toBe(events.playerType)
     })
 
-    it("should expect the chance player second", function () {
-      var endState = startState.nextPlayer()
-      expect(endState.nextPlayerIndex).toBe(playerCount)
-      expect(endState.nextEventType).toBe(events.chanceType)
+    it("should expect the chance player second", function (done) {
+      var startState = stateFactory.build(playerCount)
+      stateFactory.nextPlayer(startState, function (error, endState) {
+        expect(endState.nextPlayerIndex).toBe(playerCount)
+        expect(endState.lastPlayerIndex).toBe(0)
+        expect(endState.nextEventType).toBe(events.chanceType)
+        done()
+      })
     })
 
-    it("should expect player 2 after the chance player", function () {
-      var endState = startState.nextPlayer().nextPlayer()
-      expect(endState.nextPlayerIndex).toBe(1)
-      expect(endState.nextEventType).toBe(events.playerType)
+    it("should expect player 2 after the chance player", function (done) {
+      var startState = stateFactory.build(playerCount, {
+        nextPlayerIndex: playerCount,
+        lastPlayerIndex: 0,
+        nextEventType: events.chanceType
+      })
+      stateFactory.nextPlayer(startState, function (error, endState) {
+        expect(endState.nextPlayerIndex).toBe(1)
+        expect(endState.lastPlayerIndex).toBe(playerCount)
+        expect(endState.nextEventType).toBe(events.playerType)
+        done()
+      })
     })
 
-    it("should expect player 3 fifth", function () {
-      var endState = startState
-        .nextPlayer().nextPlayer() // player 2
-        .nextPlayer().nextPlayer() // player 3
-      expect(endState.nextPlayerIndex).toBe(2)
-      expect(endState.nextEventType).toBe(events.playerType)
+    it("should expect player 3 fifth", function (done) {
+      var startState = stateFactory.build(playerCount, {
+        nextPlayerIndex: playerCount,
+        lastPlayerIndex: 1,
+        nextEventType: events.chanceType
+      })
+      stateFactory.nextPlayer(startState, function (error, endState) {
+        expect(endState.nextPlayerIndex).toBe(2)
+        expect(endState.lastPlayerIndex).toBe(playerCount)
+        expect(endState.nextEventType).toBe(events.playerType)
+        done()
+      })
     })
 
-    it("should expect player 1 seventh", function () {
-      var endState = startState
-        .nextPlayer().nextPlayer() // player 2
-        .nextPlayer().nextPlayer() // player 3
-        .nextPlayer().nextPlayer() // player 1
-      expect(endState.nextPlayerIndex).toBe(0)
-      expect(endState.nextEventType).toBe(events.playerType)
+    it("should expect player 1 seventh", function (done) {
+      var startState = stateFactory.build(playerCount, {
+        nextPlayerIndex: playerCount,
+        lastPlayerIndex: 2,
+        nextEventType: events.chanceType
+      })
+      stateFactory.nextPlayer(startState, function (error, endState) {
+        expect(endState.nextPlayerIndex).toBe(0)
+        expect(endState.lastPlayerIndex).toBe(playerCount)
+        expect(endState.nextEventType).toBe(events.playerType)
+        done()
+      })
     })
   })
 

@@ -120,6 +120,12 @@ exports.win = function (winnerIndex) {
   }
 }
 
+exports.nextPlayer = function(state, callback) {
+  process.nextTick(function () {
+    callback(null, state.nextPlayer())
+  })
+}
+
 exports.build = function (playerCount, spec) {
   var defaults = {
     nextEventType: events.playerType,
