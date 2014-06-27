@@ -45,30 +45,6 @@ var copy = function (original) {
   return state
 }
 
-statePrototype.win = function (winnerIndex) {
-  var newState = copy(this)
-  var loserCount = this.playerCount - 1
-
-  this.scores.forEach(function (score, index) {
-    if (index === winnerIndex) {
-      newState.scores[index] = score + loserCount * newState.wager
-    } else {
-      newState.scores[index] = score - newState.wager
-    }
-  })
-
-  newState.winnerIndex = winnerIndex
-  Object.freeze(newState)
-  return newState
-}
-
-statePrototype.setWager = function (wager) {
-  var newState = copy(this)
-  newState.wager = wager
-  Object.freeze(newState)
-  return newState
-}
-
 statePrototype.toResponse = function (playerIndex) {
   var response = {
     playerIndex: playerIndex,
@@ -81,19 +57,6 @@ statePrototype.toResponse = function (playerIndex) {
   return response
 }
 
-statePrototype.nextPlayer = function () {
-  var newState = copy(this)
-  var mutator = playerMutator[this.nextEventType]
-
-  newState.lastPlayerIndex = this.nextPlayerIndex
-  newState.nextPlayerIndex = mutator.incrementPlayerIndex(this)
-
-  newState.nextEventType = mutator.nextEventType
-
-  Object.freeze(newState)
-  return newState
-}
-
 Object.defineProperty(statePrototype, "playerCount", {
   get: function () { return this.scores.length }
 })
@@ -102,27 +65,55 @@ Object.defineProperty(statePrototype, "chancePlayerIndex", {
   get: function () { return this.scores.length }
 })
 
-
-
 exports.setWager = function (wager) {
   return function (state, callback) {
+
+    var newState = copy(state)
+    newState.wager = wager
+    Object.freeze(newState)
+
     process.nextTick(function () {
-      callback(null, state.setWager(wager))
+      callback(null, newState)
     })
   }
 }
 
 exports.win = function (winnerIndex) {
   return function (state, callback) {
+    var newState = copy(state)
+    var loserCount = state.playerCount - 1
+
+    state.scores.forEach(function (score, index) {
+      if (index === winnerIndex) {
+        newState.scores[index] = score + loserCount * newState.wager
+      } else {
+        newState.scores[index] = score - newState.wager
+      }
+    })
+
+    newState.winnerIndex = winnerIndex
+    Object.freeze(newState)
+
     process.nextTick(function () {
-      callback(null, state.win(winnerIndex))
+      callback(null, newState)
     })
   }
 }
 
 exports.nextPlayer = function(state, callback) {
+
+  var newState = copy(state)
+  var mutator = playerMutator[state.nextEventType]
+
+  newState.lastPlayerIndex = state.nextPlayerIndex
+  newState.nextPlayerIndex = mutator.incrementPlayerIndex(state)
+
+  newState.nextEventType = mutator.nextEventType
+
+  Object.freeze(newState)
+
   process.nextTick(function () {
-    callback(null, state.nextPlayer())
+    callback(null, newState)
   })
 }
 

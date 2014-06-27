@@ -1,18 +1,19 @@
 "use strict";
 
 var events = require("./events")
+var states = require("./states")
 
 exports.mutateState = {}
 
 exports.mutateState[events.chanceType] = function (state, decision, callback) {
-  process.nextTick(function () {
-    callback(null, state.win(decision.userWins).nextPlayer())
+  states.win(decision.userWins)(state, function (error, state) {
+    states.nextPlayer(state, callback)
   })
 }
 
 exports.mutateState[events.playerType] = function (state, decision, callback) {
-  process.nextTick(function () {
-    callback(null, state.setWager(decision.wager).nextPlayer())
+  states.setWager(decision.wager)(state, function (error, state) {
+    states.nextPlayer(state, callback)
   })
 }
 
