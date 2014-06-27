@@ -25,6 +25,13 @@ describe("The state", function () {
       var state = stateFactory.build(2)
       expect(state.scores).toEqual([0, 0])
     })
+
+    it("expects first player to move", function () {
+      var state = stateFactory.build(3)
+      expect(state.nextPlayerIndex).toBe(0)
+      expect(state.lastPlayerIndex).toBe(3)
+      expect(state.nextEventType).toBe(events.playerType)
+    })
   })
 
   it("allows a wager to be set", function (done) {
@@ -84,13 +91,6 @@ describe("The state", function () {
         expectIsFrozen(endState)
         done()
       })
-    })
-
-    it("expects first player to move", function () {
-      var state = stateFactory.build(playerCount)
-      expect(state.nextPlayerIndex).toBe(0)
-      expect(state.lastPlayerIndex).toBe(playerCount)
-      expect(state.nextEventType).toBe(events.playerType)
     })
 
     it("should expect the chance player second", function (done) {
