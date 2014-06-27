@@ -1,49 +1,21 @@
 describe("The game", function () {
   "use strict";
 
-  var depdep = require("depdep")
   var async = require("async")
   var helpers = require("../../spec_helper")
   var requireSource = helpers.requireSource
   var events = requireSource("server/game/events")
   var dummy = helpers.dummy
 
-  var factories = {
-    playerCount: function () {
-      return 2
-    },
-
-    splitter: function (that) {
-      return requireSource("server/web/splitter").build(
-        that.dispatcher,
-        that.playerCount + 1
-      )
-    },
-
-    dispatcher: function () {
-      return requireSource("server/web/dispatcher").build()
-    },
-
-    infoHider: function (that) {
-      return requireSource("server/game/info_hider").build(
-        that.dispatcher,
-        that.playerCount + 1
-      )
-    },
-
-    gameDriver: function (that) {
-      return requireSource("server/game/state_manager").build(that.infoHider)
-    }
-  }
-
-
   it("plays a 2 player game", function (testDone) {
-    var context = depdep.buildContext(factories)
+    var context = requireSource("server/application").build().context
+    var splitter = context.splitter
+    var driver = context.gameDriver
 
     var play = function (round) {
-      return function (done) {
+      return function (roundDone) {
         async.each([0, 1, 2], function (i, taskDone) {
-          var submit = context.splitter.input(i).submitDecision
+          var submit = splitter.input(i).submitDecision
           var testData = round[i]
 
           submit(testData.decision, function (error, data) {
@@ -51,14 +23,14 @@ describe("The game", function () {
             expect(data).toEqual(testData.expectedResponse)
             taskDone()
           })
-        }, done)
+        }, roundDone)
       }
     }
 
-    context.gameDriver.start(context.playerCount)
+    driver.start(context.startState)
 
     var waitForStart = function (taskDone) {
-      context.splitter.input(0).requestUpdate(taskDone)
+      splitter.input(0).requestUpdate(taskDone)
     }
 
     var firstRound = [

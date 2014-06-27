@@ -68,26 +68,33 @@ var defaultFactories = {
   },
 
   gameDriver: function (that) {
-    return require("./game/state_manager").build(that.infoHider)
+    var sm = require("./game/state_manager")
+    return sm.build(that.infoHider, sm.mutateState)
+  },
+
+  startState: function (that) {
+    return require("./game/states").build(that.playerCount)
   }
 }
 
 exports.build = function (substitutions) {
   var application = {}
 
+  var context = require("depdep").buildContext(defaultFactories, substitutions)
+
   Object.defineProperty(application, "context", {
-    value: require("depdep").buildContext(defaultFactories, substitutions)
+    value: context
   })
   
   application.start = function (port) {
-    this.context.gameDriver.start(this.context.playerCount)
-    this.context.player2.start()
-    this.context.chancePlayer.start()
-    this.context.webServer.listen(port)
+    context.gameDriver.start(context.startState)
+    context.player2.start()
+    context.chancePlayer.start()
+    context.webServer.listen(port)
   }
 
   application.stop = function () {
-    this.context.webServer.close()
+    context.webServer.close()
   }
   
   return application

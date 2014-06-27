@@ -2,145 +2,79 @@
 
 describe("The state manager", function () {
   var helpers = require("../../spec_helper")
-  var events = helpers.requireSource("server/game/events")
-  var states = helpers.requireSource("server/game/states")
   var stateManagerFactory = helpers.requireSource("server/game/state_manager")
   var dummy = helpers.dummy
 
-  var stateManager, initialState, expectedState, intermediateState, dispatcher
+  var stateManager, expectedState, goodDecision, dispatcher, mutator
 
   beforeEach(function () {
     dispatcher = {}
+    mutator = {}
 
-    stateManager = stateManagerFactory.build(dispatcher)
+    stateManager = stateManagerFactory.build(dispatcher, mutator)
     
-    expectedState = dummy()
-
-    intermediateState = {
-      nextPlayer: function () { return expectedState }
-    }
+    expectedState = { nextEventType: "dummy" }
+    goodDecision = { type: "dummy" }
   })
-
-  describe("starting", function () {
-    it("should initialize game state", function (done) {
-      var expectedPlayerCount = 3
-      spyOn(states, "build").and.callFake(function (playerCount) {
-        return (playerCount === expectedPlayerCount) ? expectedState : undefined
-      })
-
-      stateManager.getNextEvent = function (error, data) {
-        expect(error).toBe(null)
-        expect(data).toBe(expectedState)
-        done()
-      }
-      
-      stateManager.start(expectedPlayerCount)
-    })
-  })
-
+  
   it("should send the state to the dispatcher", function (done) {
     dispatcher.sendDispatch = function (dispatch) {
       expect(dispatch).toBe(expectedState)
       done()
     }
 
-    stateManager.getNextEvent(null, expectedState)
+    stateManager.start(expectedState)
   })
 
-  it("should request chance event after client makes a wager", function (done) {
-    var decision = events.playerEvent({ wager: 3 })
+  it("should send an error if an unexpected event type is received", function (done) {
+    var badDecision = { type: "unexpected" }
 
-    var expectations = function (dispatch) {
-      expect(dispatch).toBe(expectedState)
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      callback(null, badDecision)
+    }
+
+    dispatcher.sendError = function (error) {
+      expect(error.message).toBe("State manager received invalid decision.")
+      expect(error.decision).toEqual(badDecision)
+      expect(error.state).toEqual(expectedState)
+      done()
+    }
+
+    stateManager = stateManagerFactory.build(dispatcher, dummy())
+    stateManager.start(expectedState)
+  })
+
+  it("should invoke mutation corresponding to decision type", function (done) {
+    mutator.dummy = function (state, decision) {
+      expect(state).toBe(expectedState)
+      expect(decision).toBe(goodDecision)
       done()
     }
 
     dispatcher.sendDispatch = function (dispatch, callback) {
-      dispatcher.sendDispatch = expectations
-      callback(null, decision)
+      callback(null, goodDecision)
     }
 
-    initialState = {
-      nextEventType: events.playerType,
-      setWager: function (wager) { 
-        return (wager === decision.wager) ? intermediateState : undefined
-      }
-    }
-
-    stateManager.getNextEvent(null, initialState)
+    stateManager = stateManagerFactory.build(dispatcher, mutator)
+    stateManager.start(expectedState)
   })
 
-  it("should award a win to the player who wins", function (done) {
-    var decision = events.chanceEvent(true)
-
-    var expectations = function (dispatch) {
-      expect(dispatch).toBe(expectedState)
-      done()
-    }
-
-    dispatcher.sendDispatch = function (dispatch, callback) {
-      dispatcher.sendDispatch = expectations
-      callback(null, decision)
-    }
-
-    initialState = {
-      nextEventType: events.chanceType,
-      win: function (winnerIndex) {
-        return (winnerIndex === decision.userWins) ? intermediateState : undefined
-      }
-    }
-
-    stateManager.getNextEvent(null, initialState)
-  })
-
-  it("should send error to dispatcher", function (done) {
+  it("should send errors from the mutator to the dispatcher", function (done) {
     var expectedError = dummy()
+
+    mutator.dummy = function (state, decision, callback) {
+      callback(expectedError)
+    }
+
+    dispatcher.sendDispatch = function (dispatch, callback) {
+      callback(null, goodDecision)
+    }
 
     dispatcher.sendError = function (error) {
       expect(error).toBe(expectedError)
       done()
     }
 
-    stateManager.getNextEvent(expectedError)
-  })
-
-  it("should return error if an unexpected chance event is received", function (done) {
-    var decision = events.chanceEvent(true)
-    var initialState = {
-      nextEventType: events.playerType
-    }
-
-    dispatcher.sendDispatch = function (dispatch, callback) {
-      callback(null, decision)
-    }
-
-    dispatcher.sendError = function (error) {
-      expect(error.message).toBe("State manager received invalid decision.")
-      expect(error.decision).toEqual(decision)
-      expect(error.state).toEqual(initialState)
-      done()
-    }
-
-    stateManager.getNextEvent(null, initialState)
-  })
-
-  it("should return error if an unexpected client event is received", function (done) {
-    var decision = events.playerEvent({ wager: 3 })
-    var initialState = {
-      nextEventType: events.chanceType
-    }
-
-    dispatcher.sendDispatch = function (dispatch, callback) {
-      callback(null, decision)
-    }
-
-    dispatcher.sendError = function (error) {
-      expect(error.message).toBe("State manager received invalid decision.")
-      expect(error.decision).toEqual(decision)
-      expect(error.state).toEqual(initialState)
-      done()
-    }
-
-    stateManager.getNextEvent(null, initialState)    
+    stateManager.start(expectedState)
   })
 })
