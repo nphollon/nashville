@@ -1,6 +1,6 @@
 describe("The application", function () {
 	"use strict";
-	pending()
+
 	var Browser = require("zombie")
 	var helpers = require("./spec_helper")
 	var applicationFactory = helpers.requireSource("server/application")
@@ -44,14 +44,15 @@ describe("The application", function () {
 		startApplication({ random: winningRandom })
 
 		browser.visit(url, logError(done, function () {
-			expect(browser.text("#status")).toEqual("Place your bet.")
+			expect(browser.text("#status")).toEqual("Welcome to Nashville")
+			expect(browser.text("#instruction")).toEqual("Place a wager")
 			expect(browser.text("#score")).toEqual("0")
 
 			browser.fill("#wager", 5)
 			browser.fire("#submit", "click", logError(done, function () {
-				// opponent bets 1, user wins...
-				// TODO need to add confirmation step
-				expect(browser.text("#score")).toEqual("6")
+				expect(browser.text("#status")).toEqual("Player 1 has won")
+				expect(browser.text("#instruction")).toEqual("")
+				expect(browser.text("#score")).toEqual("5")
 				done()
 			}))
 		}))

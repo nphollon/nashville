@@ -11,7 +11,7 @@ exports.buildClient = function (requester, renderer, reader) {
 	var processResponse = function (response) {
 		renderer.render(response)
 
-		if (response.enableInput === true) {
+		if (response.input.enableSubmit === true) {
 			reader.enable(client.submit)
 		} else {
 			process.nextTick(function () {

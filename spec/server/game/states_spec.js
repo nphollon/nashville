@@ -267,29 +267,3 @@ describe("The state", function () {
     })
   })
 })
-
-/**
-enableSubmit: boolean on response
-status: string on state
-instruction: string on response
-action: string on response
-
-possibilities...
-1) If player is last
-enableInput: false
-enableSubmit: false
-instruction: ""
-action: ""
-
-2) If player is neither next nor last
-enableInput: false
-enableSubmit: true
-instruction: ""
-action: "Continue"
-
-3) If player is next
-enableInput: true
-enableSubmit: true
-instruction: "Place a wager."
-action: "Submit"
-**/

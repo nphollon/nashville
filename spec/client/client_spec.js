@@ -108,6 +108,8 @@ describe("The client", function () {
 	})
 
 	var createResponse = function (enableInput) {
-		return { enableInput: enableInput }
+		return {
+			input: { enableSubmit: enableInput }
+		}
 	}
 })
