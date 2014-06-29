@@ -38,20 +38,30 @@ describe("The game", function () {
         decision: events.playerEvent({ wager: 2 }),
         expectedResponse: {
           playerIndex: 0,
-          enableInput: false,
+          wager: 2,
           scores: [0, 0],
-          status: jasmine.any(String),
-          wager: 2
+          status: "Player 1 has bet $2",
+          input: {
+            enableText: false,
+            enableSubmit: false,
+            instruction: "",
+            action: ""
+          }
         }
       },
       {
         decision: dummy(),
         expectedResponse: {
           playerIndex: 1,
-          enableInput: false,
+          wager: 2,
           scores: [0, 0],
-          status: jasmine.any(String),
-          wager: 2
+          status: "Player 1 has bet $2",
+          input: {
+            enableText: false,
+            enableSubmit: true,
+            instruction: "",
+            action: "Continue"
+          }
         }
       },
       {
@@ -65,20 +75,30 @@ describe("The game", function () {
         decision: dummy(),
         expectedResponse: {
           playerIndex: 0,
-          enableInput: false,
+          wager: 2,
           scores: [2, -2],
-          status: "You won.",
-          wager: 2
+          status: "Player 1 has won",
+          input: {
+            enableText: false,
+            enableSubmit: true,
+            instruction: "",
+            action: "Continue"
+          }
         }
       },
       {
         decision: dummy(),
         expectedResponse: {
           playerIndex: 1,
-          enableInput: true,
+          wager: 2,
           scores: [2, -2],
-          status: "You lost.",
-          wager: 2
+          status: "Player 1 has won",
+          input: {
+            enableText: true,
+            enableSubmit: true,
+            instruction: "Place a wager",
+            action: "Submit"
+          }
         }
       },
       {
@@ -87,6 +107,87 @@ describe("The game", function () {
       }
     ]
 
-    async.series([waitForStart, play(firstRound), play(secondRound), testDone])
+    var thirdRound = [
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 0,
+          wager: 10,
+          scores: [2, -2],
+          status: "Player 2 has bet $10",
+          input: {
+            enableText: false,
+            enableSubmit: true,
+            instruction: "",
+            action: "Continue"
+          }
+        }
+      },
+      {
+        decision: events.playerEvent({ wager: 10 }),
+        expectedResponse: {
+          playerIndex: 1,
+          wager: 10,
+          scores: [2, -2],
+          status: "Player 2 has bet $10",
+          input: {
+            enableText: false,
+            enableSubmit: false,
+            instruction: "",
+            action: ""
+          }
+        }
+      },
+      {
+        decision: dummy(),
+        expectedResponse: jasmine.any(Object)
+      }
+    ]
+
+    var fourthRound = [
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 0,
+          wager: 10,
+          scores: [12, -12],
+          status: "Player 1 has won",
+          input: {
+            enableText: true,
+            enableSubmit: true,
+            instruction: "Place a wager",
+            action: "Submit"
+          }
+        }
+      },
+      {
+        decision: dummy(),
+        expectedResponse: {
+          playerIndex: 1,
+          wager: 10,
+          scores: [12, -12],
+          status: "Player 1 has won",
+          input: {
+            enableText: false,
+            enableSubmit: true,
+            instruction: "",
+            action: "Continue"
+          }
+        }
+      },
+      {
+        decision: events.chanceEvent(0),
+        expectedResponse: jasmine.any(Object)
+      }
+    ]
+
+    async.series([
+      waitForStart,
+      play(firstRound), 
+      play(secondRound),
+      play(thirdRound),
+      play(fourthRound),
+      testDone
+    ])
   })
 })

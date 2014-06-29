@@ -4,18 +4,51 @@ var events = require("./events")
 
 var statePrototype = {}
 
-var getStatus = function (winnerIndex, playerIndex) {
-  if (winnerIndex === undefined) {
-    return "Place your bet."
-  }
-  if (winnerIndex === playerIndex) {
-    return "You won."
-  }
-  return "You lost."
+var playerName = function (playerIndex) {
+  return "Player " + (playerIndex + 1)
 }
 
-var shouldEnableInput = function (state, playerIndex) {
-  return state.nextPlayerIndex === playerIndex && state.nextEventType !== events.chanceType
+var wagerMessage = function (playerIndex, wager) {
+  return playerName(playerIndex) + " has bet $" + wager
+}
+
+var victoryMessage = function (winnerIndex) {
+  return playerName(winnerIndex) + " has won"
+}
+
+var fullInputEnabled = {
+  enableText: true,
+  enableSubmit: true,
+  instruction: "Place a wager",
+  action: "Submit"
+}
+
+var confirmationEnabled = {
+  enableText: false,
+  enableSubmit: true,
+  instruction: "",
+  action: "Continue"
+}
+
+var noInputEnabled = {
+  enableText: false,
+  enableSubmit: false,
+  instruction: "",
+  action: ""
+}
+
+Object.freeze(fullInputEnabled)
+Object.freeze(confirmationEnabled)
+Object.freeze(noInputEnabled)
+
+var inputSettings = function (playerIndex, nextPlayerIndex, lastPlayerIndex) {
+  if (playerIndex === nextPlayerIndex) {
+    return fullInputEnabled
+  }
+  if (playerIndex === lastPlayerIndex) {
+    return noInputEnabled
+  }
+  return confirmationEnabled
 }
 
 var playerMutator = {}
@@ -42,16 +75,17 @@ var copy = function (original) {
   state.wager = original.wager
   state.scores = original.scores
   state.winnerIndex = original.winnerIndex
+  state.status = original.status
   return state
 }
 
 statePrototype.toResponse = function (playerIndex) {
   var response = {
     playerIndex: playerIndex,
-    enableInput: shouldEnableInput(this, playerIndex),
     wager: this.wager,
     scores: this.scores,
-    status: getStatus(this.winnerIndex, playerIndex)
+    status: this.status,
+    input: inputSettings(playerIndex, this.nextPlayerIndex, this.lastPlayerIndex)
   }
   Object.freeze(response)
   return response
@@ -70,6 +104,7 @@ exports.setWager = function (wager) {
 
     var newState = copy(state)
     newState.wager = wager
+    newState.status = wagerMessage(newState.nextPlayerIndex, wager)
     Object.freeze(newState)
 
     process.nextTick(function () {
@@ -92,6 +127,7 @@ exports.win = function (winnerIndex) {
     })
 
     newState.winnerIndex = winnerIndex
+    newState.status = victoryMessage(winnerIndex)
     Object.freeze(newState)
 
     process.nextTick(function () {
@@ -124,7 +160,8 @@ exports.build = function (playerCount, spec) {
     nextPlayerIndex: 0,
     numberOfPlayers: playerCount,
     wager: 1,
-    scores: []
+    scores: [],
+    status: "Welcome to Nashville"
   }
 
   Object.keys(spec || {}).forEach(function (key) {

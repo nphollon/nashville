@@ -32,16 +32,31 @@ describe("The state", function () {
       expect(state.lastPlayerIndex).toBe(3)
       expect(state.nextEventType).toBe(events.playerType)
     })
+
+    it("has a default status message", function () {
+      var state = stateFactory.build(2)
+      expect(state.status).toBe("Welcome to Nashville")
+    })
   })
 
-  it("allows a wager to be set", function (done) {
-    var startState = stateFactory.build(1)
-    var wager = dummy()
-    stateFactory.setWager(wager)(startState, function (error, endState) {
-      expect(error).toBe(null)
-      expect(endState.wager).toBe(wager)
-      expectIsFrozen(endState)
-      done()
+  describe("setting a wager", function () {
+    it("sets the wager to the given value", function (done) {
+      var startState = stateFactory.build(1)
+      var wager = dummy()
+      stateFactory.setWager(wager)(startState, function (error, endState) {
+        expect(error).toBe(null)
+        expect(endState.wager).toBe(wager)
+        expectIsFrozen(endState)
+        done()
+      })
+    })
+
+    it("says who set the wager in the status message", function (done) {
+      var startState = stateFactory.build(2, { nextPlayerIndex: 0 })
+      stateFactory.setWager(2)(startState, function (error, endState) {
+        expect(endState.status).toBe("Player 1 has bet $2")
+        done()
+      })
     })
   })
 
@@ -72,6 +87,14 @@ describe("The state", function () {
       var startState = stateFactory.build(3, { wager: wager })
       stateFactory.win(0)(startState, function (error, endState) {
         expect(endState.scores).toEqual([ 2*wager, -wager, -wager ])
+        done()
+      })
+    })
+
+    it("declares the winner in the status message", function (done) {
+      var startState = stateFactory.build(2)
+      stateFactory.win(0)(startState, function (error, endState) {
+        expect(endState.status).toBe("Player 1 has won")
         done()
       })
     })
@@ -169,6 +192,13 @@ describe("The state", function () {
       expect(response.wager).toEqual(expectedWager)
     })
 
+    it("should contain the same status", function () {
+      var expectedStatus = dummy()
+      var state = stateFactory.build(2, { status: expectedStatus})
+      var response = state.toResponse(0)
+      expect(response.status).toEqual(expectedStatus)
+    })
+
     it("should contain the same list of scores", function () {
       var expectedScores = [ dummy(), dummy() ]
       var state = stateFactory.build(2, { scores: expectedScores })
@@ -186,50 +216,80 @@ describe("The state", function () {
       expect(response.playerIndex).toEqual(1)
     })
 
-    describe("status message", function () {
-      it("should contain lose message if player lost", function () {
-        var state = stateFactory.build(2, { winnerIndex: 1 })
-        var response = state.toResponse(0)
-        expect(response.status).toEqual("You lost.")
-      })
-
-      it("should contain win message if player won", function () {
-        var state = stateFactory.build(2, { winnerIndex: 0 })
-        var response = state.toResponse(0)
-        expect(response.status).toEqual("You won.")
-      })
-
-      it("should contain instruction if nobody has won yet", function () {
-        var state = stateFactory.build(2, { winnerIndex: undefined })
-        var response = state.toResponse(0)
-        expect(response.status).toEqual("Place your bet.")
-      })
-    })
-
     describe("enabling player input", function () {
-      it("should enable input for first player if it is their turn", function () {
+      var fullInput = {
+        enableText: true,
+        enableSubmit: true,
+        instruction: "Place a wager",
+        action: "Submit"
+      }
+
+      var noInput = {
+        enableText: false,
+        enableSubmit: false,
+        instruction: "",
+        action: ""
+      }
+
+      var confirmation = {
+        enableText: false,
+        enableSubmit: true,
+        instruction: "",
+        action: "Continue"
+      }
+
+      it("should fully enable input for first player if it is their turn", function () {
         var state = stateFactory.build(2, { nextPlayerIndex: 0 })
         var response = state.toResponse(0)
-        expect(response.enableInput).toBe(true)
-      })
-
-      it("should disable input for first player if it is not their turn", function () {
-        var state = stateFactory.build(2, { nextPlayerIndex: 1 })
-        var response = state.toResponse(0)
-        expect(response.enableInput).toBe(false)
+        expect(response.input).toEqual(fullInput)
+        expectIsFrozen(response.input)
       })
 
       it("should enable input for second player if it is their turn", function () {
         var state = stateFactory.build(2, { nextPlayerIndex: 1 })
         var response = state.toResponse(1)
-        expect(response.enableInput).toBe(true)
+        expect(response.input).toEqual(fullInput)
       })
 
-      it("should not enable input for any player if a chance event is expected", function () {
-        var state = stateFactory.build(1, { nextPlayerIndex: 0, nextEventType: events.chanceType })
+      it("should disable input for first player if they just had a turn", function () {
+        var state = stateFactory.build(2, { nextPlayerIndex: 2, lastPlayerIndex: 0 })
         var response = state.toResponse(0)
-        expect(response.enableInput).toBe(false)
+        expect(response.input).toEqual(noInput)
+        expectIsFrozen(response.input)
+      })
+
+      it("should enable confirmation for first player if their turn is neither next nor last", function () {
+        var state = stateFactory.build(2, { nextPlayerIndex: 2, lastPlayerIndex: 1 })
+        var response = state.toResponse(0)
+        expect(response.input).toEqual(confirmation)
+        expectIsFrozen(response.input)
       })
     })
   })
 })
+
+/**
+enableSubmit: boolean on response
+status: string on state
+instruction: string on response
+action: string on response
+
+possibilities...
+1) If player is last
+enableInput: false
+enableSubmit: false
+instruction: ""
+action: ""
+
+2) If player is neither next nor last
+enableInput: false
+enableSubmit: true
+instruction: ""
+action: "Continue"
+
+3) If player is next
+enableInput: true
+enableSubmit: true
+instruction: "Place a wager."
+action: "Submit"
+**/

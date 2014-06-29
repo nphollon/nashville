@@ -17,7 +17,6 @@ exports.mutateState[events.playerType] = function (state, decision, callback) {
   })
 }
 
-
 exports.build = function (dispatcher, mutateState) {
   var stateManager = {}
 
