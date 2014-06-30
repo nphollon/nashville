@@ -1,7 +1,7 @@
 ;(function () {
 	"use strict";
 
-	var port = 4567
+	var port = process.env.PORT || 4567
 
   var application = require("./server/application").build()
 
