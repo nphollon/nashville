@@ -4,15 +4,21 @@ describe("the application", function () {
   var helpers = require("../spec_helper")
   var applicationFactory = helpers.requireSource("server/application")
 
-  var gameDriver, webServer, port, playerCount, substitutions
+  var gameDriver, webServer, port, startState, agent, substitutions
 
   beforeEach(function () {
     port = 1
     gameDriver = jasmine.createSpyObj("game driver", ["start"])
     webServer = jasmine.createSpyObj("web server", ["listen", "close"])
-    playerCount = 3
+    agent = jasmine.createSpyObj("agent", ["start"])
+    startState = helpers.dummy()
 
-    substitutions = { gameDriver: gameDriver, webServer: webServer, playerCount: playerCount }
+    substitutions = {
+      gameDriver: gameDriver,
+      webServer: webServer,
+      agents: [ agent ],
+      startState: startState
+    }
   })
 
   it("should pass substitutions to dependency manager", function () {
@@ -22,13 +28,14 @@ describe("the application", function () {
     expect(dependencyManager.buildContext).toHaveBeenCalledWith(jasmine.any(Object), substitutions)
   })
 
-  xit("should start web server and game driver", function () {
+  it("should start web server, game driver, and agents", function () {
     var application = applicationFactory.build(substitutions)
 
     application.start(port)
 
-    expect(gameDriver.start).toHaveBeenCalledWith(playerCount)
+    expect(gameDriver.start).toHaveBeenCalledWith(startState)
     expect(webServer.listen).toHaveBeenCalledWith(port)
+    expect(agent.start).toHaveBeenCalled()
   })
 
   it("should close the web server when stopped", function () {

@@ -16,10 +16,13 @@ exports.build = function (random, inputCallbacks) {
   }
 
   chancePlayer.getNextEvent = function (error, state) {
-    var winningPlayerIndex = random.integer(0, playerCount(state))
-    process.nextTick(function () {
-      inputCallbacks.submitDecision(events.chanceEvent(winningPlayerIndex), chancePlayer.getNextEvent)
-    })
+    if (error === null) {
+      var winningPlayerIndex = random.integer(0, playerCount(state))
+
+      process.nextTick(function () {
+        inputCallbacks.submitDecision(events.chanceEvent(winningPlayerIndex), chancePlayer.getNextEvent)
+      })
+    }
   }
 
   return chancePlayer

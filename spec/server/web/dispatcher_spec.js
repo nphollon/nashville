@@ -91,11 +91,11 @@ describe("The dispatcher", function () {
 
     var dispatchInterval = setInterval(sendDispatch, 1, dummy(), dummy())
 
-    setTimeout(function () {
+    helpers.later(function () {
       clearInterval(dispatchInterval)
       expect(submitCallback.calls.count()).toBe(1)
       done()
-    }, 10)
+    })
   })
 
   it("should send an error if a decision is submitted before previous submit callback is fulfilled", function (done) {

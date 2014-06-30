@@ -58,7 +58,7 @@ describe("The application", function () {
 		}))
 	})
 
-	xit("should cope with server-side errors gracefully", function (done) {
+	it("should cope with server-side errors gracefully", function (done) {
 		var failingDispatcher = {
 			requestUpdate: function (callback) {
 				callback(new Error("dispatcher error"))

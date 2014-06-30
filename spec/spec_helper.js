@@ -16,4 +16,8 @@ exports.resetSpecTimeout = function () {
   this.setSpecTimeout(500)
 }
 
+exports.later = function (callback) {
+	setTimeout(callback, 10)
+}
+
 exports.resetSpecTimeout()

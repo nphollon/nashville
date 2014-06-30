@@ -48,5 +48,15 @@ describe("The chance player", function () {
 
       chancePlayer.getNextEvent(null, state)
     })
+
+    it("should give up if it receives an error", function (done) {
+      inputCallbacks.submitDecision = jasmine.createSpy("submit decision")
+      chancePlayer.getNextEvent(new Error("dispatcher error"))
+
+      helpers.later(function () {
+        expect(inputCallbacks.submitDecision).not.toHaveBeenCalled()
+        done()
+      })
+    })
   })
 })

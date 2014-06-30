@@ -33,15 +33,11 @@ var defaultFactories = {
     return require("./web/ajax_adapter").build(that.splitter.input(0))
   },
 
-  player2: function (that) {
-    return require("./game/opponent").build(that.splitter.input(1))
-  },
-
-  chancePlayer: function (that) {
-    return require("./game/chance_player").build(
-      that.random,
-      that.splitter.input(that.playerCount)
-    )
+  agents: function (that) {
+    return [
+      require("./game/opponent").build(that.splitter.input(1)),
+      require("./game/chance_player").build(that.random, that.splitter.input(that.playerCount))
+    ]
   },
 
   random: function () {
@@ -88,8 +84,9 @@ exports.build = function (substitutions) {
   
   application.start = function (port) {
     context.gameDriver.start(context.startState)
-    context.player2.start()
-    context.chancePlayer.start()
+    context.agents.forEach(function (agent) {
+      agent.start()
+    })
     context.webServer.listen(port)
   }
 

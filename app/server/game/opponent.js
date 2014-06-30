@@ -12,10 +12,12 @@ exports.build = function (inputCallbacks) {
     })
   }
 
-  opponent.getNextEvent = function () {
-    process.nextTick(function () {
-      inputCallbacks.submitDecision(decision, opponent.getNextEvent)
-    })
+  opponent.getNextEvent = function (error) {
+    if (error === null) {
+      process.nextTick(function () {
+        inputCallbacks.submitDecision(decision, opponent.getNextEvent)
+      })
+    }
   }
 
   return opponent

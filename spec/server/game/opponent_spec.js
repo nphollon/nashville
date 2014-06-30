@@ -35,5 +35,16 @@ describe("Default opponent", function () {
 
       opponent.getNextEvent(null, null)
     })
+
+    it("gives up if an error is received", function (done) {
+      inputCallbacks.submitDecision = jasmine.createSpy("submit decision")
+
+      opponent.getNextEvent(new Error("dispatcher error"))
+
+      helpers.later(function () {
+        expect(inputCallbacks.submitDecision).not.toHaveBeenCalled()
+        done()
+      })
+    })
   })
 })
