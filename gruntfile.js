@@ -78,8 +78,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-sass")
   grunt.loadNpmTasks("grunt-shell")
 
-  grunt.registerTask("compile", ["jshint:source", "browserify", "sass"])
-  grunt.registerTask("test", ["compile", "jshint:spec", "shell:runJasmine"])
-  grunt.registerTask("launch", ["test", "shell:startServer"])
+  grunt.registerTask("compile", ["browserify", "sass"])
+  grunt.registerTask("test", ["compile", "jshint:source", "jshint:spec", "shell:runJasmine"])
+  grunt.registerTask("launch", ["shell:startServer"])
   grunt.registerTask("default", ["test"])
 }
