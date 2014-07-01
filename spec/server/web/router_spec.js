@@ -9,7 +9,7 @@ describe("The router", function () {
   var routerFactory = requireSource("server/web/router")
 
   var routes, router, responseStream
-  var getUrl, postUrl, badUrl, GET, POST
+  var getUrl, postUrl, badUrl, GET, POST, plainContent
 
   beforeEach(function () {
     getUrl = "/valid_get"
@@ -17,6 +17,7 @@ describe("The router", function () {
     badUrl = "/invalid"
     GET = "GET"
     POST = "POST"
+    plainContent = {"Content-Type": "text/plain"}
 
     routes = {}
     routes[getUrl] = { method: GET }
@@ -35,7 +36,7 @@ describe("The router", function () {
     var requestStream = buildRequestStream(badUrl, GET)
     router(requestStream, responseStream)
     process.nextTick(function () {
-      expect(responseStream.writeHead).toHaveBeenCalledWith(404)
+      expect(responseStream.writeHead).toHaveBeenCalledWith(404, plainContent)
       done()
     })
   })
@@ -44,7 +45,7 @@ describe("The router", function () {
     var requestStream = buildRequestStream(getUrl, POST)
     router(requestStream, responseStream)
     process.nextTick(function () {
-      expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+      expect(responseStream.writeHead).toHaveBeenCalledWith(405, plainContent)
       done()
     })
   })
@@ -53,7 +54,7 @@ describe("The router", function () {
     var requestStream = buildRequestStream(postUrl, GET)
     router(requestStream, responseStream)
     process.nextTick(function () {
-      expect(responseStream.writeHead).toHaveBeenCalledWith(405)
+      expect(responseStream.writeHead).toHaveBeenCalledWith(405, plainContent)
       done()
     })
   })

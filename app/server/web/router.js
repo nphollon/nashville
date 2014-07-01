@@ -21,14 +21,14 @@ var buildResponder = function (responseStream) {
 
   responder.respondToInvalidPath = function () {
     process.nextTick(function () {
-      responseStream.writeHead(404)
+      responseStream.writeHead(404, {"Content-Type": "text/plain"})
       responseStream.end()
     })
   }
 
   responder.respondToInvalidMethod = function () {
     process.nextTick(function () {
-      responseStream.writeHead(405)
+      responseStream.writeHead(405, {"Content-Type": "text/plain"})
       responseStream.end()
     })
   }
