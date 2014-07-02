@@ -20,13 +20,13 @@
     "grunt": "^0.4.4",
     "grunt-cli": "^0.1.13",
     "grunt-shell": "^0.7.0",
+    "grunt-browserify": "^2.1.0",
+    "grunt-sass": "^0.12.1",
     "jquery": "^2.1.0",
     "random-js": "^1.0.4"
   },
   "devDependencies": {
-    "grunt-browserify": "^2.1.0",
     "grunt-contrib-jshint": "^0.10.0",
-    "grunt-sass": "^0.12.1",
     "jasmine-node": "^2.0.0-beta3",
     "zombie": "^2.0.0-alpha31"
   },
