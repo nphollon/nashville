@@ -82,5 +82,4 @@ module.exports = function(grunt) {
   grunt.registerTask("test", ["compile", "jshint:source", "jshint:spec", "shell:runJasmine"])
   grunt.registerTask("launch", ["shell:startServer"])
   grunt.registerTask("default", ["test"])
-  grunt.registerTask("heroku:production", ["shell:startServer"])
 }
