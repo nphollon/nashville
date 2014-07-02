@@ -85,7 +85,7 @@ module.exports = function(grunt) {
   grunt.registerTask("unit-test", ["shell:jasmine-unit"])
   grunt.registerTask("compile", ["browserify", "sass"])
   grunt.registerTask("functional-test", ["shell:jasmine-functional"])
-  grunt.registerTask("launch", ["shell:start-server"])
+  grunt.registerTask("launch", ["compile", "shell:start-server"])
 
   grunt.registerTask("dev:all", ["jshint", "unit-test", "compile", "functional-test"])
   grunt.registerTask("dev:lite", ["jshint", "unit-test"])
