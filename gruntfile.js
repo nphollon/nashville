@@ -63,11 +63,15 @@ module.exports = function(grunt) {
     },
 
     shell: {
-      runJasmine: {
-        command: "node_modules/jasmine-node/bin/jasmine-node spec --captureExceptions"
+      "jasmine-unit": {
+        command: "node_modules/jasmine-node/bin/jasmine-node spec/client spec/server --captureExceptions"
       },
 
-      startServer: {
+      "jasmine-functional": {
+        command: "node_modules/jasmine-node/bin/jasmine-node spec/full_stack_spec.js --captureExceptions"
+      },
+
+      "start-server": {
         command: "node app/main.js"
       }
     }
@@ -78,8 +82,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-sass")
   grunt.loadNpmTasks("grunt-shell")
 
+  grunt.registerTask("unit-test", ["shell:jasmine-unit"])
   grunt.registerTask("compile", ["browserify", "sass"])
-  grunt.registerTask("test", ["compile", "jshint:source", "jshint:spec", "shell:runJasmine"])
-  grunt.registerTask("launch", ["shell:startServer"])
-  grunt.registerTask("default", ["test"])
+  grunt.registerTask("functional-test", ["shell:jasmine-functional"])
+  grunt.registerTask("launch", ["compile", "shell:start-server"])
+
+  grunt.registerTask("dev:all", ["jshint", "unit-test", "compile", "functional-test"])
+  grunt.registerTask("dev:lite", ["jshint", "unit-test"])
+
+  grunt.registerTask("default", ["dev:all"])
 }
