@@ -16,6 +16,8 @@ var defaultFactories = {
       "/": get("public/index.html", "text/html"),
       "/index.css": get("public/index.css", "text/css"),
       "/index.js": get("public/index.js", "application/javascript"),
+      "/bootstrap.min.css": get("public/bootstrap.min.css", "text/css"),
+      "/bootstrap.min.js": get("public/bootstrap.min.js", "application/javascript"),
       "/request-update": post(that.adapter.requestUpdate),
       "/submit-decision": post(that.adapter.submitDecision)
     }
