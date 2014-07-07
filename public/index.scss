@@ -10,12 +10,27 @@ $btn_txt_color: $terra;
 $btn_bkg_color: $acqua;
 $btn_hover_color: $abisso;
 
+body {
+  height: 500px;
+}
+
+.container-fluid, #app, #player-list, #main, .margin {
+  height: 100%
+}
+
+#app {
+  background-color: $abisso;
+}
+
+.player-data {
+  height: 50%
+}
+
 #main {
   background-color: $bkg_color;
   color: $txt_color;
   font-family: sans-serif;
   text-align: center;
-  width: 500px;
   padding-top: 10px;
   padding-bottom: 30px;
 }
