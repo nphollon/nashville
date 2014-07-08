@@ -10,29 +10,70 @@ $btn_txt_color: $terra;
 $btn_bkg_color: $acqua;
 $btn_hover_color: $abisso;
 
-body {
-  height: 500px;
-}
+$border_radius: 10px;
 
-.container-fluid, #app, #player-list, #main, .margin {
-  height: 100%
-}
+html, body { height: 100%; }
 
-#app {
+.container-fluid {
+  min-height: 100%;
   background-color: $abisso;
 }
 
-.player-data {
-  height: 50%
+#app {
+  height: 300px;
+  font-size: 10px;
+}
+
+#player-list {
+  height: 100%;
+
+  .row {
+    height: 50%;
+
+    .content {
+      height: 94%;
+      border-radius: $border_radius;
+      padding-top: 1em;
+      text-align: center;
+      font-size: 3em;
+      color: $terra;
+      background-color: $acqua;
+    }
+
+    &:first-child .content {
+      margin-top: 4%;
+      margin-bottom: 2%;
+    }
+
+    &:last-child .content {
+      margin-top: 2%;
+      margin-bottom: 4%; 
+    }
+  }
 }
 
 #main {
-  background-color: $bkg_color;
-  color: $txt_color;
-  font-family: sans-serif;
-  text-align: center;
-  padding-top: 10px;
-  padding-bottom: 30px;
+  height: 100%;
+
+  .content {
+    background-color: $bkg_color;
+    color: $txt_color;
+    border-radius: $border_radius;
+    height: 96%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    text-align: center;
+    padding-top: 10px;
+
+    #info-pane {
+      height: 60%;
+      padding-top: 20%;
+    }
+
+    #action-pane {
+      height: 40%;
+    }
+  }
 }
 
 var {
@@ -63,7 +104,6 @@ var {
   border-color: $btn_txt_color;
   background-color: $btn_bkg_color;
   color: $btn_txt_color;
-  font-family: sans-serif;
   cursor: pointer;
   text-align: center;
   width: 100px;

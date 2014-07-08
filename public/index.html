@@ -12,26 +12,33 @@
         <div class="margin col-xs-3"></div>
 
         <div id="player-list" class="col-xs-2">
-          <div class="player-data row">Player 1</div>
-          <div class="player-data row">Player 2</div>
+          <div class="row">
+            <div class="content">
+              <p>Player 1</p>
+              <p><var id="score"></var></p>  
+            </div>
+          </div>
+          <div class="row">
+            <div class="content">
+              <p>Player 2</p>
+              <p><var>0</var></p>
+            </div>
+          </div>
         </div>
 
         <div id="main" class="col-xs-4">
-          <div id="display">
-            <h2 id="status"></h2>
-            <h3 id="instruction"></h3>
-            <h3>
-              Score:
-              <var id="score"></var>
-            </h3>
-          </div>
-          <div id="controls">
-            <h4 id="error"></h4>
-            <h3>
-              Wager
-              <input id="wager" type="text" value="1" autofocus="true" />
-            </h3>
-            <input id="submit" type="button" class="button" value="Submit" />
+          <div class="content">
+            <div id="info-pane" class="row">
+              <p id="status"></p>
+              <p>
+                <span id="instruction"></span>
+                <input id="wager" type="text" value="1" autofocus="true" />
+              </p>
+              <p id="error"></p>
+            </div>
+            <div id="action-pane" class="row">
+              <input id="submit" type="button" class="button" value="Submit" />
+            </div>
           </div>
         </div>
 
