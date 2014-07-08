@@ -12,67 +12,76 @@ $btn_hover_color: $abisso;
 
 $border_radius: 10px;
 
-html, body { height: 100%; }
+@function height($percent) {
+  @return ($percent/100) * 300px;
+}
 
-.container-fluid {
+@function width($percent) {
+  @return ($percent/100) * 600px;
+}
+
+@function margin() {
+  @return height(3)
+}
+
+@function height-with-margins($percent, $count) {
+  @return height($percent) - $count*margin();
+}
+
+@function width-with-margins($percent, $count) {
+  @return width($percent) - $count*margin();
+}
+
+html { height: 100%; }
+
+body {
   min-height: 100%;
   background-color: $abisso;
 }
 
 #app {
-  height: 300px;
+  height: height(100);
+  width: width(100);
   font-size: 10px;
 }
 
 #player-list {
-  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  height: height(100);
+  width: width-with-margins(30, 2);
+  margin: 0 margin();
 
-  .row {
-    height: 50%;
-
-    .content {
-      height: 94%;
-      border-radius: $border_radius;
-      padding-top: 1em;
-      text-align: center;
-      font-size: 3em;
-      color: $terra;
-      background-color: $acqua;
-    }
-
-    &:first-child .content {
-      margin-top: 4%;
-      margin-bottom: 2%;
-    }
-
-    &:last-child .content {
-      margin-top: 2%;
-      margin-bottom: 4%; 
-    }
+  .player-cell {
+    height: height-with-margins(50, 1.5);
+    margin: margin() 0;
+    border-radius: $border_radius;
+    text-align: center;
+    font-size: 1em;
+    color: $terra;
+    background-color: $acqua;
   }
 }
 
 #main {
-  height: 100%;
+  height: height-with-margins(100, 2);
+  width: width(70);
+  margin: margin() 0;
 
-  .content {
-    background-color: $bkg_color;
-    color: $txt_color;
-    border-radius: $border_radius;
-    height: 96%;
-    margin-top: 2%;
-    margin-bottom: 2%;
-    text-align: center;
-    padding-top: 10px;
+  display: inline-block;
+  vertical-align: top;
 
-    #info-pane {
-      height: 60%;
-      padding-top: 20%;
-    }
+  background-color: $bkg_color;
+  color: $txt_color;
+  border-radius: $border_radius;
+  text-align: center;
 
-    #action-pane {
-      height: 40%;
-    }
+  #info-pane {
+    height: 60%;
+  }
+
+  #action-pane {
+    height: 40%;
   }
 }
 
