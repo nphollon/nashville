@@ -12,77 +12,82 @@ $btn_hover_color: $abisso;
 
 $border_radius: 10px;
 
-@function height($percent) {
-  @return ($percent/100) * 300px;
-}
-
-@function width($percent) {
-  @return ($percent/100) * 600px;
-}
-
-@function margin() {
-  @return height(3)
-}
-
-@function height-with-margins($percent, $count) {
-  @return height($percent) - $count*margin();
-}
-
-@function width-with-margins($percent, $count) {
-  @return width($percent) - $count*margin();
-}
-
 html { height: 100%; }
 
 body {
   min-height: 100%;
   background-color: $abisso;
+  text-align: center;
 }
 
 #app {
-  height: height(100);
-  width: width(100);
-  font-size: 10px;
+  display: inline-block;
+  position: relative;
+  height: 300px;
+  width: 600px;
+  font-size: 16px;
+
+  font-family: "Roboto Slab", serif;
+
+  input {
+    font: inherit;
+  }
 }
 
 #player-list {
-  display: inline-block;
-  vertical-align: top;
-  height: height(100);
-  width: width-with-margins(30, 2);
-  margin: 0 margin();
+  display: block;
+  position: absolute;
+  height: auto;
+  width: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 70%;
+  margin: 0 3px;
 
   .player-cell {
-    height: height-with-margins(50, 1.5);
-    margin: margin() 0;
+    display: block;
+    position: absolute;
+    height: auto;
+    left: 0;
+    right: 0;
+    margin: 3px 0;
     border-radius: $border_radius;
     text-align: center;
-    font-size: 1em;
+    font-size: 1.2em;
+    padding-top: 1em;
     color: $terra;
     background-color: $acqua;
+  }
+
+  #player-1-cell {
+    bottom: 50%;
+    top: 0;
+  }
+
+  #player-2-cell {
+    bottom: 0;
+    top: 50%;
   }
 }
 
 #main {
-  height: height-with-margins(100, 2);
-  width: width(70);
-  margin: margin() 0;
-
-  display: inline-block;
-  vertical-align: top;
+  display: block;
+  position: absolute;
+  height: auto;
+  width: auto;
+  top: 0;
+  bottom: 0;
+  left: 30%;
+  right: 0;
+  margin: 3px 0 3px 3px;
 
   background-color: $bkg_color;
   color: $txt_color;
   border-radius: $border_radius;
   text-align: center;
 
-  #info-pane {
-    height: 60%;
-  }
-
-  #action-pane {
-    height: 40%;
-  }
+  font-size: 1.2em;
 }
 
 var {
@@ -90,7 +95,7 @@ var {
 }
 
 #wager {
-  $field_height: 20px;
+  $field_height: 1.5em;
 
   autofocus: true;
   background-color: $btn_bkg_color;
@@ -100,6 +105,7 @@ var {
   height: $field_height;
   border: none;
   border-radius: $field_height;
+  margin-left: 0.5em;
 
   &:focus {
     background-color: $btn_hover_color;
@@ -108,15 +114,21 @@ var {
 }
 
 #submit {
-  $button_height: 30px;
+  $button_height: 2.0em;
+
+  display: block;
+  position: absolute;
+  height: $button_height;
+  width: auto;
+  bottom: 10%;
+  left: 0;
+  right: 0;
 
   border-color: $btn_txt_color;
   background-color: $btn_bkg_color;
   color: $btn_txt_color;
   cursor: pointer;
   text-align: center;
-  width: 100px;
-  height: $button_height;
   line-height: $button_height;
   margin-left: auto;
   margin-right: auto;
