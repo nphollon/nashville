@@ -10,7 +10,11 @@ $btn_txt_color: $terra;
 $btn_bkg_color: $acqua;
 $btn_hover_color: $abisso;
 
-$border_radius: 10px;
+$height: 300px;
+$width: 600px;
+$margin: 3px;
+$font-size: 16px;
+$border-radius: 10px;
 
 html { height: 100%; }
 
@@ -23,124 +27,124 @@ body {
 #app {
   display: inline-block;
   position: relative;
-  height: 300px;
-  width: 600px;
-  font-size: 16px;
-
+  height: $height;
+  width: $width;
+  
+  font-size: $font-size;
   font-family: "Roboto Slab", serif;
+  input { font: inherit; }
+  var { font-style: normal; }
 
-  input {
-    font: inherit;
-  }
-}
-
-#player-list {
-  display: block;
-  position: absolute;
-  height: auto;
-  width: auto;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 70%;
-  margin: 0 3px;
-
-  .player-cell {
+  #player-list {
     display: block;
     position: absolute;
     height: auto;
+    width: auto;
+    top: 0;
+    bottom: 0;
     left: 0;
+    right: 70%;
+    margin: 0 $margin;
+
+    .player-cell {
+      display: block;
+      position: absolute;
+      height: auto;
+      left: 0;
+      right: 0;
+      margin: $margin 0;
+      padding-top: 1em;
+      
+      border-radius: $border-radius;
+      
+      text-align: center;
+      font-size: 1.2em;
+
+      color: $terra;
+      background-color: $acqua;
+    }
+
+    #player-1-cell {
+      bottom: 50%;
+      top: 0;
+    }
+
+    #player-2-cell {
+      bottom: 0;
+      top: 50%;
+    }
+  }
+
+  #main {
+    display: block;
+    position: absolute;
+    height: auto;
+    width: auto;
+    top: 0;
+    bottom: 0;
+    left: 30%;
     right: 0;
-    margin: 3px 0;
-    border-radius: $border_radius;
+    margin: $margin 0 $margin $margin;
+
+    border-radius: $border-radius;
+
     text-align: center;
     font-size: 1.2em;
-    padding-top: 1em;
-    color: $terra;
-    background-color: $acqua;
-  }
+    
+    background-color: $bkg_color;
+    color: $txt_color;
 
-  #player-1-cell {
-    bottom: 50%;
-    top: 0;
-  }
+    #error { font-size: 0.7em; }
 
-  #player-2-cell {
-    bottom: 0;
-    top: 50%;
-  }
-}
+    #wager {
+      $field_height: 1.5em;
 
-#main {
-  display: block;
-  position: absolute;
-  height: auto;
-  width: auto;
-  top: 0;
-  bottom: 0;
-  left: 30%;
-  right: 0;
-  margin: 3px 0 3px 3px;
+      width: 3em;
+      height: $field_height;
+      margin-left: 0.5em;
 
-  background-color: $bkg_color;
-  color: $txt_color;
-  border-radius: $border_radius;
-  text-align: center;
+      border: none;
+      border-radius: $field_height;
 
-  font-size: 1.2em;
-}
+      autofocus: true;
+      text-align: center;
 
-var {
-  font-style: normal;
-}
+      color: $btn_txt_color;
+      background-color: $btn_bkg_color;
 
-#wager {
-  $field_height: 1.5em;
+      &:focus {
+        background-color: $btn_hover_color;
+        outline: none;
+      }
+    }
 
-  autofocus: true;
-  background-color: $btn_bkg_color;
-  color: $btn_txt_color;
-  text-align: center;
-  width: 50px;
-  height: $field_height;
-  border: none;
-  border-radius: $field_height;
-  margin-left: 0.5em;
+    #submit {
+      $button_height: 2.0em;
 
-  &:focus {
-    background-color: $btn_hover_color;
-    outline: none;
-  }
-}
+      display: block;
+      position: absolute;
+      height: $button_height;
+      width: auto;
+      bottom: 10%;
+      left: 0;
+      right: 0;
+      margin-left: auto;
+      margin-right: auto;
 
-#submit {
-  $button_height: 2.0em;
+      border: 0.2em;
+      border-style: solid;
+      border-radius: $button_height;
 
-  display: block;
-  position: absolute;
-  height: $button_height;
-  width: auto;
-  bottom: 10%;
-  left: 0;
-  right: 0;
+      cursor: pointer;
+      text-align: center;
+      line-height: $button_height;
 
-  border-color: $btn_txt_color;
-  background-color: $btn_bkg_color;
-  color: $btn_txt_color;
-  cursor: pointer;
-  text-align: center;
-  line-height: $button_height;
-  margin-left: auto;
-  margin-right: auto;
-  border: 3px;
-  border-style: solid;
-  border-radius: $button_height;
+      border-color: $btn_txt_color;
+      background-color: $btn_bkg_color;
+      color: $btn_txt_color;
 
-  &:hover {
-    background-color: $btn_hover_color;
-  }
-
-  &:disabled {
-    background-color: $btn_txt_color;
+      &:hover { background-color: $btn_hover_color; }
+      &:disabled { background-color: $btn_txt_color; }
+    }
   }
 }
