@@ -46,13 +46,15 @@ describe("The application", function () {
 		browser.visit(url, logError(done, function () {
 			expect(browser.text("#status")).toEqual("Welcome to Nashville")
 			expect(browser.text("#instruction")).toEqual("Place a wager")
-			expect(browser.text("#score")).toEqual("0")
+			expect(browser.text("#player-1-score")).toEqual("0")
+			expect(browser.text("#player-2-score")).toEqual("0")
 
 			browser.fill("#wager", 5)
 			browser.fire("#submit", "click", logError(done, function () {
 				expect(browser.text("#status")).toEqual("Player 1 has won")
 				expect(browser.text("#instruction")).toEqual("")
-				expect(browser.text("#score")).toEqual("5")
+				expect(browser.text("#player-1-score")).toEqual("5")
+				expect(browser.text("#player-2-score")).toEqual("-5")
 				done()
 			}))
 		}))

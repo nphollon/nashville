@@ -5,19 +5,19 @@ describe("The renderer", function () {
   var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
 
-  var wagerField, statusDiv, scoreDiv, renderer, instructionDiv, submitButton
+  var wagerField, statusDiv, scoreDivs, renderer, instructionDiv, submitButton
 
   beforeEach(function () {
     wagerField = mock("wager field", ["val"])
     statusDiv = mock("status div", ["text"])
     instructionDiv = mock("instruction div", ["text"])
     submitButton = mock("submitButton", ["val"])
-    scoreDiv = mock("score div", ["text"])
+    scoreDivs = [ mock("player 1 score", ["text"]), mock("player 2 score", ["text"]) ]
     renderer = rendererFactory.buildRenderer({
       statusDiv: statusDiv, 
       instructionDiv: instructionDiv,
       wagerField: wagerField,
-      scoreDiv: scoreDiv,
+      scoreDivs: scoreDivs,
       submitButton: submitButton
     })
   })
@@ -28,7 +28,7 @@ describe("The renderer", function () {
         playerIndex: 1,
         wager: dummy(),
         status: dummy(),
-        scores: [ null, dummy(), null ],
+        scores: [ dummy(), dummy() ],
         input: {
           instruction: dummy(),
           action: dummy()
@@ -38,7 +38,8 @@ describe("The renderer", function () {
       renderer.render(data)
       expect(wagerField.val).toHaveBeenCalledWith(data.wager)
       expect(statusDiv.text).toHaveBeenCalledWith(data.status)
-      expect(scoreDiv.text).toHaveBeenCalledWith(data.scores[1])
+      expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
+      expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
       expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
       expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
     })
@@ -49,7 +50,8 @@ describe("The renderer", function () {
       renderer.error()
       expect(statusDiv.text).toHaveBeenCalledWith("We're sorry. Something went wrong.")
       expect(wagerField.val).toHaveBeenCalledWith(0)
-      expect(scoreDiv.text).toHaveBeenCalledWith(0)
+      expect(scoreDivs[0].text).toHaveBeenCalledWith(0)
+      expect(scoreDivs[1].text).toHaveBeenCalledWith(0)
       expect(instructionDiv.text).toHaveBeenCalledWith("")
       expect(submitButton.val).toHaveBeenCalledWith("")
     })

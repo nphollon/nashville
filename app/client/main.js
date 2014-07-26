@@ -15,7 +15,7 @@
 		var interfaceElements = {
 			statusDiv: $("#status"),
 			instructionDiv: $("#instruction"),
-			scoreDiv: $("#score"),
+			scoreDivs: [ $("#player-1-score"), $("#player-2-score") ],
 			wagerField: $("#wager"),
 			submitButton: $("#submit"),
 			errorDiv: $("#error")
