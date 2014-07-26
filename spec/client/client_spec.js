@@ -42,7 +42,7 @@ describe("The client", function () {
 		it("enables user input if the response asks for user input", function () {
 			var response = createResponse(true)
 			client.update(null, response)
-			expect(reader.enable).toHaveBeenCalledWith(client.submit, response.input)
+			expect(reader.enable).toHaveBeenCalledWith(response.input, client.submit)
 		})
 
 		it("does not send a request if the response asks for user input", function () {

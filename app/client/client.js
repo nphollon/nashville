@@ -12,7 +12,7 @@ exports.buildClient = function (requester, renderer, reader) {
 		renderer.render(response)
 
 		if (response.input.enableSubmit === true) {
-			reader.enable(client.submit, response.input)
+			reader.enable(response.input, client.submit)
 		} else {
 			client.submit({})
 		}

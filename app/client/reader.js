@@ -21,9 +21,9 @@ exports.buildReader = function (interfaceElements) {
     }
   })
 
-  reader.enable = function (callback, inputFlags) {
+  reader.enable = function (inputFlags, callback) {
     setButtonDisabled(false)
-    submitButton.click(this.buildOnClickCallback(callback, inputFlags))
+    submitButton.click(this.buildOnClickCallback(inputFlags, callback))
   }
 
   reader.disable = function () {
@@ -31,7 +31,7 @@ exports.buildReader = function (interfaceElements) {
     submitButton.off("click")
   }
 
-  reader.buildOnClickCallback = function (clientCallback, inputFlags) {
+  reader.buildOnClickCallback = function (inputFlags, clientCallback) {
     if (inputFlags.enableText) {
       return function () {
         var decision = reader.getDecision()

@@ -43,13 +43,13 @@ describe("The reader", function () {
       var inputFlags = dummy()
       var callbackWrapper = dummy()
 
-      reader.buildOnClickCallback = function (callback, data) {
+      reader.buildOnClickCallback = function (data, callback) {
         expect(callback).toEqual(clientCallback)
         expect(data).toEqual(inputFlags)
         return callbackWrapper
       }
 
-      reader.enable(clientCallback, inputFlags)
+      reader.enable(inputFlags, clientCallback)
 
       expect(submitButton.click).toHaveBeenCalledWith(callbackWrapper)
     })
@@ -72,7 +72,7 @@ describe("The reader", function () {
       }
 
       var clientCallback = jasmine.createSpy("callback")
-      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textEnabled)
+      var callbackWrapper = reader.buildOnClickCallback(textEnabled, clientCallback)
 
       callbackWrapper()
 
@@ -85,13 +85,13 @@ describe("The reader", function () {
 
     it("should not call the client callback", function () {
       var clientCallback = jasmine.createSpy("clientCallback")
-      reader.buildOnClickCallback(clientCallback, textEnabled)
+      reader.buildOnClickCallback(textEnabled, clientCallback)
       expect(clientCallback).not.toHaveBeenCalled()
     })
 
     it("should not get a decision", function () {
       spyOn(reader, "getDecision")
-      reader.buildOnClickCallback(dummy(), textEnabled)
+      reader.buildOnClickCallback(textEnabled, dummy())
       expect(reader.getDecision).not.toHaveBeenCalled()
     })
 
@@ -105,7 +105,7 @@ describe("The reader", function () {
         done()
       }
 
-      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textEnabled)
+      var callbackWrapper = reader.buildOnClickCallback(textEnabled, clientCallback)
 
       callbackWrapper()
     })
@@ -131,7 +131,7 @@ describe("The reader", function () {
         done()
       }
 
-      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textDisabled)
+      var callbackWrapper = reader.buildOnClickCallback(textDisabled, clientCallback)
 
       callbackWrapper()
     })
