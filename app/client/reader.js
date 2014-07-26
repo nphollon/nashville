@@ -30,18 +30,19 @@ exports.buildReader = function (interfaceElements) {
   reader.buildOnClickCallback = function (clientCallback) {
     return function () {
       var decision = reader.getDecision()
-      var canSubmit = isValidWager(decision.wager)
-      var errorMessage = canSubmit ? "" : "Wager must be a positive number."
-
-      process.nextTick(function () {
-        errorDiv.text(errorMessage)
-      })
+      var errorMessage
       
-      if (canSubmit) {
+      if (isValidWager(decision.wager)) {
+        errorMessage = ""
+
         process.nextTick(function () {
           clientCallback(decision)
         })
+      } else {
+        errorMessage = "Wager must be a positive number."
       }
+
+      errorDiv.text(errorMessage)
     }
   }
 

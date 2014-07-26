@@ -12,34 +12,28 @@ exports.buildClient = function (requester, renderer, reader) {
 		renderer.render(response)
 
 		if (response.input.enableSubmit === true) {
-			reader.enable(client.submit)
+			reader.enable(client.submit, response.input)
 		} else {
-			process.nextTick(function () {
-				requester.submit({}, client.update)
-			})
+			client.submit({})
 		}
 	}
 
 	client.start = function () {
-		process.nextTick(function () {
-			requester.request(client.update)
-		})
 		reader.disable()
+		requester.request(client.update)
 	}
 
 	client.update = function (error, response) {
-		if (error === null) {
-			processResponse(response)
-		} else {
+		if (error) {
 			recordError(error)
+		} else {
+			processResponse(response)
 		}
 	}
 
 	client.submit = function (decision) {
-		process.nextTick(function () {
-			requester.submit(decision, client.update)
-		})
 		reader.disable()
+		requester.submit(decision, client.update)
 	}
 
 	return client

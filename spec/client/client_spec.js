@@ -18,16 +18,17 @@ describe("The client", function () {
 
 	describe("starting", function () {
 		it("sends a request", function (done) {
-			client.start()
-			requester.request.and.callFake(function (callback) {
+			requester.request = function (callback) {
 				expect(callback).toBe(client.update)
 				done()
-			})
+			}
+
+			client.start()
 		})
 
-		it("disables user input", function () {
+		it("disables user input", function (done) {
+			reader.disable = done
 			client.start()
-			expect(reader.disable).toHaveBeenCalled()
 		})
 	})
 
@@ -39,8 +40,9 @@ describe("The client", function () {
 		})
 
 		it("enables user input if the response asks for user input", function () {
-			client.update(null, createResponse(true))
-			expect(reader.enable).toHaveBeenCalledWith(client.submit)
+			var response = createResponse(true)
+			client.update(null, response)
+			expect(reader.enable).toHaveBeenCalledWith(client.submit, response.input)
 		})
 
 		it("does not send a request if the response asks for user input", function () {
@@ -92,18 +94,18 @@ describe("The client", function () {
 	describe("submitting user input", function () {
 		it("sends the submission as a request", function (done) {
 			var decision = dummy()
-			client.submit(decision)
-			requester.submit.and.callFake(function (submission, callback) {
+			requester.submit = function (submission, callback) {
 				expect(submission).toBe(decision)
 				expect(callback).toBe(client.update)
 				done()
-			})
+			}
+
+			client.submit(decision)
 		})
 
-		it("disables user input", function () {
-			var decision = dummy()
-			client.submit(decision)
-			expect(reader.disable).toHaveBeenCalled()
+		it("disables user input", function (done) {
+			reader.disable = done
+			client.submit(dummy())
 		})
 	})
 
