@@ -11,15 +11,19 @@ exports.buildReader = function (interfaceElements) {
     return (typeof wager === "number" && wager > 0)
   }
 
+  var callAsync = function (data, callback) {
+    process.nextTick(function () { callback(data) })
+  }
+
   wagerField.keypress(function (event) {
     if (event.which === 13) {
       submitButton.click()
     }
   })
 
-  reader.enable = function (callback) {
+  reader.enable = function (callback, inputFlags) {
     setButtonDisabled(false)
-    submitButton.click(this.buildOnClickCallback(callback))
+    submitButton.click(this.buildOnClickCallback(callback, inputFlags))
   }
 
   reader.disable = function () {
@@ -27,23 +31,24 @@ exports.buildReader = function (interfaceElements) {
     submitButton.off("click")
   }
 
-  reader.buildOnClickCallback = function (clientCallback) {
-    return function () {
-      var decision = reader.getDecision()
-      var errorMessage
-      
-      if (isValidWager(decision.wager)) {
-        errorMessage = ""
+  reader.buildOnClickCallback = function (clientCallback, inputFlags) {
+    if (inputFlags.enableText) {
+      return function () {
+        var decision = reader.getDecision()
+        var errorMessage
+        
+        if (isValidWager(decision.wager)) {
+          errorMessage = ""
+          callAsync(decision, clientCallback)
+        } else {
+          errorMessage = "Wager must be a positive number."
+        }
 
-        process.nextTick(function () {
-          clientCallback(decision)
-        })
-      } else {
-        errorMessage = "Wager must be a positive number."
+        errorDiv.text(errorMessage)
       }
-
-      errorDiv.text(errorMessage)
     }
+     
+    return callAsync.bind(null, {}, clientCallback)
   }
 
   reader.getDecision = function () {

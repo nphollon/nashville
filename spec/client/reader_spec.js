@@ -34,32 +34,45 @@ describe("The reader", function () {
 
   describe("enabling user input", function () {
     it("should enable the submit button", function () {
-      reader.enable(dummy())
+      reader.enable(dummy(), dummy())
       expect(submitButton.prop).toHaveBeenCalledWith("disabled", false)
     })
 
     it("should set the button's click event to trigger the callback", function () {
       var clientCallback = dummy()
+      var inputFlags = dummy()
       var callbackWrapper = dummy()
 
-      reader.buildOnClickCallback = function (callback) {
-        return (callback === clientCallback) ? callbackWrapper : undefined
+      reader.buildOnClickCallback = function (callback, data) {
+        expect(callback).toEqual(clientCallback)
+        expect(data).toEqual(inputFlags)
+        return callbackWrapper
       }
 
-      reader.enable(clientCallback)
+      reader.enable(clientCallback, inputFlags)
 
       expect(submitButton.click).toHaveBeenCalledWith(callbackWrapper)
     })
   })
 
   describe("building the onClick callback", function () {
-    var expectError = function (done, decision) {
+    var textEnabled = {
+      enableText: true,
+      enableSubmit: true
+    }
+
+    var textDisabled = {
+      enableText: false,
+      enableSubmit: true
+    }
+
+    var expectError = function (decision, done) {
       reader.getDecision = function () {
         return decision
       }
 
       var clientCallback = jasmine.createSpy("callback")
-      var callbackWrapper = reader.buildOnClickCallback(clientCallback)
+      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textEnabled)
 
       callbackWrapper()
 
@@ -72,13 +85,13 @@ describe("The reader", function () {
 
     it("should not call the client callback", function () {
       var clientCallback = jasmine.createSpy("clientCallback")
-      reader.buildOnClickCallback(clientCallback)
+      reader.buildOnClickCallback(clientCallback, textEnabled)
       expect(clientCallback).not.toHaveBeenCalled()
     })
 
     it("should not get a decision", function () {
       spyOn(reader, "getDecision")
-      reader.buildOnClickCallback(dummy())
+      reader.buildOnClickCallback(dummy(), textEnabled)
       expect(reader.getDecision).not.toHaveBeenCalled()
     })
 
@@ -92,21 +105,35 @@ describe("The reader", function () {
         done()
       }
 
-      var callbackWrapper = reader.buildOnClickCallback(clientCallback)
+      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textEnabled)
 
       callbackWrapper()
     })
 
     it("should reject decision with a non-numerical wager", function (done) {
-      expectError(done, { wager: "a potato" })
+      expectError({ wager: "a potato" }, done)
     })
 
     it("should reject decision with a negative wager", function (done) {
-      expectError(done, {wager: -1})
+      expectError({ wager: -1 }, done)
     })
 
     it("should reject decision with a zero wager", function (done) {
-      expectError(done, {wager: 0})
+      expectError({ wager: 0 }, done)
+    })
+
+    it("should send empty decision if wager field is disabled", function (done) {
+      spyOn(reader, "getDecision")
+
+      var clientCallback = function (data) {
+        expect(data).toEqual({})
+        expect(reader.getDecision).not.toHaveBeenCalled()
+        done()
+      }
+
+      var callbackWrapper = reader.buildOnClickCallback(clientCallback, textDisabled)
+
+      callbackWrapper()
     })
   })
 
