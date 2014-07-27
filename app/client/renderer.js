@@ -4,7 +4,7 @@ exports.buildRenderer = function (interfaceElements) {
   var renderer = {} 
 
   renderer.render = function (data) {
-    interfaceElements.wagerField.val(data.wager)
+    interfaceElements.wagerField.toggle(data.input.enableText)
     interfaceElements.statusDiv.text(data.status)
     interfaceElements.instructionDiv.text(data.input.instruction)
     interfaceElements.submitButton.val(data.input.action)
@@ -16,11 +16,10 @@ exports.buildRenderer = function (interfaceElements) {
 
   renderer.error = function () {
     this.render({
-      playerIndex: 0,
       status: "We're sorry. Something went wrong.",
       scores: [0, 0],
-      wager: 0,
       input: {
+        enableText: false,
         instruction: "",
         action: ""
       }

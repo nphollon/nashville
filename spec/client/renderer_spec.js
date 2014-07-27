@@ -8,7 +8,7 @@ describe("The renderer", function () {
   var wagerField, statusDiv, scoreDivs, renderer, instructionDiv, submitButton
 
   beforeEach(function () {
-    wagerField = mock("wager field", ["val"])
+    wagerField = mock("wager field", ["toggle"])
     statusDiv = mock("status div", ["text"])
     instructionDiv = mock("instruction div", ["text"])
     submitButton = mock("submitButton", ["val"])
@@ -22,38 +22,40 @@ describe("The renderer", function () {
     })
   })
 
-  describe("displaying the data", function () {
-    it("should set the wager, status message, and score", function () {
-      var data = {
-        playerIndex: 1,
-        wager: dummy(),
-        status: dummy(),
-        scores: [ dummy(), dummy() ],
-        input: {
-          instruction: dummy(),
-          action: dummy()
-        }
+  it("should render data", function () {
+    var data = {
+      status: dummy(),
+      scores: [ dummy(), dummy() ],
+      input: {
+        enableText: dummy(),
+        instruction: dummy(),
+        action: dummy()
       }
+    }
 
-      renderer.render(data)
-      expect(wagerField.val).toHaveBeenCalledWith(data.wager)
-      expect(statusDiv.text).toHaveBeenCalledWith(data.status)
-      expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
-      expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
-      expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
-      expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
+    renderer.render(data)
+    assertDataDisplayed(data)
+  })
+
+  it("should display error message if an error is received", function () {
+    renderer.error()
+    assertDataDisplayed({
+      status: "We're sorry. Something went wrong.",
+      scores: [0, 0],
+      input: {
+        enableText: false,
+        instruction: "",
+        action: ""
+      }
     })
   })
 
-  describe("displaying an error", function () {
-    it("should zero interface and display error message", function () {
-      renderer.error()
-      expect(statusDiv.text).toHaveBeenCalledWith("We're sorry. Something went wrong.")
-      expect(wagerField.val).toHaveBeenCalledWith(0)
-      expect(scoreDivs[0].text).toHaveBeenCalledWith(0)
-      expect(scoreDivs[1].text).toHaveBeenCalledWith(0)
-      expect(instructionDiv.text).toHaveBeenCalledWith("")
-      expect(submitButton.val).toHaveBeenCalledWith("")
-    })
-  })
+  var assertDataDisplayed = function (data) {
+    expect(wagerField.toggle).toHaveBeenCalledWith(data.input.enableText)
+    expect(statusDiv.text).toHaveBeenCalledWith(data.status)
+    expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
+    expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
+    expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
+    expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
+  }
 })
