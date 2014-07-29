@@ -11,3 +11,22 @@ exports.defaultDecider = function () {
     })
   }  
 }
+
+exports.martingaleDecider = function () {
+  var bestScore = 0
+
+  return function (state, callback) {
+    var currentScore = state.scores[state.playerIndex]
+
+    if (currentScore > bestScore) {
+      bestScore = currentScore
+    }
+
+    var wager = bestScore - currentScore + 1
+    var decision = events.playerEvent({ wager: wager })
+    
+    process.nextTick(function () {
+      callback(decision)
+    })
+  }
+}
