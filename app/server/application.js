@@ -1,5 +1,7 @@
 "use strict";
 
+var depdep = require("depdep")
+
 var defaultFactories = {
   webServer: function (that) {
     return require("http").createServer(that.router)
@@ -88,11 +90,8 @@ var defaultFactories = {
 exports.build = function (substitutions) {
   var application = {}
 
-  var context = require("depdep").buildContext(defaultFactories, substitutions)
-
-  Object.defineProperty(application, "context", {
-    value: context
-  })
+  var context = depdep.buildContext(defaultFactories, substitutions)
+  Object.defineProperty(application, "context", { value: context })
   
   application.start = function (port) {
     context.gameDriver.start(context.startState)

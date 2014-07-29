@@ -3,35 +3,82 @@ describe("Player prototype", function () {
 
   var helpers = require("../../spec_helper")
   var playerFactory = helpers.requireSource("server/game/base_player")
+  var dummy = helpers.dummy
+  var later = helpers.later
 
-  var player, inputCallbacks
+  it("passes game state to decision function", function (done) {
+    var state = dummy()
 
-  beforeEach(function () {
-    inputCallbacks = {}
-    player = playerFactory.build(inputCallbacks)
+    var inputCallbacks = {
+      requestUpdate: function (callback) {
+        callback(null, state)
+      }
+    }
+
+    var decider = function (data) {
+      expect(data).toBe(state)
+      done()
+    }
+
+    buildAndStartPlayer(inputCallbacks, decider)
   })
 
-  describe("starting", function () {
-    it("requests an update", function (done) {
-      inputCallbacks.requestUpdate = function (callback) {
-        expect(callback).toBe(player.getNextEvent)
+  it("passes decision to submit function", function (done) {
+    var decision = dummy()
+    var eventHandler
+
+    var inputCallbacks = {
+      requestUpdate: function (callback) {
+        eventHandler = callback
+        callback(null, dummy())
+      },
+
+      submitDecision: function (data, callback) {
+        expect(callback).toBe(eventHandler)
+        expect(data).toBe(decision)
         done()
       }
+    }
 
-      player.start()
+    var decider = function (data, callback) {
+      callback(decision)
+    }
+
+    buildAndStartPlayer(inputCallbacks, decider)
+  })
+
+  it("gives up if an error is received", function (done) {
+    var inputCallbacks = {
+      requestUpdate: function (callback) {
+        callback(new Error("dispatcher error"))
+      }
+    }
+
+    var decider = jasmine.createSpy("decider")
+
+    buildAndStartPlayer(inputCallbacks, decider)
+
+    later(function () {
+      expect(decider).not.toHaveBeenCalled()
+      done()
     })
   })
 
-  describe("getting the next event", function () {
-    it("gives up if an error is received", function (done) {
-      inputCallbacks.submitDecision = jasmine.createSpy("submit decision")
+  it("does nothing if not given a decision function", function (done) {
+    var inputCallbacks = {
+      requestUpdate: jasmine.createSpy("requestUpdate")
+    }
 
-      player.getNextEvent(new Error("dispatcher error"))
+    buildAndStartPlayer(inputCallbacks, null)
 
-      helpers.later(function () {
-        expect(inputCallbacks.submitDecision).not.toHaveBeenCalled()
-        done()
-      })
+    later(function () {
+      expect(inputCallbacks.requestUpdate).not.toHaveBeenCalled()
+      done()
     })
   })
+
+  var buildAndStartPlayer = function (inputCallbacks, decider) {
+    var player = playerFactory.build(inputCallbacks, decider)
+    player.start()    
+  }
 })

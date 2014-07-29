@@ -3,25 +3,27 @@
 exports.build = function (inputCallbacks, makeDecision) {
   var player = {}
 
-  var submitDecision = function (decision) {
+  var start = function () {
     process.nextTick(function () {
-      inputCallbacks.submitDecision(decision, player.getNextEvent)
-    })
-  }
-  
-  player.start = function () {
-    process.nextTick(function () {
-      inputCallbacks.requestUpdate(player.getNextEvent)
+      inputCallbacks.requestUpdate(getNextEvent)
     })
   }
 
-  player.getNextEvent = function (error, state) {
+  var getNextEvent = function (error, state) {
     if (error) { return }
 
     process.nextTick(function () {
       makeDecision(state, submitDecision)
     })
   }
+
+  var submitDecision = function (decision) {
+    process.nextTick(function () {
+      inputCallbacks.submitDecision(decision, getNextEvent)
+    })
+  }
+
+  player.start = makeDecision ? start : function () {}
 
   return player
 }
