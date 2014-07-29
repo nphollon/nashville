@@ -38,13 +38,13 @@ var defaultFactories = {
   },
 
   agents: function (that) {
-    var playerFactory = require("./game/base_player")
+    var playerFactory = require("./game/player_factory")
     var deciders = [null, that.defaultOpponent, that.chancePlayer]
     return playerFactory.buildList(that.splitter, deciders)
   },
 
   defaultOpponent: function () {
-    return require("./game/default_opponent").defaultDecider()
+    return require("./game/opponents").defaultDecider()
   },
 
   chancePlayer: function (that) {

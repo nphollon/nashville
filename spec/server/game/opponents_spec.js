@@ -2,7 +2,7 @@ describe("Default opponent", function () {
   "use strict";
 
   var helpers = require("../../spec_helper")
-  var opponents = helpers.requireSource("server/game/default_opponent")
+  var opponents = helpers.requireSource("server/game/opponents")
   var events = helpers.requireSource("server/game/events")
 
   it("should place a wager of $1", function (done) {
