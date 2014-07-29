@@ -36,10 +36,16 @@ var defaultFactories = {
   },
 
   agents: function (that) {
+    var playerFactory = require("./game/base_player")
+
     return [
-      require("./game/default_opponent").build(that.splitter.input(1)),
+      playerFactory.build(that.splitter.input(1), that.defaultOpponent),
       require("./game/chance_player").build(that.random, that.splitter.input(that.playerCount))
     ]
+  },
+
+  defaultOpponent: function () {
+    return require("./game/default_opponent").defaultDecider()
   },
 
   random: function () {
