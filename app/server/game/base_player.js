@@ -27,3 +27,9 @@ exports.build = function (inputCallbacks, makeDecision) {
 
   return player
 }
+
+exports.buildList = function (splitter, deciders) {
+  return deciders.map(function (decider, index) {
+    return exports.build(splitter.input(index), decider)
+  })
+}

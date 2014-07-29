@@ -39,11 +39,8 @@ var defaultFactories = {
 
   agents: function (that) {
     var playerFactory = require("./game/base_player")
-
-    return [
-      playerFactory.build(that.splitter.input(1), that.defaultOpponent),
-      playerFactory.build(that.splitter.input(that.playerCount), that.chancePlayer)
-    ]
+    var deciders = [null, that.defaultOpponent, that.chancePlayer]
+    return playerFactory.buildList(that.splitter, deciders)
   },
 
   defaultOpponent: function () {

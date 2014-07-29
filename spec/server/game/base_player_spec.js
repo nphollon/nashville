@@ -6,79 +6,102 @@ describe("Player prototype", function () {
   var dummy = helpers.dummy
   var later = helpers.later
 
-  it("passes game state to decision function", function (done) {
-    var state = dummy()
+  describe("building a player", function () {
+    it("passes game state to decision function", function (done) {
+      var state = dummy()
 
-    var inputCallbacks = {
-      requestUpdate: function (callback) {
-        callback(null, state)
+      var inputCallbacks = {
+        requestUpdate: function (callback) {
+          callback(null, state)
+        }
       }
-    }
 
-    var decider = function (data) {
-      expect(data).toBe(state)
-      done()
-    }
-
-    buildAndStartPlayer(inputCallbacks, decider)
-  })
-
-  it("passes decision to submit function", function (done) {
-    var decision = dummy()
-    var eventHandler
-
-    var inputCallbacks = {
-      requestUpdate: function (callback) {
-        eventHandler = callback
-        callback(null, dummy())
-      },
-
-      submitDecision: function (data, callback) {
-        expect(callback).toBe(eventHandler)
-        expect(data).toBe(decision)
+      var decider = function (data) {
+        expect(data).toBe(state)
         done()
       }
-    }
 
-    var decider = function (data, callback) {
-      callback(decision)
-    }
+      buildAndStartPlayer(inputCallbacks, decider)
+    })
 
-    buildAndStartPlayer(inputCallbacks, decider)
-  })
+    it("passes decision to submit function", function (done) {
+      var decision = dummy()
+      var eventHandler
 
-  it("gives up if an error is received", function (done) {
-    var inputCallbacks = {
-      requestUpdate: function (callback) {
-        callback(new Error("dispatcher error"))
+      var inputCallbacks = {
+        requestUpdate: function (callback) {
+          eventHandler = callback
+          callback(null, dummy())
+        },
+
+        submitDecision: function (data, callback) {
+          expect(callback).toBe(eventHandler)
+          expect(data).toBe(decision)
+          done()
+        }
       }
-    }
 
-    var decider = jasmine.createSpy("decider")
+      var decider = function (data, callback) {
+        callback(decision)
+      }
 
-    buildAndStartPlayer(inputCallbacks, decider)
-
-    later(function () {
-      expect(decider).not.toHaveBeenCalled()
-      done()
+      buildAndStartPlayer(inputCallbacks, decider)
     })
+
+    it("gives up if an error is received", function (done) {
+      var inputCallbacks = {
+        requestUpdate: function (callback) {
+          callback(new Error("dispatcher error"))
+        }
+      }
+
+      var decider = jasmine.createSpy("decider")
+
+      buildAndStartPlayer(inputCallbacks, decider)
+
+      later(function () {
+        expect(decider).not.toHaveBeenCalled()
+        done()
+      })
+    })
+
+    it("does nothing if not given a decision function", function (done) {
+      var inputCallbacks = {
+        requestUpdate: jasmine.createSpy("requestUpdate")
+      }
+
+      buildAndStartPlayer(inputCallbacks, null)
+
+      later(function () {
+        expect(inputCallbacks.requestUpdate).not.toHaveBeenCalled()
+        done()
+      })
+    })
+
+    var buildAndStartPlayer = function (inputCallbacks, decider) {
+      var player = playerFactory.build(inputCallbacks, decider)
+      player.start()    
+    }
   })
 
-  it("does nothing if not given a decision function", function (done) {
-    var inputCallbacks = {
-      requestUpdate: jasmine.createSpy("requestUpdate")
-    }
+  describe("building many players", function () {
+    it("will build a player for each decision function", function () {
+      playerFactory.build = function (inputCallbacks, decider) {
+        return [ inputCallbacks, decider ]
+      }
 
-    buildAndStartPlayer(inputCallbacks, null)
+      var splitter = {
+        input: function (index) { return index - 5 }
+      }
 
-    later(function () {
-      expect(inputCallbacks.requestUpdate).not.toHaveBeenCalled()
-      done()
+      var deciders = [ dummy(), dummy() ]
+
+      var players = playerFactory.buildList(splitter, deciders)
+
+      expect(players).toEqual([
+        [ -5, deciders[0] ],
+        [ -4, deciders[1] ]
+      ])
     })
   })
-
-  var buildAndStartPlayer = function (inputCallbacks, decider) {
-    var player = playerFactory.build(inputCallbacks, decider)
-    player.start()    
-  }
 })
