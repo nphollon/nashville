@@ -40,12 +40,16 @@ var defaultFactories = {
 
     return [
       playerFactory.build(that.splitter.input(1), that.defaultOpponent),
-      require("./game/chance_player").build(that.random, that.splitter.input(that.playerCount))
+      playerFactory.build(that.splitter.input(that.playerCount), that.chancePlayer)
     ]
   },
 
   defaultOpponent: function () {
     return require("./game/default_opponent").defaultDecider()
+  },
+
+  chancePlayer: function (that) {
+    return require("./game/chance_player").decider(that.random)
   },
 
   random: function () {

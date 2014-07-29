@@ -1,10 +1,9 @@
 "use strict";
 
 var events = require("./events")
-var player = require("./base_player")
 
-exports.build = function (random, inputCallbacks) {
-  var makeDecision = function (state, callback) {
+exports.decider = function (random) {
+  return function (state, callback) {
     var playerCount = state.scores.length - 1
     var winningPlayerIndex = random.integer(0, playerCount)
 
@@ -12,6 +11,4 @@ exports.build = function (random, inputCallbacks) {
       callback(events.chanceEvent(winningPlayerIndex))
     })
   }
-
-  return player.build(inputCallbacks, makeDecision)
 }
