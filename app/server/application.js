@@ -37,7 +37,7 @@ var defaultFactories = {
 
   agents: function (that) {
     return [
-      require("./game/opponent").build(that.splitter.input(1)),
+      require("./game/default_opponent").build(that.splitter.input(1)),
       require("./game/chance_player").build(that.random, that.splitter.input(that.playerCount))
     ]
   },

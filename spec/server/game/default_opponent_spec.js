@@ -2,7 +2,7 @@ describe("Default opponent", function () {
   "use strict";
 
   var helpers = require("../../spec_helper")
-  var opponentFactory = helpers.requireSource("server/game/opponent")
+  var opponentFactory = helpers.requireSource("server/game/default_opponent")
   var events = helpers.requireSource("server/game/events")
 
   var opponent, inputCallbacks

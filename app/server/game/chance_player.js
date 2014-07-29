@@ -1,29 +1,17 @@
 "use strict";
 
 var events = require("./events")
+var player = require("./base_player")
 
 exports.build = function (random, inputCallbacks) {
-  var chancePlayer = {}
+  var makeDecision = function (state, callback) {
+    var playerCount = state.scores.length - 1
+    var winningPlayerIndex = random.integer(0, playerCount)
 
-  var playerCount = function (state) {
-    return state.scores.length - 1
-  }
-
-  chancePlayer.start = function () {
     process.nextTick(function () {
-      inputCallbacks.requestUpdate(chancePlayer.getNextEvent)
+      callback(events.chanceEvent(winningPlayerIndex))
     })
   }
 
-  chancePlayer.getNextEvent = function (error, state) {
-    if (error === null) {
-      var winningPlayerIndex = random.integer(0, playerCount(state))
-
-      process.nextTick(function () {
-        inputCallbacks.submitDecision(events.chanceEvent(winningPlayerIndex), chancePlayer.getNextEvent)
-      })
-    }
-  }
-
-  return chancePlayer
+  return player.build(inputCallbacks, makeDecision)
 }
