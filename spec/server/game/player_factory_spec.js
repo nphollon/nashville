@@ -3,6 +3,7 @@ describe("Player prototype", function () {
 
   var helpers = require("../../spec_helper")
   var playerFactory = helpers.requireSource("server/game/player_factory")
+  
   var dummy = helpers.dummy
   var later = helpers.later
 

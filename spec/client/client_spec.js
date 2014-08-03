@@ -2,9 +2,11 @@ describe("The client", function () {
 	"use strict";
 	
 	var helpers = require("../spec_helper")
+	var clientFactory = helpers.requireSource("client/client")
+
 	var mock = jasmine.createSpyObj
 	var dummy = helpers.dummy
-	var clientFactory = helpers.requireSource("client/client")
+	var later = helpers.later
 
 	var requester, renderer, reader, client
 
@@ -45,16 +47,22 @@ describe("The client", function () {
 			expect(reader.enable).toHaveBeenCalledWith(response.input, client.submit)
 		})
 
-		it("does not send a request if the response asks for user input", function () {
+		it("does not send a request if the response asks for user input", function (done) {
 			spyOn(process, "nextTick")
 			client.update(null, createResponse(true))
-			expect(process.nextTick).not.toHaveBeenCalled()
+			later(function () {
+				expect(process.nextTick).not.toHaveBeenCalled()
+				done()
+			})
 		})
 
-		it("displays the info if the response forbids user input", function () {
+		it("displays the info if the response forbids user input", function (done) {
 			var response = createResponse(false)
 			client.update(null, response)
-			expect(renderer.render).toHaveBeenCalledWith(response)
+			later(function () {
+				expect(renderer.render).toHaveBeenCalledWith(response)
+				done()
+			})
 		})
 
 		it("does not enable user input if the response forbids it", function () {

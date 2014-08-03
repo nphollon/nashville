@@ -2,9 +2,11 @@ describe("The reader", function () {
   "use strict";
 
   var helpers = require("../spec_helper")
+  var readerFactory = helpers.requireSource("client/reader")
+
   var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
-  var readerFactory = helpers.requireSource("client/reader")
+  var later = helpers.later
 
   var submitButton, wagerField, errorDiv, reader
   
@@ -76,7 +78,7 @@ describe("The reader", function () {
 
       callbackWrapper()
 
-      process.nextTick(function () {
+      later(function () {
         expect(clientCallback).not.toHaveBeenCalled()
         expect(errorDiv.text).toHaveBeenCalledWith("Wager must be a positive number.")
         done()
