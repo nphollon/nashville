@@ -64,7 +64,7 @@ module.exports = function(grunt) {
 
     shell: {
       "jasmine-unit": {
-        command: "node_modules/jasmine-node/bin/jasmine-node spec/client spec/server --captureExceptions"
+        command: "node_modules/jasmine-node/bin/jasmine-node spec/client spec/server spec/util --captureExceptions"
       },
 
       "jasmine-functional": {

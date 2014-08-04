@@ -1,5 +1,7 @@
 "use strict";
 
+var zipMap = require("../util/async").zipMap
+
 exports.buildRenderer = function (interfaceElements) {
   var renderer = {} 
 
@@ -9,8 +11,9 @@ exports.buildRenderer = function (interfaceElements) {
     interfaceElements.instructionDiv.text(data.input.instruction)
     interfaceElements.submitButton.val(data.input.action)
 
-    interfaceElements.scoreDivs.forEach(function (scoreDiv, i) {
-      scoreDiv.text(data.scores[i])
+    zipMap([interfaceElements.scoreDivs, data.scores], function (div, score, done) {
+      div.text(score)
+      done()
     })
   }
 

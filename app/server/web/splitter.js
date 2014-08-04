@@ -1,24 +1,23 @@
 "use strict";
 
+var async = require("async")
+var zipMap = require("../../util/async").zipMap
+
 exports.build = function (dispatcher, count) {
   var splitter = {}
   var decisions = []
   var submitCallbacks = []
 
   var fulfillWithError = function (error) {
-    return function (callback) {
-      process.nextTick(function () {
-        callback(error)
-      })
+    return function (callback, done) {
+      process.nextTick(callback.bind(null, error))
+      done()
     }
   }
 
-  var fulfillWithData = function (data) {
-    return function (callback, index) {
-      process.nextTick(function () {
-        callback(null, data[index])
-      })
-    }
+  var fulfillWithData = function (callback, data, done) {
+    process.nextTick(callback.bind(null, null, data))
+    done()
   }
 
   var fulfillRequestCallback = function (callback, n) {
@@ -33,18 +32,17 @@ exports.build = function (dispatcher, count) {
     }
   }
 
-  var fulfillSubmitCallbacks = function (error, data) {
-    var fulfill
-
-    if (error === null) {
-      fulfill = fulfillWithData(data)
-    } else {
-      fulfill = fulfillWithError(error)
-    }
-
-    submitCallbacks.forEach(fulfill)
+  var reset = function () {
     submitCallbacks = []
     decisions = []
+  }
+  
+  var fulfillSubmitCallbacks = function (error, data) {
+    if (error === null) {
+      zipMap([submitCallbacks, data], fulfillWithData, reset)
+    } else {
+      async.each(submitCallbacks, fulfillWithError(error), reset)
+    }
   }
 
   var allPlayersSubmitted = function () {

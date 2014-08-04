@@ -1,5 +1,6 @@
 "use strict";
 
+var async = require("async")
 var depdep = require("depdep")
 
 var defaultFactories = {
@@ -92,10 +93,17 @@ exports.build = function (substitutions) {
   
   application.start = function (port) {
     context.gameDriver.start(context.startState)
-    context.agents.forEach(function (agent) {
-      agent.start()
-    })
-    context.webServer.listen(port)
+    
+    async.each(
+      context.agents,
+      function (agent, done) {
+        agent.start()
+        done()
+      },
+      function () {
+        context.webServer.listen(port)
+      }
+    )
   }
 
   application.stop = function () {

@@ -4,6 +4,8 @@ describe("the application", function () {
   var helpers = require("../spec_helper")
   var applicationFactory = helpers.requireSource("server/application")
 
+  var later = helpers.later
+
   var gameDriver, webServer, port, startState, agent, substitutions
 
   beforeEach(function () {
@@ -28,14 +30,17 @@ describe("the application", function () {
     expect(dependencyManager.buildContext).toHaveBeenCalledWith(jasmine.any(Object), substitutions)
   })
 
-  it("should start web server, game driver, and agents", function () {
+  it("should start web server, game driver, and agents", function (done) {
     var application = applicationFactory.build(substitutions)
 
     application.start(port)
 
-    expect(gameDriver.start).toHaveBeenCalledWith(startState)
-    expect(webServer.listen).toHaveBeenCalledWith(port)
-    expect(agent.start).toHaveBeenCalled()
+    later(function () {
+      expect(gameDriver.start).toHaveBeenCalledWith(startState)
+      expect(webServer.listen).toHaveBeenCalledWith(port)
+      expect(agent.start).toHaveBeenCalled()
+      done()
+    })
   })
 
   it("should close the web server when stopped", function () {

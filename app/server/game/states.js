@@ -1,5 +1,6 @@
 "use strict";
 
+var async = require("async")
 var events = require("./events")
 
 var statePrototype = {}
@@ -116,23 +117,22 @@ exports.setWager = function (wager) {
 exports.win = function (winnerIndex) {
   return function (state, callback) {
     var newState = copy(state)
-    var loserCount = state.playerCount - 1
-
-    state.scores.forEach(function (score, index) {
-      if (index === winnerIndex) {
-        newState.scores[index] = score + loserCount * newState.wager
-      } else {
-        newState.scores[index] = score - newState.wager
-      }
-    })
 
     newState.winnerIndex = winnerIndex
     newState.status = victoryMessage(winnerIndex)
-    Object.freeze(newState)
 
-    process.nextTick(function () {
-      callback(null, newState)
-    })
+    async.map(
+      state.scores, 
+      function (score, done) {
+        done(null, score - state.wager)
+      },
+      function (err, newScores) {
+        newState.scores = newScores
+        newState.scores[winnerIndex] += state.playerCount * state.wager
+        Object.freeze(newState)
+        callback(null, newState)
+      }
+    )
   }
 }
 

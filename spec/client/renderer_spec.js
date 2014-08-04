@@ -2,8 +2,10 @@ describe("The renderer", function () {
   "use strict";
   var helpers = require("../spec_helper")
   var rendererFactory = helpers.requireSource("client/renderer")
+
   var mock = jasmine.createSpyObj
   var dummy = helpers.dummy
+  var later = helpers.later
 
   var wagerField, statusDiv, scoreDivs, renderer, instructionDiv, submitButton
 
@@ -22,7 +24,7 @@ describe("The renderer", function () {
     })
   })
 
-  it("should render data", function () {
+  it("should render data", function (done) {
     var data = {
       status: dummy(),
       scores: [ dummy(), dummy() ],
@@ -34,12 +36,11 @@ describe("The renderer", function () {
     }
 
     renderer.render(data)
-    assertDataDisplayed(data)
+    assertDataDisplayed(data, done)
   })
 
-  it("should display error message if an error is received", function () {
-    renderer.error()
-    assertDataDisplayed({
+  it("should display error message if an error is received", function (done) {
+    var errorData = {
       status: "We're sorry. Something went wrong.",
       scores: [0, 0],
       input: {
@@ -47,15 +48,21 @@ describe("The renderer", function () {
         instruction: "",
         action: ""
       }
-    })
+    }
+
+    renderer.error()
+    assertDataDisplayed(errorData, done)
   })
 
-  var assertDataDisplayed = function (data) {
-    expect(wagerField.toggle).toHaveBeenCalledWith(data.input.enableText)
-    expect(statusDiv.text).toHaveBeenCalledWith(data.status)
-    expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
-    expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
-    expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
-    expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
+  var assertDataDisplayed = function (data, done) {
+    later(function () {
+      expect(wagerField.toggle).toHaveBeenCalledWith(data.input.enableText)
+      expect(statusDiv.text).toHaveBeenCalledWith(data.status)
+      expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
+      expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
+      expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
+      expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
+      done()
+    })
   }
 })
