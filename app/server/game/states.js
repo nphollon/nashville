@@ -164,15 +164,18 @@ exports.build = function (playerCount, spec) {
     status: "Welcome to Nashville"
   }
 
-  Object.keys(spec || {}).forEach(function (key) {
-    defaults[key] = spec[key]
-  })
-
   while (defaults.scores.length < playerCount) {
     defaults.scores.push(0)
   }
 
   var state = copy(defaults)
+
+  if (spec) {
+    Object.keys(spec).forEach(function (key) {
+      state[key] = spec[key]
+    })
+  }
+
   Object.freeze(state)
   return state
 }
