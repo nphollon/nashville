@@ -9,33 +9,11 @@ var defaultFactories = {
   },
 
   router: function (that) {
-    return require("./web/router").build(that.routes)
-  },
-
-  routes: function (that) {
-    var get = that.routeFactory.get
-    var post = that.routeFactory.post
-    return {
-      "/": get("public/index.html", "text/html"),
-      "/index.css": get("public/index.css", "text/css"),
-      "/index.js": get("public/index.js", "application/javascript"),
-      "/bootstrap.min.css": get("public/bootstrap.min.css", "text/css"),
-      "/bootstrap.min.js": get("public/bootstrap.min.js", "application/javascript"),
-      "/request-update": post(that.adapter.requestUpdate),
-      "/submit-decision": post(that.adapter.submitDecision)
-    }
-  },
-
-  routeFactory: function () {
-    return require("./web/routes")
+    return require("./web/express_router").build(that.splitter.input(0))
   },
 
   playerCount: function () {
     return 2
-  },
-
-  adapter: function (that) {
-    return require("./web/ajax_adapter").build(that.splitter.input(0))
   },
 
   agents: function (that) {

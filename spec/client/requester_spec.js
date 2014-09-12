@@ -23,7 +23,7 @@ describe("The requester", function () {
       
       jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(requestUrl)
-        expect(JSON.parse(postBody)).toEqual({})
+        expect(postBody).toEqual({})
         postCallback(response, "success", { status: 200 })
         return postXHR
       }
@@ -68,7 +68,7 @@ describe("The requester", function () {
 
       jQuery.post = function (postUrl, postBody, postCallback) {
         expect(postUrl).toBe(submitUrl)
-        expect(JSON.parse(postBody)).toEqual(decision)
+        expect(postBody).toEqual(decision)
         postCallback(response, "success", { status: 200 })
         return postXHR
       }

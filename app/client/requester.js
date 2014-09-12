@@ -16,7 +16,7 @@ exports.buildRequester = function ($, urls) {
   }
 
   var post = function (url, postObject, callback) {
-    $.post(url, JSON.stringify(postObject), sendResponseTo(callback), "json")
+    $.post(url, postObject, sendResponseTo(callback), "json")
       .fail(sendErrorTo(callback))
   }
 

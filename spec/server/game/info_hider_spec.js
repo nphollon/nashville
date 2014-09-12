@@ -87,4 +87,16 @@ describe("The information hider", function () {
     infoHider = infoHiderFactory.build(dispatcher, 1)
     infoHider.sendDispatch(state, serverCallback)
   })
+
+  it("should forward server error to dispatcher", function (done) {
+    var serverError = dummy()
+
+    dispatcher.sendError = function (error) {
+      expect(error).toBe(serverError)
+      done()
+    }
+
+    infoHider = infoHiderFactory.build(dispatcher, 1)
+    infoHider.sendError(serverError)
+  })
 })

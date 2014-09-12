@@ -29,6 +29,7 @@ exports.build = function () {
 	}
 
   dispatcher.sendError = function (error) {
+    console.log(error)
     process.nextTick(function() {
       fulfillSubmitCallback(error)
     })

@@ -36,5 +36,11 @@ exports.build = function (dispatcher, playerCount) {
     })
   }
 
+  infoHider.sendError = function (error) {
+    process.nextTick(function () {
+      dispatcher.sendError(error)
+    })
+  }
+
   return infoHider
 }
