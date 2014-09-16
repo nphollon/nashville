@@ -8,7 +8,7 @@ exports.playerType = "player"
 exports.playerEvent = function (decision) {
   var event = Object.create(gameEvent)
   event.type = exports.playerType
-  event.wager = decision.wager
+  event.wager = parseInt(decision.wager, 10)
   Object.freeze(event)
   return event
 }

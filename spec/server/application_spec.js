@@ -25,9 +25,9 @@ describe("the application", function () {
 
   it("should pass substitutions to dependency manager", function () {
     var dependencyManager = require("depdep")
-    spyOn(dependencyManager, "buildContext")
+    spyOn(dependencyManager, "buildLazyContext")
     applicationFactory.build(substitutions)
-    expect(dependencyManager.buildContext).toHaveBeenCalledWith(jasmine.any(Object), substitutions)
+    expect(dependencyManager.buildLazyContext).toHaveBeenCalledWith(jasmine.any(Object), substitutions)
   })
 
   it("should start web server, game driver, and agents", function (done) {

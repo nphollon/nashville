@@ -66,7 +66,7 @@ var defaultFactories = {
 exports.build = function (substitutions) {
   var application = {}
 
-  var context = depdep.buildContext(defaultFactories, substitutions)
+  var context = depdep.buildLazyContext(defaultFactories, substitutions)
   Object.defineProperty(application, "context", { value: context })
   
   application.start = function (port) {

@@ -4,6 +4,16 @@ var express = require("express")
 var bodyParser = require("body-parser")
 var events = require("../game/events")
 
+var complete = function (response) {
+  return function (error, update) {
+    if (error === null) {
+      response.json(update)
+    } else {
+      response.status(422).json(error)
+    }
+  }
+}
+
 exports.build = function (dispatcher) {
   var app = express()
 
@@ -19,25 +29,13 @@ exports.build = function (dispatcher) {
   })
 
   app.post("/request-update", function (request, response) {
-    dispatcher.requestUpdate(function (error, update) {
-      if (error === null) {
-        response.json(update)
-      } else {
-        response.status(422).json(error)
-      }
-    })
+    dispatcher.requestUpdate(complete(response))
   })
 
   app.post("/submit-decision", function (request, response) {
     console.log(request.body)
     var decision = events.playerEvent(request.body)
-    dispatcher.submitDecision(decision, function (error, update) {
-      if (error === null) {
-        response.json(update)
-      } else {
-        response.status(422).json(error)
-      }
-    })
+    dispatcher.submitDecision(decision, complete(response))
   })
 
   return app

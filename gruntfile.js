@@ -1,8 +1,6 @@
 module.exports = function(grunt) {
   "use strict";
 
-  var specCommand = "node_modules/jasmine-node/bin/jasmine-node --captureExceptions"
-
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     
