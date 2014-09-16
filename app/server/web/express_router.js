@@ -33,7 +33,6 @@ exports.build = function (dispatcher) {
   })
 
   app.post("/submit-decision", function (request, response) {
-    console.log(request.body)
     var decision = events.playerEvent(request.body)
     dispatcher.submitDecision(decision, complete(response))
   })

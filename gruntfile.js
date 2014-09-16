@@ -57,7 +57,7 @@ module.exports = function(grunt) {
     sass: {
       dist: {
         files: {
-          "public/index.css": "public-gen/index.scss"
+          "public/index.css": "public-src/index.scss"
         }
       }
     },
@@ -73,17 +73,29 @@ module.exports = function(grunt) {
 
       "start-server": {
         command: "node app/main.js"
+      },
+
+      "homepage": {
+        command: "cp public-src/index.html public/index.html"
+      }
+    },
+
+    uglify: {
+      build: {
+        src: "public/index.js",
+        dest: "public/index.min.js"
       }
     }
   })
 
   grunt.loadNpmTasks("grunt-browserify")
   grunt.loadNpmTasks("grunt-contrib-jshint")
+  grunt.loadNpmTasks("grunt-contrib-uglify")
   grunt.loadNpmTasks("grunt-sass")
   grunt.loadNpmTasks("grunt-shell")
 
   grunt.registerTask("unit-test", ["shell:jasmine-unit"])
-  grunt.registerTask("compile", ["browserify", "sass"])
+  grunt.registerTask("compile", ["browserify", "uglify", "sass", "shell:homepage"])
   grunt.registerTask("functional-test", ["shell:jasmine-functional"])
   grunt.registerTask("launch", ["compile", "shell:start-server"])
 
