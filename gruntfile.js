@@ -1,6 +1,8 @@
 module.exports = function(grunt) {
   "use strict";
 
+  var specCommand = "node_modules/jasmine-node/bin/jasmine-node --captureExceptions"
+
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     
@@ -68,7 +70,7 @@ module.exports = function(grunt) {
       },
 
       "jasmine-functional": {
-        command: "node_modules/jasmine-node/bin/jasmine-node spec/full_stack_spec.js --captureExceptions"
+        command: "node_modules/jasmine-node/bin/jasmine-node spec/integration --captureExceptions"
       },
 
       "start-server": {

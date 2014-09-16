@@ -2,7 +2,7 @@ describe("The application", function () {
 	"use strict";
 
 	var Browser = require("zombie")
-	var helpers = require("./spec_helper")
+	var helpers = require("../spec_helper")
 	var applicationFactory = helpers.requireSource("server/application")
 
 	var browser, application
