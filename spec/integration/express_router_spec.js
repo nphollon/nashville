@@ -14,7 +14,7 @@ describe("Express router", function () {
 
   var jar = request.jar()
   var cookie = request.cookie("session=sessionID")
-  jar.setCookie(cookie, host)
+  jar.setCookie(cookie, host, function () {})
 
 
   beforeEach(function () {
