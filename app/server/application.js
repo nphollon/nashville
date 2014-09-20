@@ -9,7 +9,12 @@ var defaultFactories = {
   },
 
   router: function (that) {
-    return require("./web/express_router").build(that.splitter.input(0))
+    var sessionManager = {
+      lookup: function () {
+        return that.splitter.input(0)
+      }
+    }
+    return require("./web/express_router").build(sessionManager)
   },
 
   playerCount: function () {

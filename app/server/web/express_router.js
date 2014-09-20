@@ -2,6 +2,7 @@
 
 var express = require("express")
 var bodyParser = require("body-parser")
+var cookieParser = require("cookie-parser")
 var events = require("../game/events")
 
 var complete = function (response) {
@@ -14,11 +15,12 @@ var complete = function (response) {
   }
 }
 
-exports.build = function (dispatcher) {
+exports.build = function (sessionManager) {
   var app = express()
 
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(bodyParser.json())
+  app.use(cookieParser())
 
   app.get("/", function (request, response) {
     response.sendfile("public/index.html")
@@ -29,11 +31,13 @@ exports.build = function (dispatcher) {
   })
 
   app.post("/request-update", function (request, response) {
+    var dispatcher = sessionManager.lookup(request)
     dispatcher.requestUpdate(complete(response))
   })
 
   app.post("/submit-decision", function (request, response) {
     var decision = events.playerEvent(request.body)
+    var dispatcher = sessionManager.lookup(request)
     dispatcher.submitDecision(decision, complete(response))
   })
 

@@ -12,11 +12,25 @@ describe("Express router", function () {
   var port = 3001
   var host = "http://localhost:" + port
 
+  var jar = request.jar()
+  var cookie = request.cookie("session=sessionID")
+  jar.setCookie(cookie, host)
+
+
   beforeEach(function () {
     helpers.setSpecTimeout(5000)
 
     dispatcher = {}
-    router = routerFactory.build(dispatcher)
+
+    var sessionManager = {
+      lookup: function (request) {
+        if (request.cookies.session === "sessionID") {
+          return dispatcher
+        }
+      }
+    }
+
+    router = routerFactory.build(sessionManager)
     
     application = http.createServer(router)
     application.listen(port)
@@ -45,7 +59,7 @@ describe("Express router", function () {
         callback(null, update)
       }
 
-      request.post({ url: url, json: true }, function (err, response, body) {
+      request.post(options(url), function (err, response, body) {
         expect(response.statusCode).toEqual(200)
         expect(body).toEqual(update)
         done()
@@ -59,7 +73,7 @@ describe("Express router", function () {
         callback(dispatcherError)
       }
 
-      request.post({ url: url, json: true }, function (err, response, body) {
+      request.post(options(url), function (err, response, body) {
         expect(response.statusCode).toEqual(422)
         expect(body).toEqual(dispatcherError)
         done()
@@ -79,7 +93,7 @@ describe("Express router", function () {
         callback(null, update)
       }
 
-      request.post({ url: url, json: true, form: decision }, function (err, response, body) {
+      request.post(options(url, decision), function (err, response, body) {
         expect(response.statusCode).toEqual(200)
         expect(body).toEqual(update)
         done()
@@ -93,11 +107,89 @@ describe("Express router", function () {
         callback(dispatcherError)
       }
 
-      request.post({ url: url, json: true, form: decision }, function (err, response, body) {
+      request.post(options(url, decision), function (err, response, body) {
         expect(response.statusCode).toEqual(422)
         expect(body).toEqual(dispatcherError)
         done()
       })      
     })
   })
+
+  var options = function (url, decision) {
+    var opt = {
+      url: url,
+      json: true,
+      jar: jar
+    }
+
+    if (decision !== undefined) {
+      opt.form = decision
+    }
+
+    return opt
+  }
+
+  /*
+  - Does the client have a valid session cookie?
+  - Find the game corresponding to session cookie X
+  - Create a new game and session cookie
+  */
+  /**
+  Background
+  Given the game always awards victory to me
+
+
+  Given I have no cookies in my browser
+
+  When I request an update from the server
+  Then I should receive a game in its initial state
+  And I should receive a session cookie
+
+  When I submit a wager of 2
+  Then I should receive a game state with scores 2:-2
+
+  When I request an update
+  Then I should receive a game state with scores 2:-2
+
+  When I clear my cookies
+  And I request an update
+  Then I should receive a game in its initial state
+  And I should receive a session cookie
+
+  When I submit a wager of 1
+  And I clear my cookies
+  And I submit a wager of 2
+  Then I should receive a game state with scores 2:-2
+
+  When I clear my cookies
+  And I create an invalid session cookie
+  And I request an update
+  Then I should receive a game in its initial state
+
+  ---------------------------------------
+  Background
+  Given the game always awards victory to me
+  And when creating a new session cookie, the server creates cookie AA, followed by cookie BB
+
+
+  Given I have no cookies in my browser
+
+  When I request an update from the server
+  Then I should receive session cookie AA
+
+  When I submit a wager of 1
+  Then I should receive a game state with scores 1:-1
+
+  When I clear my cookies
+  And I request an update
+  Then I should receive session cookie BB
+
+  When I replace cookie BB with cookie AA
+  And I request an update
+  Then I should receive a game state with scores 1:-1
+
+  When I replace cookie AA with cookie BB
+  And I submit a wager of 3
+  Then I should receive a game state with scores 3:-3
+  **/
 })
