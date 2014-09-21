@@ -5,7 +5,7 @@ describe("The application", function () {
 	var helpers = require("../spec_helper")
 	var applicationFactory = helpers.requireSource("server/application")
 
-	var browser, application
+	var browser, application, gameSubs
 
 	var port = 3000
 	var url = "http://localhost:" + port + "/"
@@ -29,6 +29,7 @@ describe("The application", function () {
 	beforeEach(function () {
 		helpers.setSpecTimeout(5000)
 		browser = new Browser()
+		gameSubs = {}
 	})
 
 	afterEach(function () {
@@ -37,11 +38,11 @@ describe("The application", function () {
 	})
 
 	it("should let the user submit a decision and display the result", function (done) {
-		var winningRandom = {
+		gameSubs.random = {
 			integer: function () { return 0 }
 		}
 
-		startApplication({ random: winningRandom })
+		startApplication({ gameSubs: gameSubs })
 
 		browser.visit(url, logError(done, function () {
 			expect(browser.text("#status")).toEqual("Welcome to Nashville")
@@ -61,16 +62,14 @@ describe("The application", function () {
 	})
 
 	it("should cope with server-side errors gracefully", function (done) {
-		var failingDispatcher = {
+		gameSubs.dispatcher = {
 			requestUpdate: function (callback) {
 				callback(new Error("dispatcher error"))
 			},
 			sendDispatch: helpers.dummy()
 		}
 
-		startApplication({ gameFactory: function () { return {
-			splitter: { input: function () { return failingDispatcher } }
-		} } })
+		startApplication({ gameSubs: gameSubs })
 
 		browser.visit(url, logError(done, function () {
 			expect(browser.text("#status")).toEqual("We're sorry. Something went wrong.")

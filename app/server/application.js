@@ -12,22 +12,18 @@ var defaultFactories = {
   },
 
   sessionManager: function (that) {
-    return require("./web/session_manager").build(that.uuidGenerator, that.gameFactory)
+    return require("./web/session_manager").build(that.random, that.gameFactory)
   },
 
   gameFactory: function (that) {
-    var gameModule = require("./game/game_factory")
-    return gameModule.build({
-      random: that.random
-    })
+    return require("./game/game_factory").build(that.gameSubs)
+  },
+
+  gameSubs: function (that) {
+    return { random: that.random }
   },
 
   random: function () {
-    var Random = require("random-js");
-    return new Random(Random.engines.mt19937().autoSeed())
-  },
-
-  uuidGenerator: function () {
     var Random = require("random-js");
     return new Random(Random.engines.mt19937().autoSeed())
   }
