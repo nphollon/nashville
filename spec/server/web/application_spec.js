@@ -1,8 +1,8 @@
 describe("the application", function () {
   "use strict";
 
-  var helpers = require("../spec_helper")
-  var applicationFactory = helpers.requireSource("server/application")
+  var helpers = require("../../spec_helper")
+  var applicationFactory = helpers.requireSource("server/web/application")
   var webServer, port, substitutions
 
   beforeEach(function () {

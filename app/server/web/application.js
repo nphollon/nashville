@@ -8,15 +8,15 @@ var defaultFactories = {
   },
 
   router: function (that) {
-    return require("./web/express_router").build(that.sessionManager)
+    return require("./express_router").build(that.sessionManager)
   },
 
   sessionManager: function (that) {
-    return require("./web/session_manager").build(that.random, that.gameFactory)
+    return require("./session_manager").build(that.random, that.gameFactory)
   },
 
   gameFactory: function (that) {
-    return require("./game/game_factory").build(that.gameSubs)
+    return require("../game/game_factory").build(that.gameSubs)
   },
 
   gameSubs: function (that) {

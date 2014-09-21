@@ -3,7 +3,7 @@
 
 	var port = process.env.PORT || 4567
 
-  var application = require("./server/application").build()
+  var application = require("./web/application").build()
 
   application.start(port)
   

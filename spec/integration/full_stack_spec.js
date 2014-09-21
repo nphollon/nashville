@@ -3,7 +3,7 @@ describe("The application", function () {
 
 	var Browser = require("zombie")
 	var helpers = require("../spec_helper")
-	var applicationFactory = helpers.requireSource("server/application")
+	var applicationFactory = helpers.requireSource("server/web/application")
 
 	var browser, application, gameSubs
 
