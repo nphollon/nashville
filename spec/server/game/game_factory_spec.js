@@ -2,7 +2,7 @@ describe("Game instance", function () {
   "use strict";
 
   var helpers = require("../../spec_helper")
-  var gameFactory = helpers.requireSource("server/game/game")
+  var gameFactory = helpers.requireSource("server/game/game_factory")
   var later = helpers.later
   var dummy = helpers.dummy
 

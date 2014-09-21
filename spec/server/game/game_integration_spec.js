@@ -8,7 +8,7 @@ describe("The game", function () {
   var dummy = helpers.dummy
 
   it("plays a 2 player game", function (testDone) {
-    var context = requireSource("server/game/game").build({
+    var context = requireSource("server/game/game_factory").build({
       deciders: [null, null, null]
     })
     var splitter = context.splitter
