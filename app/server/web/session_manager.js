@@ -7,11 +7,10 @@ exports.build = function (random, newGame) {
 
   var newSession = function (response) {
     var id = random.uuid4()
-    var game = newGame()
-    sessions[id] = game
+    sessions[id] = newGame()
 
     response.cookie("session", id, { secure: true })
-    return game
+    return sessions[id]
   }
 
   sessionManager.lookup = function (request, response) {
