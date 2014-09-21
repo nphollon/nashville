@@ -10,7 +10,7 @@ describe("The game", function () {
   it("plays a 2 player game", function (testDone) {
     var context = requireSource("server/game/game_factory").build({
       deciders: [null, null, null]
-    })
+    })()
     var splitter = context.splitter
 
     var play = function (round) {

@@ -17,11 +17,9 @@ var defaultFactories = {
 
   gameFactory: function (that) {
     var gameModule = require("./game/game_factory")
-    return function () {
-      return gameModule.build({
-        random: that.random
-      })
-    }
+    return gameModule.build({
+      random: that.random
+    })
   },
 
   random: function () {

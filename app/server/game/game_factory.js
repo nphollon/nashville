@@ -58,17 +58,19 @@ var defaults = {
 }
 
 exports.build = function (substitutions) {
-  var context = depdep.buildLazyContext(defaults, substitutions)
+  return function () {
+    var context = depdep.buildLazyContext(defaults, substitutions)
 
-  context.stateManager.start(context.startState)
-    
-  async.each(
-    context.agents,
-    function (agent, done) {
-      agent.start()
-      done()
-    }
-  )
+    context.stateManager.start(context.startState)
+      
+    async.each(
+      context.agents,
+      function (agent, done) {
+        agent.start()
+        done()
+      }
+    )
 
-  return context
+    return context
+  }
 }
