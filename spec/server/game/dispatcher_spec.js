@@ -3,7 +3,7 @@ describe("The dispatcher", function () {
   
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
-  var dispatcherFactory = helpers.requireSource("server/web/dispatcher")
+  var dispatcherFactory = helpers.requireSource("server/game/dispatcher")
 
 	var dispatcher
 

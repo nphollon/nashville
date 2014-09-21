@@ -3,7 +3,7 @@ describe("The splitter", function () {
 
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
-  var splitterFactory = helpers.requireSource("server/web/splitter")
+  var splitterFactory = helpers.requireSource("server/game/splitter")
 
   var splitter, dispatcher
 

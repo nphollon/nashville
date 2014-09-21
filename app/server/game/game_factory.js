@@ -21,7 +21,7 @@ var defaults = {
   },
 
   splitter: function (that) {
-    return require("../web/splitter").build(
+    return require("./splitter").build(
       that.dispatcher,
       that.playerCount + 1
     )
@@ -40,7 +40,7 @@ var defaults = {
   },
 
   dispatcher: function () {
-    return require("../web/dispatcher").build()
+    return require("./dispatcher").build()
   },
 
   startState: function (that) {
