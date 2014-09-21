@@ -20,7 +20,7 @@ exports.build = function (sessionManager) {
 
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(bodyParser.json())
-  app.use(cookieParser("SECRET"))
+  app.use(cookieParser())
 
   app.get("/", function (request, response) {
     response.sendfile("public/index.html")
