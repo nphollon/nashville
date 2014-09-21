@@ -20,7 +20,7 @@ exports.build = function (sessionManager) {
 
   app.use(bodyParser.urlencoded({ extended: false }))
   app.use(bodyParser.json())
-  app.use(cookieParser())
+  app.use(cookieParser("SECRET"))
 
   app.get("/", function (request, response) {
     response.sendfile("public/index.html")
@@ -31,13 +31,13 @@ exports.build = function (sessionManager) {
   })
 
   app.post("/request-update", function (request, response) {
-    var dispatcher = sessionManager.lookup(request)
+    var dispatcher = sessionManager.lookup(request, response)
     dispatcher.requestUpdate(complete(response))
   })
 
   app.post("/submit-decision", function (request, response) {
     var decision = events.playerEvent(request.body)
-    var dispatcher = sessionManager.lookup(request)
+    var dispatcher = sessionManager.lookup(request, response)
     dispatcher.submitDecision(decision, complete(response))
   })
 

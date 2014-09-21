@@ -9,18 +9,18 @@ exports.build = function (random, newGame) {
     var id = random.uuid4()
     sessions[id] = newGame()
 
-    response.cookie("session", id, { secure: true })
-    return sessions[id]
+    response.cookie("session", id)
+    return sessions[id].splitter.input(0)
   }
 
   sessionManager.lookup = function (request, response) {
-    var id = request.signedCookies.session
+    var id = request.cookies.session
 
     if (sessions[id] === undefined) {
       return newSession(response)
     }
 
-    return sessions[id]
+    return sessions[id].splitter.input(0)
   }
 
   return sessionManager

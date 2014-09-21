@@ -68,7 +68,9 @@ describe("The application", function () {
 			sendDispatch: helpers.dummy()
 		}
 
-		startApplication({ dispatcher: failingDispatcher })
+		startApplication({ gameFactory: function () { return {
+			splitter: { input: function () { return failingDispatcher } }
+		} } })
 
 		browser.visit(url, logError(done, function () {
 			expect(browser.text("#status")).toEqual("We're sorry. Something went wrong.")

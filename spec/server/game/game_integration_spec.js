@@ -8,9 +8,10 @@ describe("The game", function () {
   var dummy = helpers.dummy
 
   it("plays a 2 player game", function (testDone) {
-    var context = requireSource("server/application").build().context
+    var context = requireSource("server/game/game").build({
+      deciders: [null, null, null]
+    })
     var splitter = context.splitter
-    var driver = context.gameDriver
 
     var play = function (round) {
       return function (roundDone) {
@@ -26,8 +27,6 @@ describe("The game", function () {
         }, roundDone)
       }
     }
-
-    driver.start(context.startState)
 
     var waitForStart = function (taskDone) {
       splitter.input(0).requestUpdate(taskDone)
