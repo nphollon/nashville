@@ -72,7 +72,7 @@ module.exports = function(grunt) {
       },
 
       "start-server": {
-        command: "node app/main.js"
+        command: "node app/server/main.js"
       },
 
       "homepage": {
