@@ -10,7 +10,7 @@ describe("The chance player", function () {
   beforeEach(function () {
     random = {}
     decide = chancePlayer.decider(random)
-    state = { scores: new Array(3) }
+    state = { players: new Array(3) }
   })
 
   describe ("getting the next event", function () {

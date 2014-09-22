@@ -199,11 +199,13 @@ describe("The state", function () {
       expect(response.status).toEqual(expectedStatus)
     })
 
+    // TODO finish converting data structure (scores --> players)
     it("should contain the same list of scores", function () {
       var expectedScores = [ dummy(), dummy() ]
+      var expectedPlayers = [ { score: expectedScores[0] }, { score: expectedScores[1] } ]
       var state = stateFactory.build(2, { scores: expectedScores })
       var response = state.toResponse(0)
-      expect(response.scores).toEqual(expectedScores)
+      expect(response.players).toEqual(expectedPlayers)
     })
 
     it("should contain index 0 if the response is for player 0", function () {

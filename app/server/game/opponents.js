@@ -16,7 +16,7 @@ exports.martingaleDecider = function () {
   var bestScore = 0
 
   return function (state, callback) {
-    var currentScore = state.scores[state.playerIndex]
+    var currentScore = state.players[state.playerIndex].score
 
     if (currentScore > bestScore) {
       bestScore = currentScore

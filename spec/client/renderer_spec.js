@@ -7,19 +7,30 @@ describe("The renderer", function () {
   var dummy = helpers.dummy
   var later = helpers.later
 
-  var wagerField, statusDiv, scoreDivs, renderer, instructionDiv, submitButton
+  var wagerField, statusDiv, playerPanels, renderer, instructionDiv, submitButton
 
   beforeEach(function () {
-    wagerField = mock("wager field", ["toggle"])
-    statusDiv = mock("status div", ["text"])
-    instructionDiv = mock("instruction div", ["text"])
-    submitButton = mock("submitButton", ["val"])
-    scoreDivs = [ mock("player 1 score", ["text"]), mock("player 2 score", ["text"]) ]
+    wagerField = mock("wager-field", ["toggle"])
+    statusDiv = mock("status-div", ["text"])
+    instructionDiv = mock("instruction-div", ["text"])
+    submitButton = mock("submit-button", ["val"])
+
+    playerPanels = [
+      {
+        score: mock("player-1-score", ["text"]),
+        card: mock("player-1-card", ["text"])
+      },
+      {
+        score: mock("player-2-score", ["text"]),
+        card: mock("player-2-card", ["text"])
+      }
+    ]
+
     renderer = rendererFactory.buildRenderer({
       statusDiv: statusDiv, 
       instructionDiv: instructionDiv,
       wagerField: wagerField,
-      scoreDivs: scoreDivs,
+      playerPanels: playerPanels,
       submitButton: submitButton
     })
   })
@@ -27,7 +38,14 @@ describe("The renderer", function () {
   it("should render data", function (done) {
     var data = {
       status: dummy(),
-      scores: [ dummy(), dummy() ],
+      players: [
+        {
+          score: dummy()
+        },
+        {
+          score: dummy()
+        }
+      ],
       input: {
         enableText: dummy(),
         instruction: dummy(),
@@ -42,7 +60,14 @@ describe("The renderer", function () {
   it("should display error message if an error is received", function (done) {
     var errorData = {
       status: "We're sorry. Something went wrong.",
-      scores: [0, 0],
+      players: [
+        {
+          score: 0
+        },
+        {
+          score: 0
+        }
+      ],
       input: {
         enableText: false,
         instruction: "",
@@ -56,12 +81,16 @@ describe("The renderer", function () {
 
   var assertDataDisplayed = function (data, done) {
     later(function () {
-      expect(wagerField.toggle).toHaveBeenCalledWith(data.input.enableText)
       expect(statusDiv.text).toHaveBeenCalledWith(data.status)
-      expect(scoreDivs[0].text).toHaveBeenCalledWith(data.scores[0])
-      expect(scoreDivs[1].text).toHaveBeenCalledWith(data.scores[1])
+
+      expect(wagerField.toggle).toHaveBeenCalledWith(data.input.enableText)
       expect(instructionDiv.text).toHaveBeenCalledWith(data.input.instruction)
       expect(submitButton.val).toHaveBeenCalledWith(data.input.action)
+      
+      expect(playerPanels[0].score.text).toHaveBeenCalledWith(data.players[0].score)
+      expect(playerPanels[1].score.text).toHaveBeenCalledWith(data.players[1].score)
+      expect(playerPanels[0].card.text).toHaveBeenCalledWith(1)
+      expect(playerPanels[1].card.text).toHaveBeenCalledWith(1)
       done()
     })
   }

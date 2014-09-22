@@ -53,6 +53,8 @@ describe("The application", function () {
 				expect(browser.text("#instruction")).toEqual("Place a wager")
 				expect(browser.text("#player-1-score")).toEqual("0")
 				expect(browser.text("#player-2-score")).toEqual("0")
+				expect(browser.text("#player-1-card")).toEqual("1")
+				expect(browser.text("#player-2-card")).toEqual("1")
 
 				// Given the user's score is 0
 				// When the user submits a wager of 5

@@ -38,7 +38,7 @@ describe("Opponents", function () {
   var stateWithScore = function (score) {
     return {
       playerIndex: 1,
-      scores: [0, score, 0]
+      players: [ { score: 0 }, { score: score }, { score: 0 } ]
     }
   }
 
