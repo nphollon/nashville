@@ -39,12 +39,8 @@ describe("The renderer", function () {
     var data = {
       status: dummy(),
       players: [
-        {
-          score: dummy()
-        },
-        {
-          score: dummy()
-        }
+        { score: dummy(), card: dummy() },
+        { score: dummy(), card: dummy() }
       ],
       input: {
         enableText: dummy(),
@@ -61,12 +57,8 @@ describe("The renderer", function () {
     var errorData = {
       status: "We're sorry. Something went wrong.",
       players: [
-        {
-          score: 0
-        },
-        {
-          score: 0
-        }
+        { score: 0, card: 1 },
+        { score: 0, card: 1 }
       ],
       input: {
         enableText: false,
@@ -89,8 +81,8 @@ describe("The renderer", function () {
       
       expect(playerPanels[0].score.text).toHaveBeenCalledWith(data.players[0].score)
       expect(playerPanels[1].score.text).toHaveBeenCalledWith(data.players[1].score)
-      expect(playerPanels[0].card.text).toHaveBeenCalledWith(1)
-      expect(playerPanels[1].card.text).toHaveBeenCalledWith(1)
+      expect(playerPanels[0].card.text).toHaveBeenCalledWith(data.players[0].card)
+      expect(playerPanels[1].card.text).toHaveBeenCalledWith(data.players[1].card)
       done()
     })
   }

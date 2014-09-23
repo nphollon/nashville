@@ -194,7 +194,7 @@ describe("The state", function () {
 
     it("should contain the same status", function () {
       var expectedStatus = dummy()
-      var state = stateFactory.build(2, { status: expectedStatus})
+      var state = stateFactory.build(2, { status: expectedStatus })
       var response = state.toResponse(0)
       expect(response.status).toEqual(expectedStatus)
     })
@@ -202,7 +202,7 @@ describe("The state", function () {
     // TODO finish converting data structure (scores --> players)
     it("should contain the same list of scores", function () {
       var expectedScores = [ dummy(), dummy() ]
-      var expectedPlayers = [ { score: expectedScores[0] }, { score: expectedScores[1] } ]
+      var expectedPlayers = [ { score: expectedScores[0], card: 1 }, { score: expectedScores[1], card: 1 } ]
       var state = stateFactory.build(2, { scores: expectedScores })
       var response = state.toResponse(0)
       expect(response.players).toEqual(expectedPlayers)

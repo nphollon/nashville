@@ -84,7 +84,7 @@ statePrototype.toResponse = function (playerIndex) {
   var response = {
     playerIndex: playerIndex,
     wager: this.wager,
-    players: this.scores.map(function (score) { return { score: score } }),
+    players: this.scores.map(function (score) { return { score: score, card: 1 } }),
     status: this.status,
     input: inputSettings(playerIndex, this.nextPlayerIndex, this.lastPlayerIndex)
   }

@@ -18,7 +18,7 @@ exports.buildRenderer = function (elements) {
 
     zipMap([elements.playerPanels, data.players], function (panel, playerData, done) {
       panel.score.text(playerData.score)
-      panel.card.text(1)
+      panel.card.text(playerData.card)
       done()
     })
   }
@@ -28,10 +28,10 @@ exports.buildRenderer = function (elements) {
       status: "We're sorry. Something went wrong.",
       players: [
         {
-          score: 0
+          score: 0, card: 1
         },
         {
-          score: 0
+          score: 0, card: 1
         }
       ],
       input: {

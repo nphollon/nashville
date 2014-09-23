@@ -38,7 +38,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 0,
           wager: 2,
-          players: [ { score: 0 }, { score: 0 } ],
+          players: [ { score: 0, card: 1 }, { score: 0, card: 1 } ],
           status: "Player 1 has bet $2",
           input: {
             enableText: false,
@@ -53,7 +53,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 1,
           wager: 2,
-          players: [ { score: 0 }, { score: 0 } ],
+          players: [ { score: 0, card: 1 }, { score: 0, card: 1 } ],
           status: "Player 1 has bet $2",
           input: {
             enableText: false,
@@ -75,7 +75,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 0,
           wager: 2,
-          players: [ { score: 2 }, { score: -2 } ],
+          players: [ { score: 2, card: 1 }, { score: -2, card: 1 } ],
           status: "Player 1 has won",
           input: {
             enableText: false,
@@ -90,7 +90,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 1,
           wager: 2,
-          players: [ { score: 2 }, { score: -2 } ],
+          players: [ { score: 2, card: 1 }, { score: -2, card: 1 } ],
           status: "Player 1 has won",
           input: {
             enableText: true,
@@ -112,7 +112,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 0,
           wager: 10,
-          players: [ { score: 2 }, { score: -2 } ],
+          players: [ { score: 2, card: 1 }, { score: -2, card: 1 } ],
           status: "Player 2 has bet $10",
           input: {
             enableText: false,
@@ -127,7 +127,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 1,
           wager: 10,
-          players: [ { score: 2 }, { score: -2 } ],
+          players: [ { score: 2, card: 1 }, { score: -2, card: 1 } ],
           status: "Player 2 has bet $10",
           input: {
             enableText: false,
@@ -149,7 +149,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 0,
           wager: 10,
-          players: [ { score: 12 }, { score: -12 } ],
+          players: [ { score: 12, card: 1 }, { score: -12, card: 1 } ],
           status: "Player 1 has won",
           input: {
             enableText: true,
@@ -164,7 +164,7 @@ describe("The game", function () {
         expectedResponse: {
           playerIndex: 1,
           wager: 10,
-          players: [ { score: 12 }, { score: -12 } ],
+          players: [ { score: 12, card: 1 }, { score: -12, card: 1 } ],
           status: "Player 1 has won",
           input: {
             enableText: false,
