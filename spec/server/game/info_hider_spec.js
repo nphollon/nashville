@@ -4,35 +4,39 @@ describe("The information hider", function () {
   var helpers = require("../../spec_helper")
   var dummy = helpers.dummy
   var infoHiderFactory = helpers.requireSource("server/game/info_hider")
-  var dispatcher, infoHider, state
+  var dispatcher, infoHider, state, toResponse, dummyResponse
 
   beforeEach(function () {
     dispatcher = {}
 
-    var dummyResponse = [ dummy(), dummy() ]
+    state = dummy()
+    dummyResponse = [ dummy(), dummy() ]
 
-    state = {
-      toResponse: function (i) { return dummyResponse[i] }
+    toResponse = function (receivedState, playerIndex, callback) {
+      if (receivedState === state) {
+        callback(dummyResponse[playerIndex])
+      }
     }
+
   })
 
   it("should wrap state in a list if there is one player", function (done) {    
     dispatcher.sendDispatch = function (data) {
-      expect(data).toEqual([ state.toResponse(0) ])
+      expect(data).toEqual([ dummyResponse[0] ])
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 1)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 1)
     infoHider.sendDispatch(state, dummy())
   })
 
   it("should duplicate state if there are two players", function (done) {
     dispatcher.sendDispatch = function (data) {
-      expect(data).toEqual([ state.toResponse(0), state.toResponse(1) ])
+      expect(data).toEqual([ dummyResponse[0], dummyResponse[1] ])
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 2)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 2)
     infoHider.sendDispatch(state, dummy())
   })
 
@@ -50,7 +54,7 @@ describe("The information hider", function () {
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 2)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 2)
     infoHider.sendDispatch(state, serverCallback)
   })
 
@@ -68,7 +72,7 @@ describe("The information hider", function () {
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 2)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 2)
     infoHider.sendDispatch(state, serverCallback)
   })
 
@@ -84,7 +88,7 @@ describe("The information hider", function () {
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 1)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 1)
     infoHider.sendDispatch(state, serverCallback)
   })
 
@@ -96,7 +100,7 @@ describe("The information hider", function () {
       done()
     }
 
-    infoHider = infoHiderFactory.build(dispatcher, 1)
+    infoHider = infoHiderFactory.build(dispatcher, toResponse, 1)
     infoHider.sendError(serverError)
   })
 })

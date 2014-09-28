@@ -35,12 +35,17 @@ var defaults = {
   infoHider: function (that) {
     return require("./info_hider").build(
       that.dispatcher,
+      that.toResponse,
       that.playerCount + 1
     )
   },
 
   dispatcher: function () {
     return require("./dispatcher").build()
+  },
+
+  toResponse: function () {
+    return require("./response")
   },
 
   startState: function (that) {

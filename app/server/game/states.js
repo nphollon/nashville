@@ -17,41 +17,6 @@ var victoryMessage = function (winnerIndex) {
   return playerName(winnerIndex) + " has won"
 }
 
-var fullInputEnabled = {
-  enableText: true,
-  enableSubmit: true,
-  instruction: "Place a wager",
-  action: "Submit"
-}
-
-var confirmationEnabled = {
-  enableText: false,
-  enableSubmit: true,
-  instruction: "",
-  action: "Continue"
-}
-
-var noInputEnabled = {
-  enableText: false,
-  enableSubmit: false,
-  instruction: "",
-  action: ""
-}
-
-Object.freeze(fullInputEnabled)
-Object.freeze(confirmationEnabled)
-Object.freeze(noInputEnabled)
-
-var inputSettings = function (playerIndex, nextPlayerIndex, lastPlayerIndex) {
-  if (playerIndex === nextPlayerIndex) {
-    return fullInputEnabled
-  }
-  if (playerIndex === lastPlayerIndex) {
-    return noInputEnabled
-  }
-  return confirmationEnabled
-}
-
 var playerMutator = {}
 
 playerMutator[events.playerType] = {
@@ -78,18 +43,6 @@ var copy = function (original) {
   state.winnerIndex = original.winnerIndex
   state.status = original.status
   return state
-}
-
-statePrototype.toResponse = function (playerIndex) {
-  var response = {
-    playerIndex: playerIndex,
-    wager: this.wager,
-    players: this.scores.map(function (score) { return { score: score, card: 1 } }),
-    status: this.status,
-    input: inputSettings(playerIndex, this.nextPlayerIndex, this.lastPlayerIndex)
-  }
-  Object.freeze(response)
-  return response
 }
 
 Object.defineProperty(statePrototype, "playerCount", {

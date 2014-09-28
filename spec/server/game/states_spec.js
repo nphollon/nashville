@@ -5,10 +5,7 @@ describe("The state", function () {
   var stateFactory = helpers.requireSource("server/game/states")
   var events = helpers.requireSource("server/game/events")
   var dummy = helpers.dummy
-
-  var expectIsFrozen = function (object) {
-    expect(Object.isFrozen(object)).toBe(true)
-  }
+  var expectIsFrozen = helpers.expectIsFrozen
 
   describe("default state", function () {
     it("has a default wager of 1", function () {
@@ -165,106 +162,6 @@ describe("The state", function () {
         expect(endState.lastPlayerIndex).toBe(playerCount)
         expect(endState.nextEventType).toBe(events.playerType)
         done()
-      })
-    })
-  })
-
-  describe("The response", function () {
-    it("should be immutable", function () {
-      var state = stateFactory.build(1)
-      var response = state.toResponse(0)
-      expectIsFrozen(response)
-    })
-
-    it("should not contain the next event type or player index", function () {
-      var state = stateFactory.build(1)
-      expect(state.hasOwnProperty("nextEventType")).toBe(true)
-      expect(state.hasOwnProperty("nextPlayerIndex")).toBe(true)
-      var response = state.toResponse(0)
-      expect(response.hasOwnProperty("nextEventType")).toBe(false)
-      expect(response.hasOwnProperty("nextPlayerIndex")).toBe(false)
-    })
-
-    it("should contain the same wager", function () {
-      var expectedWager = dummy()
-      var state = stateFactory.build(2, { wager: expectedWager })
-      var response = state.toResponse(0)
-      expect(response.wager).toEqual(expectedWager)
-    })
-
-    it("should contain the same status", function () {
-      var expectedStatus = dummy()
-      var state = stateFactory.build(2, { status: expectedStatus })
-      var response = state.toResponse(0)
-      expect(response.status).toEqual(expectedStatus)
-    })
-
-    // TODO finish converting data structure (scores --> players)
-    it("should contain the same list of scores", function () {
-      var expectedScores = [ dummy(), dummy() ]
-      var expectedPlayers = [ { score: expectedScores[0], card: 1 }, { score: expectedScores[1], card: 1 } ]
-      var state = stateFactory.build(2, { scores: expectedScores })
-      var response = state.toResponse(0)
-      expect(response.players).toEqual(expectedPlayers)
-    })
-
-    it("should contain index 0 if the response is for player 0", function () {
-      var response = stateFactory.build(2).toResponse(0)
-      expect(response.playerIndex).toEqual(0)
-    })
-
-    it("should contain index 1 if the response is for player 1", function () {
-      var response = stateFactory.build(2).toResponse(1)
-      expect(response.playerIndex).toEqual(1)
-    })
-
-    describe("enabling player input", function () {
-      var fullInput = {
-        enableText: true,
-        enableSubmit: true,
-        instruction: "Place a wager",
-        action: "Submit"
-      }
-
-      var noInput = {
-        enableText: false,
-        enableSubmit: false,
-        instruction: "",
-        action: ""
-      }
-
-      var confirmation = {
-        enableText: false,
-        enableSubmit: true,
-        instruction: "",
-        action: "Continue"
-      }
-
-      it("should fully enable input for first player if it is their turn", function () {
-        var state = stateFactory.build(2, { nextPlayerIndex: 0 })
-        var response = state.toResponse(0)
-        expect(response.input).toEqual(fullInput)
-        expectIsFrozen(response.input)
-      })
-
-      it("should enable input for second player if it is their turn", function () {
-        var state = stateFactory.build(2, { nextPlayerIndex: 1 })
-        var response = state.toResponse(1)
-        expect(response.input).toEqual(fullInput)
-      })
-
-      it("should disable input for first player if they just had a turn", function () {
-        var state = stateFactory.build(2, { nextPlayerIndex: 2, lastPlayerIndex: 0 })
-        var response = state.toResponse(0)
-        expect(response.input).toEqual(noInput)
-        expectIsFrozen(response.input)
-      })
-
-      it("should enable confirmation for first player if their turn is neither next nor last", function () {
-        var state = stateFactory.build(2, { nextPlayerIndex: 2, lastPlayerIndex: 1 })
-        var response = state.toResponse(0)
-        expect(response.input).toEqual(confirmation)
-        expectIsFrozen(response.input)
       })
     })
   })

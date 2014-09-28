@@ -2,7 +2,7 @@
 
 var async = require("async")
 
-exports.build = function (dispatcher, playerCount) {
+exports.build = function (dispatcher, toResponse, playerCount) {
   var infoHider = {}
 
   var buildDispatch = function (state, send) {
@@ -10,8 +10,10 @@ exports.build = function (dispatcher, playerCount) {
     async.whilst(
       function () { return dispatch.length < playerCount },
       function (done) {
-        dispatch.push(state.toResponse(dispatch.length))
-        done()
+        toResponse(state, dispatch.length, function (response) {
+          dispatch.push(response)
+          done()
+        })
       },
       function () { send(dispatch) }
     )

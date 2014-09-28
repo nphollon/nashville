@@ -20,4 +20,8 @@ exports.later = function (callback) {
 	setTimeout(callback, 10)
 }
 
+exports.expectIsFrozen = function (object) {
+  expect(Object.isFrozen(object)).toBe(true)
+}
+
 exports.resetSpecTimeout()
